@@ -123,6 +123,7 @@ It reminds us of the programming in the private.php file, with which it surely h
 
 We have the data of the following user obtained from the database:
 
+
 - user: nohydragent
 - password hash: 53199f8a05fec6a7e686b6f816e73995
 - salt1: 598afc235e17f253bfa3d5d1d221829c
