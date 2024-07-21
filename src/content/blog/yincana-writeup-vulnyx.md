@@ -205,9 +205,7 @@ We execute the following command to try to include the RSA public key in the man
 
 `margarita@yincana:/tmp$ sudo -u manel /usr/bin/xsltproc -o /home/manel/.ssh/authorized_keys crea_rsa.xml datos.xml` 
 
-<img src="/assets/yincana/img
-
-_p13_2.png" />
+<img src="/assets/yincana/img_p13_2.png" />
 
 We try to access manel via SSH with the generated RSA key from our kali.
 
