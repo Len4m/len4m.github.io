@@ -142,7 +142,9 @@ Now we need to make the site believe that the launch time has arrived, we can do
 
 To modify this variable, we open the browser console by pressing the F12 key and change the launch date to the current date by entering:
 
-`dateFinish = new Date();`
+```
+dateFinish = new Date();
+```
 
 ![img_p6_2](/assets/twitx/img_p6_2.png)
 

@@ -12,7 +12,7 @@ tags:
   - RCE
   - CRON
 description:
-  CTF dedicated to streamers and content creators who taught me some hacking techniques.
+  I tried to create a CTF to practice bypassing the Apache ModSecurity WAF.
 ---
 
 The machine has two flags, one for the user and one for root.

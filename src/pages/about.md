@@ -15,4 +15,5 @@ I am a developer and sys admin with over 30 years of experience. My first progra
   <img src="/assets/pc1512.png" class="sm:w-1/2 mx-auto" alt="Amstrad PC1512">
 </div>
 
-I have my own company, which I will not disclose on this blog. I value anonymity and do not want to expose my company or clients to any mischievous black hat hackers. If you need my services, you can find me on Discord.
+I have my own company, which I will not disclose on this blog. I value anonymity and do not want to expose my company or clients to any mischievous black hat hackers. If you need my services, you can find me on Discord or send me e-mail.
+
