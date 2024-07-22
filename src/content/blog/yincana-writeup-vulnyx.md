@@ -15,6 +15,7 @@ tags:
   - sudo
 description:
   Enjoy the Yincana machine and don't forget to give flowers. ;)
+ogImage: /assets/yincana/OpenGraph.png
 ---
 
 As always, I apologize for the spelling mistakes and for not knowing the names of the techniques; I am a developer intruding into the hacking world. I believe this time it is a difficult machine, although someone may find easier ways to compromise it.
