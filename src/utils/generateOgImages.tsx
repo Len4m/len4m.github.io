@@ -49,6 +49,8 @@ function svgBufferToPngBuffer(svg: string) {
 }
 
 export async function generateOgImageForPost(post: CollectionEntry<"blog">) {
+  
+  
   const svg = await satori(postOgImage(post), options);
   return svgBufferToPngBuffer(svg);
 }

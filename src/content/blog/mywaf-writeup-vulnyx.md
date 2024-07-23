@@ -21,7 +21,7 @@ I wasn't happy with the result of the YourWAF CTF, so now I bring MyWAF, a CTF c
 
 ## Table of contents
 
-# Enumeration
+## Enumeration
 
 `$ nmap -p- -Pn -T5 10.0.2.6`
 
@@ -55,7 +55,7 @@ There's a magnificent command execution for server maintenance in maintenance.my
 
 On the other hand, the domain configure.mywaf.nyx has basic HTTP authentication.
 
-# Intrusion
+## Intrusion
 
 We try brute-forcing to get past the authentication of the configure.mywaf.nyx domain, first we try with hydra but there's a problem, there's no way to remove the User-Agent header it sends, which makes the WAF detect it. We try with medusa, which doesn't send any suspicious User-Agent.
 
@@ -107,7 +107,7 @@ $salt2 = bin2hex(random_bytes(16));
 $hashed_password = md5(md5(md5($password_plain).$salt1).$salt2);
 ```
 
-## Database
+### Database
 
 Since we have the database username and password, we use them to access.
 
@@ -119,7 +119,7 @@ We find a user in the database, with a hash and two salts.
 
 It reminds us of the programming in the private.php file, with which it surely has a connection.
 
-## Crack hash user nohydragent
+### Crack hash user nohydragent
 
 We have the data of the following user obtained from the database:
 
@@ -147,7 +147,7 @@ And we try to crack it with john and rockyou, it does it super fast and we get t
 
 ![img_p7_3](/assets/mywaf/img_p7_3.png)
 
-## User flag
+### User flag
 
 We try to connect with the user nohydragent via ssh with the credentials obtained in case there's password reuse and bingo!
 
@@ -157,7 +157,7 @@ We get the user.txt flag
 
 ![img_p8_2](/assets/mywaf/img_p8_2.png)
 
-# Privesc
+## Privesc
 
 > This part of the CTF is not well executed; privilege escalation should have been done via sudo with a password. This would have required cracking the password of the user nohydragent.
 
