@@ -22,19 +22,20 @@ const socialCount = SOCIALS.filter(social => social.active).length;
   <Header activeNav="about" />
   <Breadcrumbs />
   <main id="main-content">
-    <section id="about" class="prose mb-28 max-w-3xl prose-img:border-0">
+    <section id="about" class="prose mb-5 max-w-3xl prose-img:border-0">
       <h1 class="text-center text-2xl tracking-wider sm:text-3xl">{frontmatter.title}</h1>
       <slot />
-      {
-        // only display if at least one social link is enabled
-        socialCount > 0 && (
-          <div class="social-wrapper">
-            <div class="social-links text-white">Social Links:</div>
-            <Socials />
-          </div>
-        )
-      }
-
+    </section>
+    <section  class="mb-16 max-w-3xl">
+    {
+      // only display if at least one social link is enabled
+      socialCount > 0 && (
+        <div class="social-wrapper">
+          <div class="social-links ">Social Links:</div>
+          <Socials />
+        </div>
+      )
+    }
     </section>
   </main>
   <Footer />

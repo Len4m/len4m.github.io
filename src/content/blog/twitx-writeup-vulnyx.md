@@ -5,6 +5,7 @@ title: WriteUp Twitx - Vulnyx
 slug: twitx-writeup-vulnyx
 featured: false
 draft: false
+ogImage: "assets/twitx/OpenGraph.png"
 tags:
   - writeup
   - vulnyx

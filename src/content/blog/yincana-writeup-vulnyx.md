@@ -5,6 +5,7 @@ title: WriteUp Yincana - Vulnyx
 slug: yincana-writeup-vulnyx
 featured: true
 draft: false
+ogImage: "assets/yincana/OpenGraph.png"
 tags:
   - writeup
   - vulnyx

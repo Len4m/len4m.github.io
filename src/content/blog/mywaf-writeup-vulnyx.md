@@ -5,6 +5,7 @@ title: WriteUp MyWaf - Vulnyx
 slug: mywaf-writeup-vulnyx
 featured: false
 draft: false
+ogImage: "assets/mywaf/OpenGraph.png"
 tags:
   - writeup
   - vulnyx
@@ -17,7 +18,7 @@ description:
 
 I wasn't happy with the result of the YourWAF CTF, so now I bring MyWAF, a CTF created from the other one, completely modified and improved as a sequel. I hope this is not an impediment to accepting it.
 
-![img_p0_1](/assets/mywaf/img_p0_1.png)
+![vbox issues](/assets/mywaf/img_p0_1.png)
 
 ## Table of contents
 
@@ -25,19 +26,19 @@ I wasn't happy with the result of the YourWAF CTF, so now I bring MyWAF, a CTF c
 
 `$ nmap -p- -Pn -T5 10.0.2.6`
 
-![img_p0_2](/assets/mywaf/img_p0_2.png)
+![nmap all ports](/assets/mywaf/img_p0_2.png)
 
 `$ nmap -sVC -p22,80,3306 -T5 10.0.2.6`
 
-![img_p0_3](/assets/mywaf/img_p0_3.png)
+![nmap](/assets/mywaf/img_p0_3.png)
 
 We find mariadb, ssh, and http ports. We check what's on the http and it redirects us to the URL [www.mywaf.nyx](http://www.mywaf.nyx/), we add it to the /etc/hosts file and look at a website.
 
-![img_p1_1](/assets/mywaf/img_p1_1.png)
+![hosts file](/assets/mywaf/img_p1_1.png)
 
 With a private area with user registration and validation:
 
-![img_p1_2](/assets/mywaf/img_p1_2.png)
+![web www.yourwaf.nyx](/assets/mywaf/img_p1_2.png)
 
 We look for possible subdomains with a large dictionary.
 
@@ -45,7 +46,7 @@ We look for possible subdomains with a large dictionary.
 
 We quickly find `www` and `maintenance`, and at 40 seconds, configure.
 
-![img_p2_1](/assets/mywaf/img_p2_1.png)
+![curl](/assets/mywaf/img_p2_1.png)
 
 We add all the subdomains to `/etc/hosts` and observe what's there with the browser.
 

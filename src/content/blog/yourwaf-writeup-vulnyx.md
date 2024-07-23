@@ -5,6 +5,7 @@ title: WriteUp YourWaf - Vulnyx
 slug: yourwaf-writeup-vulnyx
 featured: false
 draft: false
+ogImage: "assets/yourwaf/OpenGraph.png"
 tags:
   - writeup
   - vulnyx
