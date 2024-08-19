@@ -61,7 +61,7 @@ There are likely different ways to perform the intrusion; in this case, we opted
 More information at:
 
 - https://imagetragick.com/
-- https://www.hackplayers.com/2023/02/-imagemagick-la-vulnerabilidad-oculta.html
+- https://www.hackplayers.com/2023/02/imagemagick-la-vulnerabilidad-oculta.html
 
 ### LFI
 
