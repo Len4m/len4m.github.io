@@ -5,6 +5,7 @@ title: WriteUp DebugMe - Dockerlabs
 slug: debugme-writeup-dockerlabs
 featured: true
 draft: false
+ogImage: "assets/debugme/OpenGraph.png"
 tags:
   - writeup
   - dockerlabs
