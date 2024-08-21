@@ -1,0 +1,85 @@
+---
+import { getAllLocaleUrls } from "astro-i18n-aut";
+
+const allLocaleUrls = getAllLocaleUrls(Astro.url);
+const langs = Object.keys(allLocaleUrls);
+
+langs.forEach(key => {
+  let url = allLocaleUrls[key];
+  if (/\/posts\/*\//.test(url) && !/\/posts\/$/.test(url)) {
+    allLocaleUrls[key] = url.substring(0, url.length - 4) + "-" + key + "/";
+  }
+});
+
+const vals = Object.values(allLocaleUrls);
+
+export interface Props {
+  lang: string;
+}
+
+const { lang } = Astro.props;
+---
+
+<span>
+  <button id="langDropdownBtn" class="inline-flex items-center" type="button">
+    <img
+      src={"/assets/icons/" + lang + ".svg"}
+      alt={lang}
+      class="mt-1 w-6 rounded-full"
+    />
+    <svg
+      class="ms-3 h-2.5 w-2.5"
+      aria-hidden="true"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 10 6"
+    >
+      <path
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="m1 1 4 4 4-4"></path>
+    </svg>
+  </button>
+  <div id="langDropdown" class="absolute z-20 hidden divide-y shadow">
+    <ul
+      class="bg-skin-fill py-2 text-sm text-gray-700 dark:text-gray-200"
+      aria-labelledby="dropdownDefaultButton"
+    >
+      {
+        langs.map((val, i) => (
+          <li>
+            <a
+              href={vals[i]}
+              class="block px-2 py-2 hover:bg-skin-accent hover:text-skin-inverted"
+            >
+              <img
+                src={"/assets/icons/" + val + ".svg"}
+                alt={val}
+                class="w-6 rounded-full"
+              />
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</span>
+
+<script>
+  function toggleLang() {
+    // Toggle menu
+    const langBtn = document.querySelector("#langDropdownBtn");
+    const langDropdown = document.querySelector("#langDropdown");
+
+    langBtn?.addEventListener("click", () =>
+      langDropdown?.classList.toggle("hidden")
+    );
+  }
+
+  toggleLang();
+
+  // Runs on view transitions navigation
+  document.addEventListener("astro:after-swap", toggleLang);
+</script>

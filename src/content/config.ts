@@ -1,4 +1,4 @@
-import { SITE } from "@config";
+import { LOCALE, SITE } from "@config";
 import { defineCollection, z } from "astro:content";
 
 const blog = defineCollection({
@@ -20,6 +20,7 @@ const blog = defineCollection({
         .optional(),
       description: z.string(),
       canonicalURL: z.string().optional(),
+      lang: z.string().default(LOCALE.lang)
     }),
 });
 

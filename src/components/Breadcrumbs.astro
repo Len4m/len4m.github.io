@@ -1,15 +1,37 @@
 ---
+import { LOCALE } from "@config";
+import { getLocale } from "astro-i18n-aut";
+
+const locale = getLocale(Astro.url);
+
+LOCALE.lang = locale;
+
 // Remove current url path and remove trailing slash if exists
 const currentUrlPath = Astro.url.pathname.replace(/\/+$/, "");
 
 // Get url array from path
 // eg: /tags/tailwindcss => ['tags', 'tailwindcss']
 const breadcrumbList = currentUrlPath.split("/").slice(1);
+let posttxt = "Posts" as string;
+let tagstxt = "Tags" as string;
+switch (locale) {
+  case "es":
+    posttxt = "Publicaciones";
+    tagstxt = "Etiquetas";
+    break;
+  case "ca":
+    posttxt = "Publicacions";
+    tagstxt = "Etiquetes";
+    break;
+}
+
+locale !== "en" && breadcrumbList.splice(0, 1);
 
 // if breadcrumb is Home > Posts > 1 <etc>
 // replace Posts with Posts (page number)
+
 breadcrumbList[0] === "posts" &&
-  breadcrumbList.splice(0, 2, `Posts (page ${breadcrumbList[1] || 1})`);
+  breadcrumbList.splice(0, 2, `${posttxt} (page ${breadcrumbList[1] || 1})`);
 
 // if breadcrumb is Home > Tags > [tag] > [page] <etc>
 // replace [tag] > [page] with [tag] (page number)
@@ -18,7 +40,7 @@ breadcrumbList[0] === "tags" &&
   breadcrumbList.splice(
     1,
     3,
-    `${breadcrumbList[1]} ${
+    `${tagstxt} ${
       Number(breadcrumbList[2]) === 1 ? "" : "(page " + breadcrumbList[2] + ")"
     }`
   );
@@ -27,7 +49,7 @@ breadcrumbList[0] === "tags" &&
 <nav class="breadcrumb" aria-label="breadcrumb">
   <ul>
     <li>
-      <a href="/">Home</a>
+      <a href={`/${locale}/`}>Home</a>
       <span aria-hidden="true">&raquo;</span>
     </li>
     {
@@ -44,7 +66,7 @@ breadcrumbList[0] === "tags" &&
           </li>
         ) : (
           <li>
-            <a href={`/${breadcrumb}/`}>{breadcrumb}</a>
+            <a href={`/${locale}/${breadcrumb}/`}>{breadcrumb}</a>
             <span aria-hidden="true">&raquo;</span>
           </li>
         )

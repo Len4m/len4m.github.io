@@ -1,6 +1,22 @@
 ---
 import LinkButton from "./LinkButton.astro";
 import socialIcons from "@assets/socialIcons";
+import { getLocale } from "astro-i18n-aut";
+
+const locale = getLocale(Astro.url);
+
+let sharetxt = "Share this post via" as string;
+let shareontxt = "Share this post on" as string;
+switch (locale) {
+  case "es":
+    shareontxt = "Compartir publicación vía";
+    shareontxt = "Compartir publicación en";
+    break;
+  case "ca":
+    shareontxt = "Compartir publicació via";
+    shareontxt = "Compartir publicació a";
+    break;
+}
 
 const URL = Astro.url;
 
@@ -8,38 +24,38 @@ const shareLinks = [
   {
     name: "WhatsApp",
     href: "https://wa.me/?text=",
-    linkTitle: `Share this post via WhatsApp`,
+    linkTitle: `${sharetxt} WhatsApp`,
   },
   {
     name: "Facebook",
     href: "https://www.facebook.com/sharer.php?u=",
-    linkTitle: `Share this post on Facebook`,
+    linkTitle: `${sharetxt} Facebook`,
   },
   {
     name: "Twitter",
     href: "https://twitter.com/intent/tweet?url=",
-    linkTitle: `Tweet this post`,
+    linkTitle: `Tweet post`,
   },
   {
     name: "Telegram",
     href: "https://t.me/share/url?url=",
-    linkTitle: `Share this post via Telegram`,
+    linkTitle: `${sharetxt} Telegram`,
   },
-  {
+  { 
     name: "Pinterest",
     href: "https://pinterest.com/pin/create/button/?url=",
-    linkTitle: `Share this post on Pinterest`,
+    linkTitle: `${sharetxt} Pinterest`,
   },
   {
     name: "Mail",
     href: "mailto:?subject=See%20this%20post&body=",
-    linkTitle: `Share this post via email`,
+    linkTitle: `${sharetxt} email`,
   },
 ] as const;
 ---
 
 <div class={`social-icons`}>
-  <span class="italic">Share this post on:</span>
+  <span class="italic">{shareontxt}:</span>
   <div class="text-center">
     {
       shareLinks.map(social => (

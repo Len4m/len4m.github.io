@@ -7,7 +7,11 @@ import Datetime from "@components/Datetime";
 import type { CollectionEntry } from "astro:content";
 import { slugifyStr } from "@utils/slugify";
 import ShareLinks from "@components/ShareLinks.astro";
-import { SITE } from "@config";
+import { LOCALE, SITE } from "@config";
+import { getLocale } from "astro-i18n-aut";
+
+const locale = getLocale(Astro.url);
+LOCALE.lang = locale;
 
 export interface Props {
   post: CollectionEntry<"blog">;
@@ -24,9 +28,11 @@ const {
   pubDatetime,
   modDatetime,
   tags,
+  lang,
 } = post.data;
 
 const { Content } = await post.render();
+
 
 const ogImageUrl = typeof ogImage === "string" ? ogImage : ogImage?.src;
 const ogUrl = new URL(
@@ -36,16 +42,30 @@ const ogUrl = new URL(
 
 const layoutProps = {
   title: `${title} | ${SITE.title}`,
-  author,
+  author, 
   description,
   pubDatetime,
   modDatetime,
   canonicalURL,
   ogImage: ogUrl,
   scrollSmooth: true,
-};
----
+  lang,
+}; 
 
+let toptxt = "Back to Top" as string;
+let gobacktxt = "Go back" as string;
+switch (LOCALE.lang) {
+  case "es":
+    toptxt = "Volver al inicio";
+    gobacktxt = "Volver";
+    break;
+  case "ca":
+    toptxt = "Tornar a l'inici";
+    gobacktxt = "Tornar";
+    break; 
+}  
+--- 
+ 
 <Layout {...layoutProps}>
   <Header />
 
@@ -56,25 +76,25 @@ const layoutProps = {
   <div class="mx-auto flex w-full max-w-3xl justify-start px-2">
     <button
       class="focus-outline mb-2 mt-8 flex hover:opacity-75"
-      onclick="(() => (history.length === 1) ? window.location = '/' : history.back())()"
+      onclick="(() => (history.length === 1) ? window.location = `/${LOCALE.lang}/` : history.back())()"
     >
       <svg xmlns="http://www.w3.org/2000/svg"
         ><path
           d="M13.293 6.293 7.586 12l5.707 5.707 1.414-1.414L10.414 12l4.293-4.293z"
         ></path>
-      </svg><span>Go back</span>
+      </svg><span>{gobacktxt}</span>
     </button>
   </div>
   <main id="main-content">
     <h1 transition:name={slugifyStr(title)} class="post-title">{title}</h1>
-   <!--
+    <!--
     <Datetime
       pubDatetime={pubDatetime}
       modDatetime={modDatetime}
       size="lg"
       className="my-2"
     />
-     --> 
+     -->
     <article id="article" class="prose mx-auto mt-8 max-w-3xl">
       <Content />
     </article>
@@ -95,7 +115,7 @@ const layoutProps = {
             d="M13.293 6.293 7.586 12l5.707 5.707 1.414-1.414L10.414 12l4.293-4.293z"
           ></path>
         </svg>
-        <span>Back to Top</span>
+        <span>{toptxt}</span>
       </button>
 
       <ShareLinks />

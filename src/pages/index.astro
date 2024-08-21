@@ -8,15 +8,40 @@ import Hr from "@components/Hr.astro";
 import Card from "@components/Card";
 import Socials from "@components/Socials.astro";
 import getSortedPosts from "@utils/getSortedPosts";
-import { SITE, SOCIALS } from "@config";
+import { LOCALE, SITE, SOCIALS } from "@config";
+import { getLocale } from "astro-i18n-aut";
 
-const posts = await getCollection("blog");
+const locale = getLocale(Astro.url);
+
+LOCALE.lang = locale;
+
+const posts = await getCollection("blog",({ data }) => data?.lang === locale);
 
 const sortedPosts = getSortedPosts(posts);
 const featuredPosts = sortedPosts.filter(({ data }) => data.featured);
 const recentPosts = sortedPosts.filter(({ data }) => !data.featured);
 
 const socialCount = SOCIALS.filter(social => social.active).length;
+
+let featuredtxt: string;
+let recentposttxt: string;
+let allpoststxt: string;
+switch (LOCALE.lang) {
+  case "ca":
+    featuredtxt = "Destacat";
+    recentposttxt = "Publicacions recents";
+    allpoststxt = "Totes les publicacions";
+    break;
+  case "es":
+    featuredtxt = "Destacado";
+    recentposttxt = "Publicaciones recientes";
+    allpoststxt = "Todas las publicaciones";
+    break;
+  default:
+    featuredtxt = "Featured";
+    recentposttxt = "Recent Posts";
+    allpoststxt = "All Posts";
+}
 ---
 
 <Layout>
@@ -40,36 +65,108 @@ const socialCount = SOCIALS.filter(social => social.active).length;
         </svg>
         <span class="sr-only">RSS Feed</span>
       </a>
+      {
+        LOCALE.lang === "en" && (
+          <>
+            <p>
+              Hello, welcome to Lenam's personal blog. Here you will find
+              information about CTFs, hacking, programming, artificial
+              intelligence, and technology in general.
+            </p>
+            <p>
+              I hope you find this information helpful, just as the information
+              others selflessly shared on the internet was helpful to me at the
+              time.
+            </p>
+            <h2>Important Notice</h2>
+            <p>
+              The content presented on this website is intended solely for
+              educational purposes, learning, and practice in pentesting and
+              capture the flag (CTF) competitions.
+            </p>
+            <p>
+              Read the blog posts or check
+              <LinkButton
+                className="underline decoration-dashed underline-offset-4 hover:text-skin-accent"
+                href="/about/"
+              >
+                About
+              </LinkButton>{" "}
+              for more info.
+            </p>
+          </>
+        )
+      }
+      {
+        LOCALE.lang === "es" && (
+          <>
+            <p>
+              Hola, bienvenido al blog personal de Lenam. Aquí encontrarás
+              información sobre CTFs, hacking, programación, inteligencia
+              artificial y tecnología en general.
+            </p>
+            <p>
+              Espero que encuentres útil esta información, tal como la
+              información que otros compartieron desinteresadamente en internet
+              fue útil para mí en su momento.
+            </p>
+            <h2>Aviso Importante</h2>
+            <p>
+              El contenido presentado en este sitio web está destinado
+              únicamente a fines educativos, de aprendizaje y práctica en
+              competencias de pentesting y captura la bandera (CTF).
+            </p>
+            <p>
+              Lee las publicaciones del blog o consulta
+              <LinkButton
+                className="underline decoration-dashed underline-offset-4 hover:text-skin-accent"
+                href={`/${LOCALE.lang}/about/`}
+              >
+                Acerca 
+              </LinkButton>{" "}
+              para más información.
+            </p>
+          </>
+        )
+      }
+      {
+        LOCALE.lang === "ca" && (
+          <>
+            <p>
+              Hola, benvingut al blog personal de Lenam. Aquí trobaràs
+              informació sobre CTFs, hacking, programació, intel·ligència
+              artificial i tecnologia en general.
+            </p>
+            <p>
+              Espero que trobis útil aquesta informació, tal com la informació
+              que altres van compartir desinteressadament a internet em va ser
+              útil a mi en el seu moment.
+            </p>
+            <h2>Avís Important</h2>
+            <p>
+              El contingut presentat en aquest lloc web està destinat únicament
+              a fins educatius, d'aprenentatge i pràctica en competicions de
+              pentesting i captura la bandera (CTF).
+            </p>
+            <p>
+              Llegeix les publicacions del blog o consulta
+              <LinkButton
+                className="underline decoration-dashed underline-offset-4 hover:text-skin-accent"
+                href={`/${LOCALE.lang}/about/`}
+              >
+                Sobre
+              </LinkButton>{" "}
+              per a més informació.
+            </p>
+          </>
+        )
+      }
 
-      <p>
-        Hello, welcome to Lenam's personal blog. Here you will find information
-        about CTFs, hacking, programming, artificial intelligence, and
-        technology in general.
-      </p>
-      <p>
-        I hope you find this information helpful, just as the information others
-        selflessly shared on the internet was helpful to me at the time.
-      </p>
-      <h2>Important Notice</h2>
-      <p>
-        The content presented on this website is intended solely for educational
-        purposes, learning, and practice in pentesting and capture the flag
-        (CTF) competitions.
-      </p>
-      <p>
-        Read the blog posts or check
-        <LinkButton
-          className="underline decoration-dashed underline-offset-4 hover:text-skin-accent"
-          href="/about/"
-        >
-          About
-        </LinkButton> for more info.
-      </p>
       {
         // only display if at least one social link is enabled
         socialCount > 0 && (
           <div class="social-wrapper">
-            <div class="social-links">Social Links:</div>
+            
             <Socials />
           </div>
         )
@@ -82,11 +179,11 @@ const socialCount = SOCIALS.filter(social => social.active).length;
       featuredPosts.length > 0 && (
         <>
           <section id="featured">
-            <h2>Featured</h2>
+            <h2>{featuredtxt}</h2>
             <ul>
               {featuredPosts.map(({ data, slug }) => (
                 <Card
-                  href={`/posts/${slug}/`}
+                  href={`/${data.lang}/posts/${slug}/`}
                   frontmatter={data}
                   secHeading={false}
                 />
@@ -101,13 +198,13 @@ const socialCount = SOCIALS.filter(social => social.active).length;
     {
       recentPosts.length > 0 && (
         <section id="recent-posts">
-          <h2>Recent Posts</h2>
+          <h2>{recentposttxt}</h2>
           <ul>
             {recentPosts.map(
               ({ data, slug }, index) =>
                 index < SITE.postPerIndex && (
                   <Card
-                    href={`/posts/${slug}/`}
+                    href={`/${data.lang}/posts/${slug}/`}
                     frontmatter={data}
                     secHeading={false}
                   />
@@ -119,8 +216,8 @@ const socialCount = SOCIALS.filter(social => social.active).length;
     }
 
     <div class="all-posts-btn-wrapper">
-      <LinkButton href="/posts/">
-        All Posts
+      <LinkButton href={`/${locale}/posts/`}>
+        {allpoststxt}
         <svg xmlns="http://www.w3.org/2000/svg"
           ><path
             d="m11.293 17.293 1.414 1.414L19.414 12l-6.707-6.707-1.414 1.414L15.586 11H6v2h9.586z"

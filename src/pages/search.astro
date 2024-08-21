@@ -1,15 +1,24 @@
 ---
 import { getCollection } from "astro:content";
-import { SITE } from "@config";
+import { LOCALE, SITE } from "@config";
 import Layout from "@layouts/Layout.astro";
 import Main from "@layouts/Main.astro";
 import Header from "@components/Header.astro";
 import Footer from "@components/Footer.astro";
 import SearchBar from "@components/Search";
 import getSortedPosts from "@utils/getSortedPosts";
+import { getLocale } from "astro-i18n-aut";
+import type { string } from "astro/zod";
+
+const locale = getLocale(Astro.url);
+
+LOCALE.lang = locale;
 
 // Retrieve all published articles
-const posts = await getCollection("blog", ({ data }) => !data.draft);
+const posts = await getCollection(
+  "blog",
+  ({ data }) => !data.draft && data?.lang === locale
+);
 const sortedPosts = getSortedPosts(posts);
 
 // List of items to search in
@@ -19,12 +28,28 @@ const searchList = sortedPosts.map(({ data, slug }) => ({
   data,
   slug,
 }));
+
+let titletxt: string;
+let desctxt: string;
+switch (LOCALE.lang) {
+  case "ca":
+    titletxt = "Cercar";
+    desctxt = "Cercar qualsevol article ...";
+    break;
+  case "es":
+    titletxt = "Buscar";
+    desctxt = "Buscar cualquier artículo ...";
+    break;
+  default:
+    titletxt = "Search";
+    desctxt = "Search any article ...";
+}
 ---
 
 <Layout title={`Search | ${SITE.title}`}>
   <Header activeNav="search" />
-  <Main pageTitle="Search" pageDesc="Search any article ...">
-    <SearchBar client:load searchList={searchList} />
+  <Main pageTitle={titletxt} pageDesc={desctxt} pageDesc={desctxt}>
+    <SearchBar client:load searchList={searchList} searchtxt={titletxt} /> 
   </Main>
   <Footer />
 </Layout>

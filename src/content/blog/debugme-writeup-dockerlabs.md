@@ -2,20 +2,21 @@
 author: Lenam
 pubDatetime: 2024-07-22T15:22:00Z
 title: WriteUp DebugMe - Dockerlabs
-slug: debugme-writeup-dockerlabs
+slug: debugme-writeup-dockerlabs-en
 featured: true
 draft: false
 ogImage: "assets/debugme/OpenGraph.png"
 tags:
   - writeup
-  - dockerlabs
+  - dockerlabs 
   - LFI
   - nodejs
 description:
   This cybersecurity challenge guides participants through a server intrusion. The process involves service enumeration, exploiting an LFI vulnerability, gaining SSH access via brute force, and escalating privileges through a node.js process. 
----
+lang: en
+--- 
 
-This cybersecurity challenge, available on <a target="_blank" href="https://dockerlabs.es">DockerLabs</a> (El Pinguino de Mario), guides participants through a server intrusion. The process involves service enumeration, exploiting an LFI vulnerability, gaining SSH access via brute force, and escalating privileges through a node.js process to achieve root access. 
+This cybersecurity challenge, available on <a target="_blank" href="https://dockerlabs.es">DockerLabs</a> (El Pingüino de Mario), guides participants through a server intrusion. The process involves service enumeration, exploiting an LFI vulnerability, gaining SSH access via brute force, and escalating privileges through a node.js process to achieve root access. 
 
 ## Table of contents
 

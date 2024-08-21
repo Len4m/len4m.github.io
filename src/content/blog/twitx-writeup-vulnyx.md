@@ -2,7 +2,7 @@
 author: Lenam
 pubDatetime: 2024-07-18T15:22:00Z
 title: WriteUp Twitx - Vulnyx
-slug: twitx-writeup-vulnyx
+slug: twitx-writeup-vulnyx-en
 featured: false
 draft: false
 ogImage: "assets/twitx/OpenGraph.png"
@@ -15,6 +15,7 @@ tags:
   - suid
 description:
   CTF dedicated to streamers and content creators who taught me some hacking techniques.
+lang: en
 ---
 
 The machine has two flags, one for user and another for root.
@@ -244,7 +245,7 @@ We set up a listener and in a minute or less, we are timer.
 
 ![img_p12_1](/assets/twitx/img_p12_1.png)
 
-### Lateral movement from timer to lenam
+## Lateral movement from timer to lenam
 
 We see the scheduled task that allowed us to move to this user:
 

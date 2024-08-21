@@ -1,10 +1,32 @@
 ---
-import { LOGO_IMAGE, SITE } from "@config";
+import { LOGO_IMAGE, SITE, LOCALE } from "@config";
 import Hr from "./Hr.astro";
 import LinkButton from "./LinkButton.astro";
+import LangSelector from "./LangSelector.astro";
+import { getLocale } from "astro-i18n-aut";
 
 export interface Props {
   activeNav?: "posts" | "tags" | "about" | "search";
+}
+
+LOCALE.lang = getLocale(Astro.url);
+
+let menuText = {
+  about: "About",
+  tags: "Tags",
+  posts: "Posts",
+};
+switch (LOCALE.lang) {
+  case "es":
+    menuText.tags = "Etiquetas";
+    menuText.about = "Acerca";
+    menuText.posts = "Publicaciones";
+    break;
+  case "ca":
+    menuText.tags = "Etiquetes";
+    menuText.about = "Sobre";
+    menuText.posts = "Publicacions";
+    break;
 }
 
 const { activeNav } = Astro.props;
@@ -14,19 +36,24 @@ const { activeNav } = Astro.props;
   <a id="skip-to-content" href="#main-content">Skip to content</a>
   <div class="nav-container">
     <div class="top-nav-wrap">
-      <a href="/" class="logo whitespace-nowrap border-solid flex  ">
-       
+      <a
+        href={`/${LOCALE.lang}/`}
+        class="logo flex whitespace-nowrap border-solid"
+      >
         <span>
-        { 
-        <img
-        class="rounded-full min-w-10 mr-3 float-right"
-        src={`/assets/avatar.png`}
-        alt={SITE.title}
-        width={LOGO_IMAGE.width}
-        height={LOGO_IMAGE.height} /> 
-       }
-       
-      </span> { SITE.title}
+          {
+            (
+              <img
+                class="float-right mr-3 min-w-10 rounded-full"
+                src={`/assets/avatar.png`}
+                alt={SITE.title}
+                width={LOGO_IMAGE.width}
+                height={LOGO_IMAGE.height}
+              />
+            )
+          }
+        </span>
+        {SITE.title}
       </a>
       <nav id="nav-menu">
         <button
@@ -56,23 +83,35 @@ const { activeNav } = Astro.props;
         </button>
         <ul id="menu-items" class="display-none sm:flex">
           <li>
-            <a href="/posts/" class={activeNav === "posts" ? "active" : ""}>
-              Posts
+            <a
+              href={`/${LOCALE.lang}/posts/`}
+              class={activeNav === "posts" ? "active" : ""}
+            >
+              {menuText.posts}
             </a>
           </li>
           <li>
-            <a href="/tags/" class={activeNav === "tags" ? "active" : ""}>
-              Tags
+            <a
+              href={`/${LOCALE.lang}/tags/`}
+              class={activeNav === "tags" ? "active" : ""}
+            >
+              {menuText.tags}
             </a>
           </li>
           <li>
-            <a href="/about/" class={activeNav === "about" ? "active" : ""}>
-              About
+            <a
+              href={`/${LOCALE.lang}/about/`}
+              class={activeNav === "about" ? "active" : ""}
+            >
+              {menuText.about}
             </a>
+          </li>
+          <li>
+            <LangSelector lang={LOCALE.lang} />
           </li>
           <li>
             <LinkButton
-              href="/search/"
+              href={`/${LOCALE.lang}/search/`}
               className={`focus-outline p-3 sm:p-1 ${
                 activeNav === "search" ? "active" : ""
               } flex`}

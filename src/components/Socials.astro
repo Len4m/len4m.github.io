@@ -2,6 +2,20 @@
 import { SOCIALS } from "@config";
 import LinkButton from "./LinkButton.astro";
 import socialIcons from "@assets/socialIcons";
+import { getLocale } from "astro-i18n-aut";
+
+
+const locale = getLocale(Astro.url);
+
+let titsocialtxt = "Social Links" ;
+switch (locale) {
+  case "es":
+    titsocialtxt = "Enlaces redes sociales" ;
+    break;
+  case "ca":
+    titsocialtxt = "Enllaços xarxes socials" ;
+    break;
+}
 
 export interface Props {
   centered?: boolean;
@@ -11,6 +25,8 @@ const { centered = false } = Astro.props;
 ---
 
 <div class={`social-icons ${centered ? "flex" : ""}`}>
+  
+  {!centered ? (<div class="social-links">{titsocialtxt}:</div>) : ""}
   {
     SOCIALS.filter(social => social.active).map(social => (
       <LinkButton

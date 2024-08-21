@@ -3,10 +3,15 @@ import { getCollection } from "astro:content";
 import Posts from "@layouts/Posts.astro";
 import getSortedPosts from "@utils/getSortedPosts";
 import getPagination from "@utils/getPagination";
+import { getLocale } from "astro-i18n-aut";
 
-const posts = await getCollection("blog");
+const locale = getLocale(Astro.url);
+
+const posts = await getCollection("blog",({data}) => data?.lang === locale);
 
 const sortedPosts = getSortedPosts(posts);
+
+
 
 const pagination = getPagination({
   posts: sortedPosts,

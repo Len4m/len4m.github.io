@@ -2,7 +2,7 @@
 author: Lenam
 pubDatetime: 2024-05-26T15:22:00Z
 title: WriteUp YourWaf - Vulnyx
-slug: yourwaf-writeup-vulnyx
+slug: yourwaf-writeup-vulnyx-en
 featured: false
 draft: false
 ogImage: "assets/yourwaf/OpenGraph.png"
@@ -14,6 +14,7 @@ tags:
   - CRON
 description:
   I tried to create a CTF to practice bypassing the Apache ModSecurity WAF.
+lang: en
 ---
 
 The machine has two flags, one for the user and one for root.

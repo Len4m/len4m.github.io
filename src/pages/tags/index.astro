@@ -6,18 +6,39 @@ import Layout from "@layouts/Layout.astro";
 import Main from "@layouts/Main.astro";
 import Tag from "@components/Tag.astro";
 import getUniqueTags from "@utils/getUniqueTags";
-import { SITE } from "@config";
+import { LOCALE, SITE } from "@config";
+import { getLocale } from "astro-i18n-aut";
 
-const posts = await getCollection("blog");
+const locale = getLocale(Astro.url);
+
+LOCALE.lang = locale;
+
+const posts = await getCollection(
+  "blog",
+  ({ data }) => data?.lang === LOCALE.lang
+);
 
 let tags = getUniqueTags(posts);
+
+let tittxt = "Tags" as string;
+let desctxt = "All the tags used in posts." as string;
+switch (LOCALE.lang) {
+  case "es":
+    tittxt = "Etiquetas";
+    desctxt = "Todas las etiquetas utilizadas en las publicaciones.";
+    break;
+  case "ca":
+    tittxt = "Etiquetes";
+    desctxt = "Totes les etiquetes utilitzades a les publicacions.";
+    break;
+}
 ---
 
-<Layout title={`Tags | ${SITE.title}`}>
+<Layout title={`${tittxt} | ${SITE.title}`}>
   <Header activeNav="tags" />
-  <Main pageTitle="Tags" pageDesc="All the tags used in posts.">
+  <Main pageTitle={tittxt} pageDesc={desctxt}>
     <ul>
-      {tags.map(({ tag }) => <Tag {tag} size="lg" />)}
+      {tags.map(({ tag }) => <Tag {tag} size="lg" lang={locale} />)}
     </ul>
   </Main>
   <Footer />

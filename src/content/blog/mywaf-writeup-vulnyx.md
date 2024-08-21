@@ -2,7 +2,7 @@
 author: Lenam
 pubDatetime: 2024-05-26T15:22:00Z
 title: WriteUp MyWaf - Vulnyx
-slug: mywaf-writeup-vulnyx
+slug: mywaf-writeup-vulnyx-en
 featured: false
 draft: false
 ogImage: "assets/mywaf/OpenGraph.png"
@@ -14,6 +14,7 @@ tags:
   - capabilities
 description:
   I wasn't happy with the result of the YourWAF CTF, so now I bring MyWAF, a CTF created from the other one, completely modified and improved as a sequel. I hope this is not an impediment to accepting it.
+lang: en
 ---
 
 I wasn't happy with the result of the YourWAF CTF, so now I bring MyWAF, a CTF created from the other one, completely modified and improved as a sequel. I hope this is not an impediment to accepting it.

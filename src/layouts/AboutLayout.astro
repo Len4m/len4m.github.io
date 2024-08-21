@@ -1,10 +1,16 @@
 ---
-import { SITE, SOCIALS } from "@config";
+import { LOCALE, SITE, SOCIALS } from "@config";
 import Breadcrumbs from "@components/Breadcrumbs.astro";
 import Footer from "@components/Footer.astro";
 import Header from "@components/Header.astro";
 import Layout from "./Layout.astro";
 import Socials from "@components/Socials.astro";
+import { getLocale } from "astro-i18n-aut";
+
+const locale = getLocale(Astro.url);
+
+LOCALE.lang = locale;
+
 
 export interface Props {
   frontmatter: {
@@ -31,7 +37,6 @@ const socialCount = SOCIALS.filter(social => social.active).length;
       // only display if at least one social link is enabled
       socialCount > 0 && (
         <div class="social-wrapper">
-          <div class="social-links ">Social Links:</div>
           <Socials />
         </div>
       )
