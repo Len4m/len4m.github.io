@@ -6,7 +6,7 @@ const langs = Object.keys(allLocaleUrls);
 
 langs.forEach(key => {
   let url = allLocaleUrls[key];
-  if (/\/posts\/*\//.test(url) && !/\/posts\/$/.test(url)) {
+  if (/\/posts\/*\//.test(url) && !/\/posts\/$/.test(url) && !/\/posts\/[0-9]\//.test(url)) {
     allLocaleUrls[key] = url.substring(0, url.length - 4) + "-" + key + "/";
   }
 });

@@ -5,11 +5,6 @@ import getUniqueTags from "@utils/getUniqueTags";
 import getPostsByTag from "@utils/getPostsByTag";
 import getPageNumbers from "@utils/getPageNumbers";
 import getPagination from "@utils/getPagination";
-import { getLocale } from "astro-i18n-aut";
-
-const locale = getLocale(Astro.url);
-
-
 
 
 export interface Props {
@@ -19,9 +14,9 @@ export interface Props {
 }
 
 export async function getStaticPaths() {
-  const posts = await getCollection("blog",({ data }) => data?.lang === locale);
+  const posts = await getCollection("blog",({ data }) => data?.lang === 'en');
 
-  const tags = getUniqueTags(posts);
+  const tags = getUniqueTags(posts); 
 
   return tags.flatMap(({ tag, tagName }) => {
     const tagPosts = getPostsByTag(posts, tag);
@@ -37,7 +32,7 @@ export async function getStaticPaths() {
 const { page } = Astro.params;
 const { tag, tagName } = Astro.props;
 
-const posts = await getCollection("blog", ({ data }) => !data.draft);
+const posts = await getCollection("blog", ({ data }) => !data.draft && data?.lang === 'en');
 
 const postsByTag = getPostsByTag(posts, tag);
 

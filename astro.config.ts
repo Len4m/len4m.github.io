@@ -30,6 +30,13 @@ export default defineConfig({
     i18n({
       locales,
       defaultLocale,
+      exclude: [
+        "pages/tags/index.astro",
+        "pages/es/tags/index.astro",
+        "pages/ca/tags/index.astro",
+        "pages/**/*.md",
+        "pages/*.md",
+      ]
     }),
     sitemap({
       i18n: {

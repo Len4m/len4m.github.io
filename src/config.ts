@@ -9,8 +9,8 @@ export const SITE: Site = {
   title: "Lenam",
   ogImage: "assets/avatar.png",
   lightAndDarkMode: true,
-  postPerIndex: 4,
-  postPerPage: 5,
+  postPerIndex: 3,
+  postPerPage: 3,
   scheduledPostMargin: 15 * 60 * 1000, // 15 minutes
 };
 
@@ -24,7 +24,7 @@ export const LOGO_IMAGE = {
   svg: false,
   width: 34,
   height: 34,
-};
+}; 
 
 export const SOCIALS: SocialObjects = [
   {

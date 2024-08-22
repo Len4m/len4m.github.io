@@ -4,23 +4,15 @@ import TagPosts from "@layouts/TagPosts.astro";
 import getPostsByTag from "@utils/getPostsByTag";
 import getPagination from "@utils/getPagination";
 import getUniqueTags from "@utils/getUniqueTags";
-import { getLocale } from "astro-i18n-aut";
-import { LOCALE } from "@config";
 
-const locale = getLocale(Astro.url);
-LOCALE.lang = locale;
- 
-export async function getStaticPaths() { 
-  const posts = await getCollection(
-    "blog",
-    ({ data }) => data.lang === 'ca'
-  );
+export async function getStaticPaths() {
+  const posts = await getCollection("blog", ({ data }) => data.lang === "ca");
   const tags = getUniqueTags(posts);
-  return tags.map(({ tag, tagName }) => { 
-    return { 
-      params: { tag }, 
+  return tags.map(({ tag, tagName }) => {
+    return {
+      params: { tag },
       props: { tag, tagName, posts },
-    }; 
+    };
   });
 }
 

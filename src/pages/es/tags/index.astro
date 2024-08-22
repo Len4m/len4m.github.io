@@ -12,7 +12,7 @@ import { getLocale } from "astro-i18n-aut";
 const locale = getLocale(Astro.url);
 
 LOCALE.lang = locale;
-
+ 
 const posts = await getCollection(
   "blog",
   ({ data }) => data?.lang === LOCALE.lang
@@ -39,7 +39,7 @@ switch (LOCALE.lang) {
   <Main pageTitle={tittxt} pageDesc={desctxt}>
     <ul>
       {tags.map(({ tag }) => <Tag {tag} size="lg" lang={locale} />)}
-    </ul>
+    </ul> 
   </Main>
   <Footer />
 </Layout>

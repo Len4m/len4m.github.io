@@ -11,7 +11,7 @@ import { getLocale } from "astro-i18n-aut";
 
 const locale = getLocale(Astro.url);
 
-LOCALE.lang = locale;
+LOCALE.lang = locale; 
 
 const posts = await getCollection(
   "blog",
