@@ -14,7 +14,7 @@ const { tag, size = "sm", lang = "en" } = Astro.props;
   }`}
 >
   <a
-    href={`/${lang}/tags/${tag}/`}
+    href={`${lang !== 'en' ? `/${lang}` : ''}/tags/${tag}/`}
     transition:name={tag}
     class={`${size === "sm" ? "text-sm" : "text-lg"} pr-2 group`}
   >

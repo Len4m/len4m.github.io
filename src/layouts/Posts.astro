@@ -49,8 +49,8 @@ const { currentPage, totalPages, paginatedPosts } = Astro.props;
   <Pagination
     {currentPage}
     {totalPages}
-    prevUrl={`/${LOCALE.lang}/posts${currentPage - 1 !== 1 ? "/" + (currentPage - 1) : ""}/`}
-    nextUrl={`/${LOCALE.lang}/posts/${currentPage + 1}/`}
+    prevUrl={`${LOCALE.lang !== 'en' ? `/${LOCALE.lang}` : ''}/posts${currentPage - 1 !== 1 ? "/" + (currentPage - 1) : ""}/`}
+    nextUrl={`${LOCALE.lang !== 'en' ? `/${LOCALE.lang}` : ''}/posts/${currentPage + 1}/`}
   />
 
   <Footer noMarginTop={totalPages > 1} />

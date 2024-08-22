@@ -48,9 +48,9 @@ switch (LOCALE.lang) {
   >
     <h1 slot="title" transition:name={tag}>{`${tittxt}:${tag}`}</h1>
     <ul>
-      {
+      { 
         paginatedPosts.map(({ data, slug }) => (
-          <Card href={`/${data.lang}/posts/${slug}/`} frontmatter={data} />
+          <Card href={`${LOCALE.lang !== 'en' ? `/${LOCALE.lang}` : ''}/posts/${slug}/`} frontmatter={data} />
         ))
       } 
     </ul>
@@ -59,10 +59,10 @@ switch (LOCALE.lang) {
   <Pagination
     {currentPage}
     {totalPages}
-    prevUrl={`/${LOCALE.lang}/tags/${tag}${
+    prevUrl={`${LOCALE.lang !== 'en' ? `/${LOCALE.lang}` : ''}/tags/${tag}${
       currentPage - 1 !== 1 ? "/" + (currentPage - 1) : ""
     }/`}
-    nextUrl={`/${LOCALE.lang}/tags/${tag}/${currentPage + 1}/`}
+    nextUrl={`${LOCALE.lang !== 'en' ? `/${LOCALE.lang}` : ''}/tags/${tag}/${currentPage + 1}/`}
   />
 
   <Footer noMarginTop={totalPages > 1} />
