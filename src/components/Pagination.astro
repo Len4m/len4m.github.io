@@ -1,5 +1,8 @@
 ---
 import LinkButton from "./LinkButton.astro";
+import { getLocale } from "astro-i18n-aut";
+
+const lang = getLocale(Astro.url);
 
 export interface Props {
   currentPage: number;
@@ -14,6 +17,22 @@ const prev = currentPage > 1 ? "" : "disabled";
 const next = currentPage < totalPages ? "" : "disabled";
 const isPrevDisabled = prev === "disabled";
 const isNextDisabled = next === "disabled";
+
+let i18n = {
+  prev: "prev",
+  next: "next",
+};
+
+switch (lang) {
+  case "es":
+    i18n.prev = "anterior";
+    i18n.next = "siguiente";
+    break;
+  case "ca":
+    i18n.prev = "anterior";
+    i18n.next = "següent";
+    break;
+}
 ---
 
 {
@@ -23,7 +42,7 @@ const isNextDisabled = next === "disabled";
         disabled={isPrevDisabled}
         href={prevUrl}
         className={`mr-4 select-none ${prev}`}
-        ariaLabel="Previous"
+        ariaLabel={i18n.prev}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -31,16 +50,16 @@ const isNextDisabled = next === "disabled";
         >
           <path d="M12.707 17.293 8.414 13H18v-2H8.414l4.293-4.293-1.414-1.414L4.586 12l6.707 6.707z" />
         </svg>
-        Prev
+        {i18n.prev}
       </LinkButton>
       {currentPage} / {totalPages}
       <LinkButton
         disabled={isNextDisabled}
         href={nextUrl}
         className={`ml-4 select-none ${next}`}
-        ariaLabel="Next"
+        ariaLabel={i18n.next}
       >
-        Next
+        {i18n.next}
         <svg
           xmlns="http://www.w3.org/2000/svg"
           class:list={[{ "disabled-svg": isNextDisabled }]}

@@ -10,7 +10,7 @@ export const SITE: Site = {
   ogImage: "assets/avatar.png",
   lightAndDarkMode: true,
   postPerIndex: 3,
-  postPerPage: 3,
+  postPerPage: 4,
   scheduledPostMargin: 15 * 60 * 1000, // 15 minutes
 };
 

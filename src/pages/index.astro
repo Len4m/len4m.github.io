@@ -183,7 +183,7 @@ switch (LOCALE.lang) {
             <ul>
               {featuredPosts.map(({ data, slug }) => (
                 <Card
-                  href={`/${data.lang}/posts/${slug}/`}
+                  href={`${data.lang !== 'en' ? `/${data.lang}` : ''}/posts/${slug}/`}
                   frontmatter={data}
                   secHeading={false}
                 />
@@ -204,7 +204,7 @@ switch (LOCALE.lang) {
               ({ data, slug }, index) =>
                 index < SITE.postPerIndex && (
                   <Card
-                    href={`/${data.lang}/posts/${slug}/`}
+                    href={`${data.lang !== 'en' ? `/${data.lang}` : ''}/posts/${slug}/`}
                     frontmatter={data}
                     secHeading={false}
                   />
@@ -216,7 +216,7 @@ switch (LOCALE.lang) {
     }
 
     <div class="all-posts-btn-wrapper">
-      <LinkButton href={`/${locale}/posts/`}>
+      <LinkButton href={`${locale !== 'en' ? `/${locale}` : ''}/posts/`}>
         {allpoststxt}
         <svg xmlns="http://www.w3.org/2000/svg"
           ><path

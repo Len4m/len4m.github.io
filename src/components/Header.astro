@@ -37,7 +37,7 @@ const { activeNav } = Astro.props;
   <div class="nav-container">
     <div class="top-nav-wrap">
       <a
-        href={`/${LOCALE.lang}/`}
+        href={`${LOCALE.lang !== 'en' ? `/${LOCALE.lang}` : ''}/`}
         class="logo flex whitespace-nowrap border-solid"
       >
         <span>
