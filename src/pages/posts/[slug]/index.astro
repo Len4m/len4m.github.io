@@ -33,7 +33,7 @@ export async function getStaticPaths() {
 
   return [...postResult, ...pagePaths];
 }
-
+ 
 const { slug } = Astro.params;
 const { post } = Astro.props;
 
