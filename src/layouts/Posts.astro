@@ -40,7 +40,7 @@ const { currentPage, totalPages, paginatedPosts } = Astro.props;
     <ul>
       {
         paginatedPosts.map(({ data, slug }) => (
-          <Card href={`/${data.lang}/posts/${slug}/`} frontmatter={data} />
+          <Card href={`${LOCALE.lang !== 'en' ? `/${LOCALE.lang}` : ''}/posts/${slug}/`} frontmatter={data} />
         ))
       }
     </ul>
