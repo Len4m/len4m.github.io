@@ -6,11 +6,10 @@ import getPostsByTag from "@utils/getPostsByTag";
 import getPageNumbers from "@utils/getPageNumbers";
 import getPagination from "@utils/getPagination";
 import { LOCALE } from "@config";
-import { getLocale } from "astro-i18n-aut";
 
-const locale = getLocale(Astro.url);
+const locale = 'ca';
 
-LOCALE.lang = locale??'ca';
+LOCALE.lang = locale;
 
 
 export interface Props {

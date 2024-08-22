@@ -32,6 +32,20 @@ export default defineConfig({
       defaultLocale,
       redirectDefaultLocale: true,
       exclude: [
+        "pages/posts/[slug]/index.astro",
+        "pages/es/posts/[slug]/index.astro",
+        "pages/ca/posts/[slug]/index.astro",
+
+        "pages/tags/index.astro",
+        "pages/ca/tags/index.astro",
+        "pages/es/tags/index.astro",
+        "pages/tags/[tag]/index.astro",
+        "pages/tags/[tag]/[page].astro",
+        "pages/es/tags/[tag]/index.astro",
+        "pages/es/tags/[tag]/[page].astro",
+        "pages/ca/tags/[tag]/index.astro",
+        "pages/ca/tags/[tag]/[page].astro",
+
         "pages/**/*.md",
         "pages/*.md",
         "pages/**/*.ts",

@@ -7,9 +7,9 @@ import Main from "@layouts/Main.astro";
 import Tag from "@components/Tag.astro";
 import getUniqueTags from "@utils/getUniqueTags";
 import { LOCALE, SITE } from "@config";
-import { getLocale } from "astro-i18n-aut";
 
-const locale = getLocale(Astro.url);
+
+const locale = 'es';
 
 LOCALE.lang = locale;
  
