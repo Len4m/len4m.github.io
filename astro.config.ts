@@ -9,9 +9,9 @@ import { SITE } from "./src/config";
 
 const defaultLocale = "en";
 const locales = {
-  en: "en-US", // the `defaultLocale` value must present in `locales` keys
-  es: "es-ES",
-  ca: "ca-ES",
+  en: "en", // the `defaultLocale` value must present in `locales` keys
+  es: "es",
+  ca: "ca",
 };
 
 
@@ -26,11 +26,11 @@ export default defineConfig({
     tailwind({
       applyBaseStyles: false,
     }),
-    react(),
+    react(), 
     i18n({
       locales,
       defaultLocale,
-      redirectDefaultLocale:true,
+      redirectDefaultLocale:false,
       exclude: [
         "pages/**/*.md",
         "pages/*.md",
@@ -38,7 +38,7 @@ export default defineConfig({
         "pages/*.ts",
       ]
     }),
-    sitemap({
+    sitemap({ 
       i18n: {
         locales,
         defaultLocale,

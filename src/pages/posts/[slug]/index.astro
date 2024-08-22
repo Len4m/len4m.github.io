@@ -19,25 +19,28 @@ export interface Props {
 export async function getStaticPaths() {
   const posts = await getCollection(
     "blog",
-    ({ data }) => !data.draft && data.lang === "en"
+    ({ data }) => !data.draft && data.lang === LOCALE.lang
   );
-
+ 
   const postResult = posts.map(post => ({
     params: { slug: post.slug },
-    props: { post },
+    props: { post }, 
   }));
 
   const pagePaths = getPageNumbers(posts.length).map(pageNum => ({
-    params: { slug: String(pageNum) },
+    params: {  slug: String(pageNum) },
   }));
 
+
+  
   return [...postResult, ...pagePaths];
 }
  
 const { slug } = Astro.params;
 const { post } = Astro.props;
 
-const posts = await getCollection("blog", ({ data }) => !data.draft && data.lang === "en");
+
+const posts = await getCollection("blog", ({ data }) => !data.draft && data.lang === LOCALE.lang);
 
 const sortedPosts = getSortedPosts(posts);
 
