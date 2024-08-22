@@ -3,7 +3,7 @@ author: Lenam
 pubDatetime: 2024-07-18T15:22:00Z  
 title: WriteUp Yincana - Vulnyx
 slug: yincana-writeup-vulnyx-ca  
-featured: true  
+featured: false  
 draft: false  
 ogImage: "assets/yincana/OpenGraph.png"  
 tags:  

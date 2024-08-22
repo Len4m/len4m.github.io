@@ -9,6 +9,7 @@ import ShareLinks from "@components/ShareLinks.astro";
 import { LOCALE, SITE } from "@config";
 import { getLocale } from "astro-i18n-aut";
 
+
 const locale = getLocale(Astro.url);
 LOCALE.lang = locale;
 
@@ -63,6 +64,9 @@ switch (LOCALE.lang) {
     gobacktxt = "Tornar";
     break; 
 }  
+
+
+
 --- 
  
 <Layout {...layoutProps}>
@@ -130,8 +134,11 @@ switch (LOCALE.lang) {
   .post-title {
     @apply text-2xl font-semibold text-skin-accent;
   }
+  img {
+    @apply cursor-zoom-in;
+  }
 </style>
-
+<script is:inline src="/medium-zoom/medium-zoom.min.js"></script>
 <script is:inline>
   /** Create a progress indicator
    *  at the top */
@@ -243,4 +250,10 @@ switch (LOCALE.lang) {
     });
   }
   backToTop();
+
+  /** Image articles zoom */
+  mediumZoom(document.querySelectorAll("#article img"),{
+    background: '#000000',
+  });
+  
 </script>
