@@ -9,7 +9,6 @@ import ShareLinks from "@components/ShareLinks.astro";
 import { LOCALE, SITE } from "@config";
 import { getLocale } from "astro-i18n-aut";
 
-
 const locale = getLocale(Astro.url);
 LOCALE.lang = locale;
 
@@ -33,7 +32,6 @@ const {
 
 const { Content } = await post.render();
 
-
 const ogImageUrl = typeof ogImage === "string" ? ogImage : ogImage?.src;
 const ogUrl = new URL(
   ogImageUrl ?? `/posts/${slugifyStr(title)}.png`,
@@ -42,7 +40,7 @@ const ogUrl = new URL(
 
 const layoutProps = {
   title: `${title} | ${SITE.title}`,
-  author, 
+  author,
   description,
   pubDatetime,
   modDatetime,
@@ -50,7 +48,7 @@ const layoutProps = {
   ogImage: ogUrl,
   scrollSmooth: true,
   lang,
-}; 
+};
 
 let toptxt = "Back to Top" as string;
 let gobacktxt = "Go back" as string;
@@ -62,13 +60,10 @@ switch (LOCALE.lang) {
   case "ca":
     toptxt = "Tornar a l'inici";
     gobacktxt = "Tornar";
-    break; 
-}  
+    break;
+}
+---
 
-
-
---- 
- 
 <Layout {...layoutProps}>
   <Header />
 
@@ -252,8 +247,10 @@ switch (LOCALE.lang) {
   backToTop();
 
   /** Image articles zoom */
-  mediumZoom(document.querySelectorAll("#article img"),{
-    background: '#000000',
-  });
-  
+  function imagesZoom() {
+    mediumZoom(document.querySelectorAll("#article img"), {
+      background: "#000000",
+    });
+  }
+  document.body.onload = imagesZoom;
 </script>
