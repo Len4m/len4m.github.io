@@ -26,11 +26,11 @@ export default defineConfig({
     tailwind({
       applyBaseStyles: false,
     }),
-    react(), 
+    react(),
     i18n({
       locales,
       defaultLocale,
-      redirectDefaultLocale:false,
+      redirectDefaultLocale: true,
       exclude: [
         "pages/**/*.md",
         "pages/*.md",
@@ -38,7 +38,7 @@ export default defineConfig({
         "pages/*.ts",
       ]
     }),
-    sitemap({ 
+    sitemap({
       i18n: {
         locales,
         defaultLocale,
