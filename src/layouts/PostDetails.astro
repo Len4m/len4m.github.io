@@ -246,11 +246,11 @@ switch (LOCALE.lang) {
   }
   backToTop();
 
-  /** Image articles zoom */
-  function imagesZoom() {
+  function onloadNext() {
+    /** Image articles zoom */
     mediumZoom(document.querySelectorAll("#article img"), {
       background: "#000000",
     });
   }
-  document.body.onload = imagesZoom;
+
 </script>

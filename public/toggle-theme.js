@@ -59,12 +59,21 @@ window.onload = () => {
       themeValue = themeValue === "light" ? "dark" : "light";
       setPreference();
     });
+
+    setTimeout(() => {
+      if (typeof onloadNext === "function") {
+        onloadNext();
+      }
+    }, 500);
   }
 
   setThemeFeature();
 
   // Runs on view transitions navigation
   document.addEventListener("astro:after-swap", setThemeFeature);
+
+
+
 };
 
 // sync with system changes
