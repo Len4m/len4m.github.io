@@ -29,7 +29,7 @@ export default function Card({ href, frontmatter, secHeading = true }: Props) {
             <h2  {...headerProps}>{title}</h2>
             <img
               alt={title}
-              className="h-auto max-w-lg mx-auto mt-2 mb-4
+              className="h-auto w-full max-w-lg mx-auto mt-2 mb-4
                transition-all duration-300 rounded-lg cursor-pointer filter grayscale opacity-75 
                hover:grayscale-0 hover:opacity-100"
               src={`/${frontmatter.ogImage?.toString()}`}
