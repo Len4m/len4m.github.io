@@ -6,9 +6,13 @@ slug: securitron-writeup-thehackerslabs-ca
 featured: true  
 draft: false  
 ogImage: "assets/securitron/OpenGraph.png"  
-tags:  
-  - writeup  
-  - TheHackersLabs  
+tags:
+  - writeup
+  - TheHackersLabs
+  - AI
+  - SQL Injection
+  - sudo
+  - binary planting
 description:  
   El meu primer CTF creat per a la plataforma thehackerslabs.com i amb un model d'IA, espero que sigui del vostre grat.  
 lang: ca  
