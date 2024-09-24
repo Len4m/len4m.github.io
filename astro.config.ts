@@ -84,6 +84,14 @@ export default defineConfig({
     },
   },
   vite: {
+    build: {
+      minify: 'terser',
+      terserOptions: {
+        format: {
+          comments: /@preserve|^!/  // Preserva los comentarios con @preserve o /*! */
+        },
+      },
+    },
     optimizeDeps: {
       exclude: ["@resvg/resvg-js"],
     },
