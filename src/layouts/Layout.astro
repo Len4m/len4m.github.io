@@ -134,29 +134,21 @@ const structuredData = {
     <ViewTransitions />
 
     <script is:inline src="/toggle-theme.js"></script>
-  <!-- Matomo -->
-  <script is:inline>
-    /* @preserve */
-    var _paq = window._paq = window._paq || [];
-    /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
-    _paq.push(['trackPageView']);
-    _paq.push(['enableLinkTracking']);
-    (function() {
-      var u="//lenam.kesug.com/";
-      _paq.push(['setTrackerUrl', u+'matomo.php']);
-      _paq.push(['setSiteId', '2']);
-      var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-      g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
-    })();
-  </script>
-  <!-- End Matomo Code -->
   </head>
   <body>
     <slot />
-    <noscript>
-      <!-- Matomo Image Tracker-->
-      <img referrerpolicy="no-referrer-when-downgrade" src="https://lenam.kesug.com/matomo.php?idsite=2&amp;rec=1" style="border:0" alt="" />
-      <!-- End Matomo -->
-    </noscript>
+    <!-- Default Statcounter code for Lenam Blog https://len4m.github.io -->
+    <script is:inline type="text/javascript">
+      var sc_project=13040082; 
+      var sc_invisible=1; 
+      var sc_security="ee52aec0"; 
+    </script>
+    <script type="text/javascript" is:inline
+    src="https://www.statcounter.com/counter/counter.js" async></script>
+    <noscript><div class="statcounter"><a title="site stats"
+    href="https://statcounter.com/" target="_blank"><img class="statcounter"
+    src="https://c.statcounter.com/13040082/0/ee52aec0/1/" alt="site stats"
+    referrerPolicy="no-referrer-when-downgrade"></a></div></noscript>
+    <!-- End of Statcounter Code -->
   </body>
 </html>
