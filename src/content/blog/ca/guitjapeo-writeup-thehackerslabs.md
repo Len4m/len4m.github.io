@@ -25,6 +25,8 @@ CTF on programarem, aprendrem sobre git i ens crearem un compte a GitHub.
 
 Espero que sigui del vostre gust.
 
+## Taula de continguts
+
 ## Enumeració
 
 ```bash

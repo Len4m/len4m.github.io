@@ -25,6 +25,8 @@ CTF where we'll need to code, learn about git, and create a GitHub account.
 
 I hope you find it enjoyable.
 
+## Table of contents
+
 ## Enumeration
 
 ```bash
