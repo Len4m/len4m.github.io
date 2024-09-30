@@ -202,9 +202,7 @@ Más información: https://pm2.keymetrics.io/
 
 Modificamos el archivo copylogs.sh insertando un revshell y comenzamos a escuchar.
 
-![img_p12_1](/assets/yourwaf/img_p
-
-12_1.png)
+![img_p12_1](/assets/yourwaf/img_p12_1.png)
 
 Accedemos como root y ahora podemos ver el archivo de la bandera root.
 
