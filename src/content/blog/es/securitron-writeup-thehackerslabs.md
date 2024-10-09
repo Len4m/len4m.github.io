@@ -225,9 +225,7 @@ No tenemos permisos para ver el fichero `/home/securitybot/.local/bin/bot/index.
 Miramos qué podemos encontrar en el puerto 3000. El endpoint /api nos da información en formato JSON sobre la API. Utilizamos `curl` y `node` para mostrar esta información de forma legible.
 
 ```bash
-curl http://localhost:3000/api | /home/securitybot/.nvm/versions/node/v22.5.1/bin/node -p
-
- "JSON.stringify( JSON.parse(require('fs').readFileSync(0) ), 0, 1 )"
+curl http://localhost:3000/api | /home/securitybot/.nvm/versions/node/v22.5.1/bin/node -p "JSON.stringify( JSON.parse(require('fs').readFileSync(0) ), 0, 1 )"
 ```
 
 ![API information](/assets/securitron/image-29.png)
