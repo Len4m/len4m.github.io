@@ -3,7 +3,7 @@ author: Lenam
 pubDatetime: 2024-08-23T15:22:00Z  
 title: WriteUp Securitron - TheHackersLabs  
 slug: securitron-writeup-thehackerslabs-ca
-featured: true  
+featured: false  
 draft: false  
 ogImage: "assets/securitron/OpenGraph.png"  
 tags:

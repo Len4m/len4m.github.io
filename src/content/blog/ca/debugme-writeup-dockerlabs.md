@@ -3,7 +3,7 @@ author: Lenam
 pubDatetime: 2024-07-22T15:22:00Z
 title: WriteUp DebugMe - Dockerlabs
 slug: debugme-writeup-dockerlabs-ca
-featured: true
+featured: false
 draft: false
 ogImage: "assets/debugme/OpenGraph.png"
 tags:

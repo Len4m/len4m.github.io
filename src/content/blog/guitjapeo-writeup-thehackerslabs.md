@@ -3,7 +3,7 @@ author: Lenam
 pubDatetime: 2024-09-25T15:22:00Z
 title: WriteUp Guitjapeo - TheHackersLabs  
 slug: guitjapeo-writeup-thehackerslabs-en
-featured: true  
+featured: false  
 draft: false  
 ogImage: "assets/guitjapeo/OpenGraph.png"  
 tags:

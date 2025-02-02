@@ -27,6 +27,13 @@ export const LOGO_IMAGE = {
 }; 
 
 export const SOCIALS: SocialObjects = [
+
+  {
+    name: "HackTheBox",
+    href: "https://app.hackthebox.com/profile/499231",
+    linkTitle: `${SITE.title} on Hack The Box`,
+    active: true
+  },
   {
     name: "Github",
     href: "https://github.com/Len4m",
@@ -56,5 +63,5 @@ export const SOCIALS: SocialObjects = [
     href: "https://discordapp.com/channels/@me/1239384881180573707/",
     linkTitle: `${SITE.title} on Discord`,
     active: true,
-  },
+  }
 ];
