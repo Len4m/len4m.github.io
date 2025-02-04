@@ -13,14 +13,14 @@ tags:
   - tar-wildcards
   - insecure-random
 description:
-  "Este laboratorio, disponible en la plataforma Dockerlabs, abarca múltiples desafíos de seguridad: desde la fuerza bruta en Subversion y la adivinación de un número aleatorio inseguro, hasta la explotación de un buffer overflow y la escalada de privilegios con la técnica de comodines de tar."
+  "This lab, available on the Dockerlabs platform, covers multiple security challenges: from brute-forcing Subversion and guessing an insecure random number to exploiting a buffer overflow and escalating privileges using the tar wildcard technique."
 lang: en
 ---
 
 
 ![Alt text](/assets/subversion/OpenGraph.png)
 
-"This lab, available on the Dockerlabs platform, covers multiple security challenges: from brute-forcing Subversion and guessing an insecure random number to exploiting a buffer overflow and escalating privileges using the tar wildcard technique."
+This lab, available on the Dockerlabs platform, covers multiple security challenges: from brute-forcing Subversion and guessing an insecure random number to exploiting a buffer overflow and escalating privileges using the tar wildcard technique.
 
 ## Table of Contents  
 
