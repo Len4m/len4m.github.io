@@ -1,6 +1,6 @@
 ---
 author: Lenam
-pubDatetime: 2025-02-05T15:22:00Z
+pubDatetime: 2025-02-04T15:22:00Z
 title: WriteUp Matrix - Vulnyx
 slug: matrix-writeup-vulnyx-ca
 featured: false
