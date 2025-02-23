@@ -234,7 +234,7 @@ $ curl http://192.168.1.179/.well-known/jwks.json | jq
 }
 ```
 
-Si intentamos manipular el JWT no podremos porque la programación esta bien echa (o eso creo). Solo acepta JWT encriptados con la clave privada y no se puede jugar a las diferentes técnicas de portswigger, la intención es aprender que es un JWT y el funcionamiento de claves asimétricas.
+Si intentamos manipular el JWT no podremos porque la programación esta bien echa (o eso creo). Solo acepta JWT firmados con la clave privada y no se puede jugar a las diferentes técnicas de portswigger, la intención es aprender que es un JWT y el funcionamiento de claves asimétricas.
 
 En resumen, necesitamos la clave privada de esta aplicación para poder manipular el JWT y en el código fuente hay una pista muy importante **IPFS** (`InterPlanetary File System`), y en los mensajes del administrador hay más pistas y lo que parece ser un hash.
 
