@@ -328,7 +328,7 @@ PkDtOtToiExm8jdJZ5lNdw==
 -----END PRIVATE KEY-----
 ```
 
-Obtenim una clau privada que s'utilitza per signar el token JWT, ara podem manipular-lo. Podem comprovar que aquesta clau privada pertany a la clau pública trobada a `/.well-known/jwks.json`, però abans l'haurem de transformar. També podem regenerar la clau privada a partir de la clau pública. En definitiva, podem fer diverses proves per verificar que aquesta clau privada pertany a l'aplicació exposada al port 80, però no serà necessari.
+Obtenim una clau privada que s'utilitza per signar el token JWT, ara podem manipular-lo. Podem comprovar que aquesta clau privada pertany a la clau pública trobada a `/.well-known/jwks.json`, però abans l'haurem de transformar. També podem regenerar la clau pública a partir de la clau privada. En definitiva, podem fer diverses proves per verificar que aquesta clau privada pertany a l'aplicació exposada al port 80, però no serà necessari.
 
 ## Intrusió
 

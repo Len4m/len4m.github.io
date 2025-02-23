@@ -328,7 +328,7 @@ PkDtOtToiExm8jdJZ5lNdw==
 -----END PRIVATE KEY-----
 ```
 
-We obtain a private key that is used to sign the JWT token, allowing us to manipulate it. We can verify that this private key corresponds to the public key found in `/.well-known/jwks.json`, though we first need to convert it. We could also regenerate the private key from the public key. In short, there are several ways to confirm that this private key belongs to the application exposed on port 80, but doing so won't be necessary.  
+We obtain a private key that is used to sign the JWT token, allowing us to manipulate it. We can verify that this private key corresponds to the public key found in `/.well-known/jwks.json`, though we first need to convert it. We could also regenerate the public key from the private key. In short, there are several ways to confirm that this private key belongs to the application exposed on port 80, but doing so won't be necessary.  
 
 ## Intrusion  
 

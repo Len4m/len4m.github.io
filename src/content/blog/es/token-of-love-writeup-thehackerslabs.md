@@ -328,7 +328,7 @@ PkDtOtToiExm8jdJZ5lNdw==
 -----END PRIVATE KEY-----
 ```
 
-Obtenemos una clave privada que se utiliza para firmar el token JWT, ahora podemos manipularlo. Podemos comprobar que esta clave privada pertenece a la clave publica encontrada en `/.well-known/jwks.json`, antes tendremos que transformarla. También podemos volver a crear la clave privada a partir de la clave pública. En definitiva podemos hacer varias pruebas para comprobar que esta clave privada pertenece a la aplicación expuesta en el puerto 80, pero no será necesario.
+Obtenemos una clave privada que se utiliza para firmar el token JWT, ahora podemos manipularlo. Podemos comprobar que esta clave privada pertenece a la clave pública encontrada en `/.well-known/jwks.json`, antes tendremos que transformarla. También podemos volver a crear la clave pública a partir de la clave privada. En definitiva podemos hacer varias pruebas para comprobar que esta clave privada pertenece a la aplicación expuesta en el puerto 80, pero no será necesario.
 
 ## Intrusión
 
