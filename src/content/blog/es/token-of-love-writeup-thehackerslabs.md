@@ -28,7 +28,7 @@ Writeup que narra con amor la travesía hacker en "Token Of Love", se descifra u
 
 ## Enumeración automática
 
-Escaneamos los puertos abiertos:
+Escaneando los puertos abiertos.
 
 ```bash
 $ nmap -p- -Pn -n 192.168.1.179
@@ -43,7 +43,7 @@ PORT   STATE SERVICE
 Nmap done: 1 IP address (1 host up) scanned in 0.57 seconds
 ```
 
-Encontramos el puerto 80 y el puerto 22, escaneamos estos dos puertos en para obtener más información.
+Encontramos los puertos 80 y 22, escaneamos estos dos puertos para obtener más información.
 
 ```bash
 $ nmap -p22,80 -Pn -n -sVC 192.168.1.179
@@ -72,7 +72,7 @@ $ whatweb http://192.168.1.179
 http://192.168.1.179 [200 OK] Apache[2.4.62], Country[RESERVED][ZZ], HTML5, HTTPServer[Debian Linux][Apache/2.4.62 (Debian)], IP[192.168.1.179], PasswordField[password], Title[Token Of Love - Inicia Sesión], X-Powered-By[Express]
 ```
 
-También hacemos fuzzing del sitio web para obtener aún más información.
+También realizamos fuzzing del sitio web para obtener más información.
 
 Con `dirb` ...
 
@@ -213,7 +213,7 @@ Para decodificar el token JWT que se encuentra en la cookie utilizamos el sitio 
 
 Vemos que la cookie utiliza algoritmo asimétrico RS256, por lo que seguramente hay clave privada y publica. Con la clave privada se firman los token y con la clave publica se validan los token firmados.
 
-Las aplicaciones que utilizan sistemas de firma asimétrica para JWT suelen exponer las claves publicas para que los clientes puedan comprobar la firma del servidor, estas se suelen exponer en el endpoint `/.well-known/jwks.json` por norma general, miramos si existe ese endpoint i nos devuelve la clave publica en formato JSON.
+Las aplicaciones que utilizan sistemas de firma asimétrica para JWT suelen exponer las claves publicas para que los clientes puedan comprobar la firma del servidor, estas se suelen exponer en el endpoint `/.well-known/jwks.json` por norma general, miramos si existe ese endpoint y nos devuelve la clave publica en formato JSON.
 
 ```bash
 $ curl http://192.168.1.179/.well-known/jwks.json | jq
