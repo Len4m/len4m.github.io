@@ -503,7 +503,7 @@ Serving HTTP on 0.0.0.0 port 80 (http://0.0.0.0:80/) ...
 192.168.1.117 - - [22/Mar/2025 00:24:06] "GET /ping?port=3000 HTTP/1.1" 404 - <---
 ```
 
-Tornem a modificar el fitxer `script.js` per visualitzar la resposta al port 80.
+Tornem a modificar el fitxer `script.js` per visualitzar la resposta al port 3000.
 
 ```javascript
 x=new XMLHttpRequest;
