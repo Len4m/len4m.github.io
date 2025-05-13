@@ -185,7 +185,7 @@ We found that the user `admin@sandwich.nyx` also exists.
 
 > This writeup describes the expected exploitation. However, there is an easier way to bypass the sandwich attack, discovered by the hacker `he110wor1d`. His ingenuity deserves recognition, and you can find the detailed description in his writeup [Writeup he110wor1d](https://www.cnblogs.com/ShowMeTheBug/p/18810217).
 
-### 🥪 Ataque Sandwich 
+### 🥪 Sandwich Attack 
 
 1. We create two users on webmail.sandwich.nyx and register with those same two users on sandwich.nyx (e.g., `user1@sandwich.nyx` and `user2@sandwich.nyx`).
 
