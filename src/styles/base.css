@@ -77,13 +77,15 @@
   tfoot td:first-child {
     padding-left: 0.5714286em;
   }
-  .prose h2#table-of-contents {
+  .prose h2#table-of-contents,
+  .prose h2#tabla-de-contenido,
+  .prose h2#taula-de-continguts {
     @apply mb-2;
   }
   .prose details {
-    @apply inline-block cursor-pointer select-none text-skin-base;
+    @apply w-full inline-block cursor-pointer select-none text-skin-base sticky top-0 bg-skin-fill bg-opacity-80 py-2 backdrop-blur;
   }
-  .prose summary {
+  summary {
     @apply focus-outline;
   }
   .prose h2#table-of-contents + p {
@@ -123,6 +125,34 @@
   pre > code {
     white-space: pre;
   }
+
+  /* Estilos para medium-zoom */
+  .medium-zoom-overlay {
+    position: fixed !important;
+    top: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    background: rgba(0, 0, 0, 0.8) !important;
+    z-index: 999 !important;
+  }
+
+  .medium-zoom-image--opened {
+    position: fixed !important;
+    max-width: 90vw !important;
+    max-height: 90vh !important;
+    margin: auto !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    z-index: 1000 !important;
+  }
+
+  .medium-zoom--opened .medium-zoom-overlay {
+    opacity: 1 !important;
+    cursor: zoom-out !important;
+  }
+
 }
 
 @layer components {
@@ -133,3 +163,16 @@
     @apply outline-2 outline-offset-1 outline-skin-fill focus-visible:no-underline focus-visible:outline-dashed;
   }
 }
+
+.copy-code {
+  margin-bottom: -35px;
+  margin-right: 10px;
+  z-index:1;
+  
+}
+
+body.medium-zoom--opened .copy-code {
+  visibility: hidden;
+  z-index:-1;
+}
+

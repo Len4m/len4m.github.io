@@ -15,7 +15,7 @@ const locale = getLocale(Astro.url);
 
 LOCALE.lang = locale;
 
-const posts = await getCollection("blog",({ data }) => data?.lang === locale);
+const posts = await getCollection("blog",({ data }: { data: any }) => data?.lang === locale);
 
 const sortedPosts = getSortedPosts(posts);
 const featuredPosts = sortedPosts.filter(({ data }) => data.featured);

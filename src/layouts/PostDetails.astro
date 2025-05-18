@@ -68,10 +68,6 @@ switch (LOCALE.lang) {
 <Layout {...layoutProps}>
   <Header />
 
-  <div class="progress-container fixed top-0 z-10 h-1 w-full bg-skin-fill">
-    <div class="progress-bar h-1 w-0 bg-skin-accent" id="myBar"></div>
-  </div>
-
   <div class="mx-auto flex w-full max-w-3xl justify-start px-2">
     <button
       class="focus-outline mb-2 mt-8 flex hover:opacity-75"
@@ -98,7 +94,7 @@ switch (LOCALE.lang) {
     </article>
 
     <ul class="my-8">
-      {tags.map(tag => <Tag lang={locale} tag={slugifyStr(tag)} />)}
+      {tags.map((tag: string) => <Tag lang={locale} tag={slugifyStr(tag)} />)}
     </ul>
 
     <div
@@ -151,10 +147,9 @@ switch (LOCALE.lang) {
     // Append the progress bar to the progress container
     progressContainer.appendChild(progressBar);
 
-    // Append the progress container to the document body or any other desired parent element
-    document.body.appendChild(progressContainer);
+    // Append the progress container to the document body
+    document.body.insertBefore(progressContainer, document.body.firstChild);
   }
-  createProgressBar();
 
   /** Update the progress bar
    *  when user scrolls */
@@ -172,7 +167,18 @@ switch (LOCALE.lang) {
       }
     }
   }
-  document.addEventListener("scroll", updateScrollProgress);
+
+  // Ejecutar cuando el DOM esté listo
+  document.addEventListener("DOMContentLoaded", () => {
+    createProgressBar();
+    document.addEventListener("scroll", updateScrollProgress);
+  });
+
+  // Ejecutar después de las transiciones de vista
+  document.addEventListener("astro:after-swap", () => {
+    createProgressBar();
+    document.addEventListener("scroll", updateScrollProgress);
+  });
 
   /** Attaches links to headings in the document,
    *  allowing sharing of sections easily */
@@ -201,19 +207,21 @@ switch (LOCALE.lang) {
     let codeBlocks = Array.from(document.querySelectorAll("pre"));
 
     for (let codeBlock of codeBlocks) {
-      let wrapper = document.createElement("div");
-      wrapper.style.position = "relative";
-
       let copyButton = document.createElement("button");
       copyButton.className =
-        "copy-code absolute right-3 -top-3 rounded bg-skin-card px-2 py-1 text-xs leading-4 text-skin-base font-medium";
+        "copy-code ml-auto rounded bg-skin-card px-2 py-1 text-xs leading-4 text-skin-base font-medium";
       copyButton.innerHTML = copyButtonLabel;
       codeBlock.setAttribute("tabindex", "0");
-      codeBlock.appendChild(copyButton);
 
-      // wrap codebock with relative parent element
-      codeBlock?.parentNode?.insertBefore(wrapper, codeBlock);
-      wrapper.appendChild(codeBlock);
+      // Creamos un contenedor flex
+      let flexContainer = document.createElement("div");
+      flexContainer.style.display = "flex";
+      flexContainer.style.flexDirection = "column";
+
+      // Movemos el pre al contenedor flex
+      codeBlock?.parentNode?.insertBefore(flexContainer, codeBlock);
+      flexContainer.appendChild(copyButton);
+      flexContainer.appendChild(codeBlock);
 
       copyButton.addEventListener("click", async () => {
         await copyCode(codeBlock, copyButton);
@@ -252,4 +260,103 @@ switch (LOCALE.lang) {
       background: "#000000",
     });
   }
+
+  // Manejar el zoom de imágenes
+
+  /** Maneja la tabla de contenidos y el scroll */
+  function handleTocLinks() {
+    const tocLinks = document.querySelectorAll(".prose details a");
+    const tocDetails = document.querySelector(".prose details");
+
+    // Función para manejar el scroll suave
+    function handleSmoothScroll(e, targetElement) {
+      
+      const headerOffset = 45;
+      const elementPosition = targetElement.getBoundingClientRect().top;
+      const elementMargin = parseInt(
+        window.getComputedStyle(targetElement).marginTop
+      );
+      const offsetPosition =
+        elementPosition + window.scrollY - headerOffset - elementMargin;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth",
+      });
+
+      setTimeout(() => {
+        const finalPosition =
+          targetElement.getBoundingClientRect().top +
+          window.scrollY -
+          headerOffset;
+        window.scrollTo({
+          top: finalPosition,
+          behavior: "smooth",
+        });
+      }, 100);
+    }
+
+    // Cerrar al hacer clic fuera
+    document.addEventListener("click", e => {
+      if (tocDetails && tocDetails.hasAttribute("open")) {
+        const isClickInside = tocDetails.contains(e.target);
+        if (!isClickInside) {
+          tocDetails.removeAttribute("open");
+          document.querySelectorAll(".copy-code").forEach(element => {
+            element.style.zIndex = "1";
+            element.style.visibility = "";
+          });
+        }
+      }
+    });
+
+    // Manejar el despliegue de la tabla de contenidos
+    tocDetails?.addEventListener("toggle", e => {
+      const isOpen = e.target.hasAttribute("open");
+      document.querySelectorAll(".copy-code").forEach(element => {
+        element.style.visibility = isOpen ? "hidden" : "";
+        element.style.zIndex = isOpen ? "-1" : "1";
+      });
+    });
+
+    // Manejar clics en los enlaces de la tabla de contenidos
+    tocLinks.forEach(link => {
+      link.addEventListener("click", e => {
+        if (tocDetails) {
+          tocDetails.removeAttribute("open");
+        }
+
+        const targetId = decodeURIComponent(link.getAttribute("href").substring(1));
+        const targetElement = document.getElementById(targetId);
+
+        if (targetElement) {
+          handleSmoothScroll(e, targetElement);
+        }
+      });
+    });
+
+    // Manejar todos los enlaces que apuntan a anclas
+    document.querySelectorAll('a[href^="#"]').forEach(link => {
+      link.addEventListener("click", e => {
+        const targetId = decodeURIComponent(link.getAttribute("href").substring(1));
+        const targetElement = document.getElementById(targetId);
+
+        if (targetElement) {
+          handleSmoothScroll(e, targetElement);
+        }
+      });
+    });
+  }
+
+  // Ejecutar cuando el DOM esté listo
+  document.addEventListener("DOMContentLoaded", () => {
+    handleTocLinks();
+    //onloadNext();
+  });
+
+  // Ejecutar después de las transiciones de vista
+  document.addEventListener("astro:after-swap", () => {
+    handleTocLinks();
+    onloadNext();
+  });
 </script>

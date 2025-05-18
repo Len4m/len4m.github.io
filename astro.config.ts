@@ -63,7 +63,9 @@ export default defineConfig({
   markdown: {
 
     remarkPlugins: [
-      [remarkToc, { heading: 'Table of contents|Tabla de contenido|Taula de continguts' }],
+      [remarkToc, { 
+        heading: 'Table of contents|Tabla de contenido|Taula de continguts'
+       }],
       [remarkCollapse, {
         summary: function (tit: string) {
           switch (tit) {
