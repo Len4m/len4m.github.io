@@ -141,7 +141,7 @@ Finished
 ===============================================================
 ```
 
-### Enumeración manual
+### Manual Enumeration
 
 We analyze all the endpoints and pages found. We observe that we can create a sort of email account at `http://webmail.sandwich.nyx`. Then, the account created in webmail can be used to register at `http://sandwich.nyx`. This allows us to save our favorite sandwiches. 🥪
 
