@@ -270,7 +270,6 @@ switch (LOCALE.lang) {
 
     // Función para manejar el scroll suave
     function handleSmoothScroll(e, targetElement) {
-      
       const headerOffset = 45;
       const elementPosition = targetElement.getBoundingClientRect().top;
       const elementMargin = parseInt(
@@ -306,6 +305,10 @@ switch (LOCALE.lang) {
             element.style.zIndex = "1";
             element.style.visibility = "";
           });
+      document.querySelectorAll("blockquote").forEach(element => {
+        element.style.zIndex =  "1";
+        element.style.position =  "";
+      });
         }
       }
     });
@@ -317,6 +320,10 @@ switch (LOCALE.lang) {
         element.style.visibility = isOpen ? "hidden" : "";
         element.style.zIndex = isOpen ? "-1" : "1";
       });
+      document.querySelectorAll("blockquote").forEach(element => {
+        element.style.zIndex = isOpen ? "-1" : "1";
+        element.style.position = isOpen ? "relative" : "";
+      });
     });
 
     // Manejar clics en los enlaces de la tabla de contenidos
@@ -326,7 +333,9 @@ switch (LOCALE.lang) {
           tocDetails.removeAttribute("open");
         }
 
-        const targetId = decodeURIComponent(link.getAttribute("href").substring(1));
+        const targetId = decodeURIComponent(
+          link.getAttribute("href").substring(1)
+        );
         const targetElement = document.getElementById(targetId);
 
         if (targetElement) {
@@ -338,7 +347,9 @@ switch (LOCALE.lang) {
     // Manejar todos los enlaces que apuntan a anclas
     document.querySelectorAll('a[href^="#"]').forEach(link => {
       link.addEventListener("click", e => {
-        const targetId = decodeURIComponent(link.getAttribute("href").substring(1));
+        const targetId = decodeURIComponent(
+          link.getAttribute("href").substring(1)
+        );
         const targetElement = document.getElementById(targetId);
 
         if (targetElement) {
@@ -351,12 +362,10 @@ switch (LOCALE.lang) {
   // Ejecutar cuando el DOM esté listo
   document.addEventListener("DOMContentLoaded", () => {
     handleTocLinks();
-    //onloadNext();
   });
 
   // Ejecutar después de las transiciones de vista
   document.addEventListener("astro:after-swap", () => {
     handleTocLinks();
-    onloadNext();
   });
 </script>
