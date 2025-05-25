@@ -18,7 +18,7 @@ lang: en
 
 ![Machine](/assets/galera/vm.png)
 
-## Introduction / Motivation
+## Introduction / Motivation 
 
 After watching the live streams on Twitch by [CursosDeDesarrollo](https://blog.cursosdedesarrollo.com/) struggling to install a `MariaDB` cluster with `MariaDB Galera Cluster`, I realized that if the Galera port (port `4567`) is not properly secured, a malicious node could be created to modify the cluster's databases. This CTF attempts to reproduce the issue, among other things. Additionally, since I hadn't created any CTF for [HackMyVM](https://hackmyvm.eu), this was the opportunity.
 
