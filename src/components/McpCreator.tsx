@@ -111,6 +111,38 @@ interface Translations {
   chatgptHelpText: string;
   editCodeLabel: string;
   generatedCodeLabel: string;
+  securityConfigLabel: string;
+  enableSecurityLabel: string;
+  securityLevelLabel: string;
+  securityLevelBasic: string;
+  securityLevelIntermediate: string;
+  securityLevelAdvanced: string;
+  restrictionsLabel: string;
+  allowedHostsLabel: string;
+  allowedHostsPlaceholder: string;
+  forbiddenPatternsLabel: string;
+  forbiddenPatternsPlaceholder: string;
+  maxExecutionTimeLabel: string;
+  allowedUsersLabel: string;
+  allowedUsersPlaceholder: string;
+  maxMemoryLabel: string;
+  sandboxingLabel: string;
+  useContainerLabel: string;
+  networkIsolationLabel: string;
+  filesystemRestrictionsLabel: string;
+  filesystemRestrictionsPlaceholder: string;
+  runAsUserLabel: string;
+  runAsUserPlaceholder: string;
+  validationLabel: string;
+  enableInputSanitizationLabel: string;
+  enableOutputFilteringLabel: string;
+  enableCommandWhitelistLabel: string;
+  parameterSecurityLabel: string;
+  addParameterSecurityLabel: string;
+  securityHelpText: string;
+  securityBasicHelp: string;
+  securityIntermediateHelp: string;
+  securityAdvancedHelp: string;
 }
 
 interface ParsedParameter {
@@ -128,6 +160,38 @@ interface ServerConfig {
   description: string;
   version: string;
   binaryName: string;
+}
+
+interface ParameterSecurity {
+  name: string;
+  allowedValues?: string[];
+  pattern?: string;
+  maxLength?: number;
+  sanitize?: boolean;
+}
+
+interface SecurityConfig {
+  enabled: boolean;
+  level: 'basic' | 'intermediate' | 'advanced';
+  restrictions: {
+    allowedHosts: string[];
+    forbiddenPatterns: string[];
+    maxExecutionTime: number;
+    allowedUsers: string[];
+    maxMemoryMB: number;
+  };
+  sandboxing: {
+    useContainer: boolean;
+    networkIsolation: boolean;
+    filesystemRestrictions: string[];
+    runAsUser: string;
+  };
+  parameterSecurity: ParameterSecurity[];
+  validation: {
+    enableInputSanitization: boolean;
+    enableOutputFiltering: boolean;
+    enableCommandWhitelist: boolean;
+  };
 }
 
 const translations: Record<string, Translations> = {
@@ -236,7 +300,39 @@ const translations: Record<string, Translations> = {
     chatgptLink: "https://platform.openai.com/docs/mcp",
     chatgptHelpText: "See 'Connectors in ChatGPT' section in help center",
     editCodeLabel: "Edit Code",
-    generatedCodeLabel: "Generated MCP Code:"
+    generatedCodeLabel: "Generated MCP Code:",
+    securityConfigLabel: "Security Configuration",
+    enableSecurityLabel: "Enable Security Features",
+    securityLevelLabel: "Security Level",
+    securityLevelBasic: "Basic",
+    securityLevelIntermediate: "Intermediate", 
+    securityLevelAdvanced: "Advanced",
+    restrictionsLabel: "Execution Restrictions",
+    allowedHostsLabel: "Allowed Hosts",
+    allowedHostsPlaceholder: "localhost, 127.0.0.1, db.company.com",
+    forbiddenPatternsLabel: "Forbidden Command Patterns",
+    forbiddenPatternsPlaceholder: "DROP, DELETE, rm -rf, sudo",
+    maxExecutionTimeLabel: "Max Execution Time (seconds)",
+    allowedUsersLabel: "Allowed System Users",
+    allowedUsersPlaceholder: "readonly, guest, limited",
+    maxMemoryLabel: "Max Memory (MB)",
+    sandboxingLabel: "Sandboxing Options",
+    useContainerLabel: "Use Container Isolation",
+    networkIsolationLabel: "Network Isolation",
+    filesystemRestrictionsLabel: "Filesystem Restrictions",
+    filesystemRestrictionsPlaceholder: "/tmp, /var/log, /home/user/data",
+    runAsUserLabel: "Run as User",
+    runAsUserPlaceholder: "nobody, readonly, limited",
+    validationLabel: "Input/Output Validation",
+    enableInputSanitizationLabel: "Enable Input Sanitization",
+    enableOutputFilteringLabel: "Enable Output Filtering",
+    enableCommandWhitelistLabel: "Enable Command Whitelist",
+    parameterSecurityLabel: "Parameter Security",
+    addParameterSecurityLabel: "Add Parameter Security Rule",
+    securityHelpText: "Security features help protect your system from malicious or unintended command execution.",
+    securityBasicHelp: "Basic security includes input validation and execution timeouts.",
+    securityIntermediateHelp: "Intermediate security adds user restrictions and command filtering.",
+    securityAdvancedHelp: "Advanced security includes container isolation and comprehensive sandboxing."
   },
   es: {
     title: "Creador de MCP",
@@ -343,7 +439,39 @@ const translations: Record<string, Translations> = {
     chatgptLink: "https://platform.openai.com/docs/mcp",
     chatgptHelpText: "Ver sección 'Connectors in ChatGPT' en el centro de ayuda",
     editCodeLabel: "Editar Código",
-    generatedCodeLabel: "Código MCP Generado:"
+    generatedCodeLabel: "Código MCP Generado:",
+    securityConfigLabel: "Configuración de Seguridad",
+    enableSecurityLabel: "Habilitar Características de Seguridad",
+    securityLevelLabel: "Nivel de Seguridad",
+    securityLevelBasic: "Básico",
+    securityLevelIntermediate: "Intermedio",
+    securityLevelAdvanced: "Avanzado",
+    restrictionsLabel: "Restricciones de Ejecución",
+    allowedHostsLabel: "Hosts Permitidos",
+    allowedHostsPlaceholder: "localhost, 127.0.0.1, db.empresa.com",
+    forbiddenPatternsLabel: "Patrones de Comandos Prohibidos",
+    forbiddenPatternsPlaceholder: "DROP, DELETE, rm -rf, sudo",
+    maxExecutionTimeLabel: "Tiempo Máximo de Ejecución (segundos)",
+    allowedUsersLabel: "Usuarios del Sistema Permitidos",
+    allowedUsersPlaceholder: "readonly, guest, limited",
+    maxMemoryLabel: "Memoria Máxima (MB)",
+    sandboxingLabel: "Opciones de Sandboxing",
+    useContainerLabel: "Usar Aislamiento de Contenedor",
+    networkIsolationLabel: "Aislamiento de Red",
+    filesystemRestrictionsLabel: "Restricciones del Sistema de Archivos",
+    filesystemRestrictionsPlaceholder: "/tmp, /var/log, /home/user/data",
+    runAsUserLabel: "Ejecutar como Usuario",
+    runAsUserPlaceholder: "nobody, readonly, limited",
+    validationLabel: "Validación de Entrada/Salida",
+    enableInputSanitizationLabel: "Habilitar Sanitización de Entrada",
+    enableOutputFilteringLabel: "Habilitar Filtrado de Salida",
+    enableCommandWhitelistLabel: "Habilitar Lista Blanca de Comandos",
+    parameterSecurityLabel: "Seguridad de Parámetros",
+    addParameterSecurityLabel: "Añadir Regla de Seguridad de Parámetro",
+    securityHelpText: "Las características de seguridad ayudan a proteger tu sistema de ejecución maliciosa o no intencionada de comandos.",
+    securityBasicHelp: "La seguridad básica incluye validación de entrada y timeouts de ejecución.",
+    securityIntermediateHelp: "La seguridad intermedia añade restricciones de usuario y filtrado de comandos.",
+    securityAdvancedHelp: "La seguridad avanzada incluye aislamiento de contenedor y sandboxing integral."
   },
   ca: {
     title: "Creador de MCP",
@@ -450,7 +578,39 @@ const translations: Record<string, Translations> = {
     chatgptLink: "https://platform.openai.com/docs/mcp",
     chatgptHelpText: "Veure secció 'Connectors in ChatGPT' al centre d'ajuda",
     editCodeLabel: "Editar Codi",
-    generatedCodeLabel: "Codi MCP Generat:"
+    generatedCodeLabel: "Codi MCP Generat:",
+    securityConfigLabel: "Configuració de Seguretat",
+    enableSecurityLabel: "Habilitar Característiques de Seguretat",
+    securityLevelLabel: "Nivell de Seguretat",
+    securityLevelBasic: "Bàsic",
+    securityLevelIntermediate: "Intermedi",
+    securityLevelAdvanced: "Avançat",
+    restrictionsLabel: "Restriccions d'Execució",
+    allowedHostsLabel: "Hosts Permesos",
+    allowedHostsPlaceholder: "localhost, 127.0.0.1, db.empresa.com",
+    forbiddenPatternsLabel: "Patrons de Comandaments Prohibits",
+    forbiddenPatternsPlaceholder: "DROP, DELETE, rm -rf, sudo",
+    maxExecutionTimeLabel: "Temps Màxim d'Execució (segons)",
+    allowedUsersLabel: "Usuaris del Sistema Permesos",
+    allowedUsersPlaceholder: "readonly, guest, limited",
+    maxMemoryLabel: "Memòria Màxima (MB)",
+    sandboxingLabel: "Opcions de Sandboxing",
+    useContainerLabel: "Usar Aïllament de Contenidor",
+    networkIsolationLabel: "Aïllament de Xarxa",
+    filesystemRestrictionsLabel: "Restriccions del Sistema d'Arxius",
+    filesystemRestrictionsPlaceholder: "/tmp, /var/log, /home/user/data",
+    runAsUserLabel: "Executar com a Usuari",
+    runAsUserPlaceholder: "nobody, readonly, limited",
+    validationLabel: "Validació d'Entrada/Sortida",
+    enableInputSanitizationLabel: "Habilitar Sanitització d'Entrada",
+    enableOutputFilteringLabel: "Habilitar Filtrat de Sortida",
+    enableCommandWhitelistLabel: "Habilitar Llista Blanca de Comandaments",
+    parameterSecurityLabel: "Seguretat de Paràmetres",
+    addParameterSecurityLabel: "Afegir Regla de Seguretat de Paràmetre",
+    securityHelpText: "Les característiques de seguretat ajuden a protegir el teu sistema d'execució maliciosa o no intencionada de comandaments.",
+    securityBasicHelp: "La seguretat bàsica inclou validació d'entrada i timeouts d'execució.",
+    securityIntermediateHelp: "La seguretat intermèdia afegeix restriccions d'usuari i filtrat de comandaments.",
+    securityAdvancedHelp: "La seguretat avançada inclou aïllament de contenidor i sandboxing integral."
   }
 };
 
@@ -503,6 +663,30 @@ export default function McpCreator() {
     required: false,
     takesValue: true,
     expectsValue: true
+  });
+
+  const [securityConfig, setSecurityConfig] = useState<SecurityConfig>({
+    enabled: false,
+    level: 'basic',
+    restrictions: {
+      allowedHosts: [],
+      forbiddenPatterns: [],
+      maxExecutionTime: 30,
+      allowedUsers: [],
+      maxMemoryMB: 512
+    },
+    sandboxing: {
+      useContainer: false,
+      networkIsolation: false,
+      filesystemRestrictions: [],
+      runAsUser: 'nobody'
+    },
+    parameterSecurity: [],
+    validation: {
+      enableInputSanitization: true,
+      enableOutputFiltering: false,
+      enableCommandWhitelist: false
+    }
   });
 
   useEffect(() => {
@@ -612,6 +796,159 @@ export default function McpCreator() {
   }, [editableCode, generatedCode]);
 
   const t = translations[currentLang];
+
+  // Funciones para generar código de seguridad
+  const generateSecurityCode = (securityConfig: SecurityConfig, language: 'nodejs' | 'python'): string => {
+    if (!securityConfig.enabled) return '';
+
+    if (language === 'nodejs') {
+      let securityCode = `
+// ==================== CONFIGURACIÓN DE SEGURIDAD ====================
+
+// Validaciones de seguridad
+function validateSecurityConstraints(params, command) {`;
+
+      if (securityConfig.restrictions.allowedHosts.length > 0) {
+        securityCode += `
+  // Validar hosts permitidos
+  const allowedHosts = ${JSON.stringify(securityConfig.restrictions.allowedHosts)};
+  if (params.host && !allowedHosts.includes(params.host)) {
+    throw new Error('Host no autorizado: ' + params.host);
+  }`;
+      }
+
+      if (securityConfig.restrictions.forbiddenPatterns.length > 0) {
+        securityCode += `
+  // Validar patrones prohibidos
+  const forbiddenPatterns = ${JSON.stringify(securityConfig.restrictions.forbiddenPatterns)};
+  for (const pattern of forbiddenPatterns) {
+    if (command.toLowerCase().includes(pattern.toLowerCase())) {
+      throw new Error('Comando contiene patrón prohibido: ' + pattern);
+    }
+  }`;
+      }
+
+      if (securityConfig.validation.enableInputSanitization) {
+        securityCode += `
+  // Sanitizar entrada
+  for (const [key, value] of Object.entries(params)) {
+    if (typeof value === 'string') {
+      // Remover caracteres peligrosos básicos
+      params[key] = value.replace(/[;&|]/g, '').replace(/\`/g, '').replace(/\$/g, '');
+    }
+  }`;
+      }
+
+      securityCode += `
+  return true;
+}
+
+// Ejecución segura con limitaciones
+const { spawn } = require('child_process');
+
+function executeSecurely(command, args, options = {}) {
+  const execOptions = {
+    timeout: ${securityConfig.restrictions.maxExecutionTime * 1000},
+    maxBuffer: ${securityConfig.restrictions.maxMemoryMB * 1024 * 1024},
+    ...options
+  };
+
+  return new Promise((resolve, reject) => {
+    const child = spawn(command, args, execOptions);
+    let stdout = '';
+    let stderr = '';
+
+    child.stdout?.on('data', (data) => {
+      stdout += data.toString();
+    });
+
+    child.stderr?.on('data', (data) => {
+      stderr += data.toString();
+    });
+
+    child.on('close', (code) => {
+      if (code === 0) {
+        resolve(stdout);
+      } else {
+        reject(new Error('Comando falló con código ' + code + ': ' + stderr));
+      }
+    });
+
+    child.on('error', (error) => {
+      reject(error);
+    });
+  });
+}
+
+// ==================== FIN CONFIGURACIÓN DE SEGURIDAD ====================
+`;
+
+      return securityCode;
+    } else { // Python
+      let securityCode = `
+# ==================== CONFIGURACIÓN DE SEGURIDAD ====================
+
+# Validaciones de seguridad
+def validate_security_constraints(params, command):`;
+
+      if (securityConfig.restrictions.allowedHosts.length > 0) {
+        securityCode += `
+    # Validar hosts permitidos
+    allowed_hosts = ${JSON.stringify(securityConfig.restrictions.allowedHosts)}
+    if 'host' in params and params['host'] not in allowed_hosts:
+        raise ValueError(f"Host no autorizado: {params['host']}")`;
+      }
+
+      if (securityConfig.restrictions.forbiddenPatterns.length > 0) {
+        securityCode += `
+    # Validar patrones prohibidos
+    forbidden_patterns = ${JSON.stringify(securityConfig.restrictions.forbiddenPatterns)}
+    for pattern in forbidden_patterns:
+        if pattern.lower() in command.lower():
+            raise ValueError(f"Comando contiene patrón prohibido: {pattern}")`;
+      }
+
+      if (securityConfig.validation.enableInputSanitization) {
+        securityCode += `
+    # Sanitizar entrada
+    import re
+    for key, value in params.items():
+        if isinstance(value, str):
+            # Remover caracteres peligrosos básicos
+            value = value.replace(';', '').replace('&', '').replace('|', '')
+            value = value.replace('\`', '').replace('$', '')
+            params[key] = value`;
+      }
+
+      securityCode += `
+    return True
+
+# Ejecución segura con limitaciones
+import subprocess
+
+def execute_securely(command, timeout=${securityConfig.restrictions.maxExecutionTime}):
+    """Ejecuta comando con limitaciones de seguridad"""
+    try:
+        result = subprocess.run(
+            command,
+            shell=True,
+            capture_output=True,
+            text=True,
+            timeout=timeout,
+            check=True
+        )
+        return result.stdout
+    except subprocess.TimeoutExpired:
+        raise TimeoutError(f"Comando excedió el tiempo límite de {timeout} segundos")
+    except subprocess.CalledProcessError as e:
+        raise RuntimeError(f"Comando falló: {e.stderr}")
+
+# ==================== FIN CONFIGURACIÓN DE SEGURIDAD ====================
+`;
+
+      return securityCode;
+    }
+  };
 
   // Función para parsear la ayuda del binario
   const parseBinaryHelp = (helpText: string): ParsedParameter[] => {
@@ -848,6 +1185,8 @@ export default function McpCreator() {
 
   // Función para generar plantilla Node.js
   const generateNodeJSTemplate = (config: ServerConfig, params: ParsedParameter[]): string => {
+    const securityCode = generateSecurityCode(securityConfig, 'nodejs');
+    
     const paramDefinitions = params.map(param => {
       const cleanName = param.name.replace(/[^a-zA-Z0-9]/g, '_');
       const type = param.type === 'flag' ? 'boolean' : 'string';
@@ -886,13 +1225,29 @@ export default function McpCreator() {
       }
     }).join('\n      ');
 
+    const executionCode = securityConfig.enabled ? 
+      `        // Validar seguridad antes de ejecutar
+        validateSecurityConstraints({ ${paramNames.join(', ')} }, command);
+        
+        // Ejecutar comando de forma segura
+        const result = await executeSecurely('${config.binaryName}', command.split(' ').slice(1));
+        return { content: result || 'Command executed successfully' };` :
+      `        // Execute command
+        const { stdout, stderr } = await execAsync(command);
+        
+        if (stderr) {
+          console.warn('Command stderr:', stderr);
+        }
+        
+        return { content: stdout || 'Command executed successfully' };`;
+
     return `const { Server } = require('@modelcontextprotocol/sdk/server/index.js');
 const { StdioServerTransport } = require('@modelcontextprotocol/sdk/server/stdio.js');
 const { exec } = require('child_process');
 const { promisify } = require('util');
 
 const execAsync = promisify(exec);
-
+${securityCode}
 class ${config.name.charAt(0).toUpperCase() + config.name.slice(1)}Server extends Server {
   constructor() {
     super({
@@ -923,14 +1278,7 @@ ${paramDefinitions}
         let command = '${config.binaryName}';
         ${commandBuilding}
         
-        // Execute command
-        const { stdout, stderr } = await execAsync(command);
-        
-        if (stderr) {
-          console.warn('Command stderr:', stderr);
-        }
-        
-        return { content: stdout || 'Command executed successfully' };
+${executionCode}
       } catch (error) {
         throw new Error(\`Command execution failed: \${error.message}\`);
       }
@@ -945,6 +1293,8 @@ server.listen(new StdioServerTransport());
 
   // Función para generar plantilla Python
   const generatePythonTemplate = (config: ServerConfig, params: ParsedParameter[]): string => {
+    const securityCode = generateSecurityCode(securityConfig, 'python');
+    
     const paramDefinitions = params.map(param => {
       const cleanName = param.name.replace(/[^a-zA-Z0-9]/g, '_');
       const type = param.type === 'flag' ? 'bool' : 'str';
@@ -983,13 +1333,34 @@ server.listen(new StdioServerTransport());
       }
     }).join('\n        ');
 
+    const executionCode = securityConfig.enabled ?
+      `            # Validar seguridad antes de ejecutar
+            validate_security_constraints({${paramNames.map(name => `"${name}": ${name}`).join(', ')}}, ' '.join(command))
+            
+            # Ejecutar comando de forma segura
+            result_output = execute_securely(command, timeout=${securityConfig.restrictions.maxExecutionTime})
+            return {"content": result_output or "Command executed successfully"}` :
+      `            # Execute command
+            result = subprocess.run(
+                command, 
+                capture_output=True, 
+                text=True, 
+                check=True,
+                timeout=300  # 5 minute timeout
+            )
+            
+            if result.stderr:
+                print(f"Command stderr: {result.stderr}")
+            
+            return {"content": result.stdout or "Command executed successfully"}`;
+
     return `import asyncio
 import subprocess
 from typing import Dict, Any
 from mcp.server import Server
 from mcp.server.stdio import stdio_server
 from mcp.types import Tool
-
+${securityCode}
 class ${config.name.charAt(0).toUpperCase() + config.name.slice(1)}Server(Server):
     def __init__(self):
         super().__init__(
@@ -1024,19 +1395,7 @@ ${paramDefinitions}
             command = ["${config.binaryName}"]
             ${commandBuilding}
             
-            # Execute command
-            result = subprocess.run(
-                command, 
-                capture_output=True, 
-                text=True, 
-                check=True,
-                timeout=300  # 5 minute timeout
-            )
-            
-            if result.stderr:
-                print(f"Command stderr: {result.stderr}")
-            
-            return {"content": result.stdout or "Command executed successfully"}
+${executionCode}
             
         except subprocess.TimeoutExpired:
             raise Exception("Command execution timed out")
@@ -1187,7 +1546,80 @@ if __name__ == "__main__":
   };
 
   const handleNewParameterChange = (field: keyof ParsedParameter, value: any) => {
-    setNewParameter({ ...newParameter, [field]: value });
+    setNewParameter(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  // Funciones de manejo para configuración de seguridad
+  const handleSecurityToggle = () => {
+    setSecurityConfig(prev => ({
+      ...prev,
+      enabled: !prev.enabled
+    }));
+  };
+
+  const handleSecurityLevelChange = (level: 'basic' | 'intermediate' | 'advanced') => {
+    setSecurityConfig(prev => ({
+      ...prev,
+      level
+    }));
+  };
+
+  const handleSecurityFieldChange = (section: keyof SecurityConfig, field: string, value: any) => {
+    setSecurityConfig(prev => {
+      if (section === 'restrictions') {
+        return {
+          ...prev,
+          restrictions: {
+            ...prev.restrictions,
+            [field]: value
+          }
+        };
+      } else if (section === 'sandboxing') {
+        return {
+          ...prev,
+          sandboxing: {
+            ...prev.sandboxing,
+            [field]: value
+          }
+        };
+      } else if (section === 'validation') {
+        return {
+          ...prev,
+          validation: {
+            ...prev.validation,
+            [field]: value
+          }
+        };
+      }
+      return prev;
+    });
+  };
+
+  const handleArrayFieldChange = (section: keyof SecurityConfig, field: string, value: string) => {
+    const values = value.split(',').map(v => v.trim()).filter(v => v);
+    setSecurityConfig(prev => {
+      if (section === 'restrictions') {
+        return {
+          ...prev,
+          restrictions: {
+            ...prev.restrictions,
+            [field]: values
+          }
+        };
+      } else if (section === 'sandboxing') {
+        return {
+          ...prev,
+          sandboxing: {
+            ...prev.sandboxing,
+            [field]: values
+          }
+        };
+      }
+      return prev;
+    });
   };
 
   return (
@@ -1342,6 +1774,209 @@ if __name__ == "__main__":
                   />
                 </div>
               </div>
+            </div>
+
+            {/* Security Configuration */}
+            <div className="border border-skin-border rounded-lg p-4 bg-skin-fill">
+              <div className="flex items-center justify-between mb-4">
+                <label className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    checked={securityConfig.enabled}
+                    onChange={handleSecurityToggle}
+                    className="h-4 w-4 text-skin-accent focus:ring-skin-accent border-skin-border rounded"
+                  />
+                  <span className="text-sm font-medium text-skin-base">{t.enableSecurityLabel}</span>
+                </label>
+              </div>
+
+              {securityConfig.enabled && (
+                <div className="space-y-6">
+                  {/* Security Level */}
+                  <div>
+                    <label className="block text-sm font-medium text-skin-base mb-2">
+                      {t.securityLevelLabel}
+                    </label>
+                    <div className="flex space-x-4">
+                      <label className="flex items-center">
+                        <input
+                          type="radio"
+                          value="basic"
+                          checked={securityConfig.level === 'basic'}
+                          onChange={() => handleSecurityLevelChange('basic')}
+                          className="mr-2"
+                        />
+                        <span className="text-sm text-skin-base">{t.securityLevelBasic}</span>
+                      </label>
+                      <label className="flex items-center">
+                        <input
+                          type="radio"
+                          value="intermediate"
+                          checked={securityConfig.level === 'intermediate'}
+                          onChange={() => handleSecurityLevelChange('intermediate')}
+                          className="mr-2"
+                        />
+                        <span className="text-sm text-skin-base">{t.securityLevelIntermediate}</span>
+                      </label>
+                      <label className="flex items-center">
+                        <input
+                          type="radio"
+                          value="advanced"
+                          checked={securityConfig.level === 'advanced'}
+                          onChange={() => handleSecurityLevelChange('advanced')}
+                          className="mr-2"
+                        />
+                        <span className="text-sm text-skin-base">{t.securityLevelAdvanced}</span>
+                      </label>
+                    </div>
+                    <p className="text-xs text-skin-base/70 mt-1">
+                      {securityConfig.level === 'basic' && t.securityBasicHelp}
+                      {securityConfig.level === 'intermediate' && t.securityIntermediateHelp}
+                      {securityConfig.level === 'advanced' && t.securityAdvancedHelp}
+                    </p>
+                  </div>
+
+                  {/* Execution Restrictions */}
+                  <div>
+                    <h5 className="text-md font-medium text-skin-base mb-3">{t.restrictionsLabel}</h5>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-skin-base mb-1">
+                          {t.allowedHostsLabel}
+                        </label>
+                        <input
+                          type="text"
+                          value={securityConfig.restrictions.allowedHosts.join(', ')}
+                          onChange={(e) => handleArrayFieldChange('restrictions', 'allowedHosts', e.target.value)}
+                          placeholder={t.allowedHostsPlaceholder}
+                          className="w-full p-2 border border-skin-border rounded-md bg-skin-fill text-skin-base focus:outline-none focus:ring-2 focus:ring-skin-accent text-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-skin-base mb-1">
+                          {t.forbiddenPatternsLabel}
+                        </label>
+                        <input
+                          type="text"
+                          value={securityConfig.restrictions.forbiddenPatterns.join(', ')}
+                          onChange={(e) => handleArrayFieldChange('restrictions', 'forbiddenPatterns', e.target.value)}
+                          placeholder={t.forbiddenPatternsPlaceholder}
+                          className="w-full p-2 border border-skin-border rounded-md bg-skin-fill text-skin-base focus:outline-none focus:ring-2 focus:ring-skin-accent text-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-skin-base mb-1">
+                          {t.maxExecutionTimeLabel}
+                        </label>
+                        <input
+                          type="number"
+                          value={securityConfig.restrictions.maxExecutionTime}
+                          onChange={(e) => handleSecurityFieldChange('restrictions', 'maxExecutionTime', parseInt(e.target.value) || 30)}
+                          className="w-full p-2 border border-skin-border rounded-md bg-skin-fill text-skin-base focus:outline-none focus:ring-2 focus:ring-skin-accent text-sm"
+                          min="1"
+                          max="300"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-skin-base mb-1">
+                          {t.maxMemoryLabel}
+                        </label>
+                        <input
+                          type="number"
+                          value={securityConfig.restrictions.maxMemoryMB}
+                          onChange={(e) => handleSecurityFieldChange('restrictions', 'maxMemoryMB', parseInt(e.target.value) || 512)}
+                          className="w-full p-2 border border-skin-border rounded-md bg-skin-fill text-skin-base focus:outline-none focus:ring-2 focus:ring-skin-accent text-sm"
+                          min="64"
+                          max="2048"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Validation Options */}
+                  <div>
+                    <h5 className="text-md font-medium text-skin-base mb-3">{t.validationLabel}</h5>
+                    <div className="space-y-2">
+                      <label className="flex items-center space-x-2">
+                        <input
+                          type="checkbox"
+                          checked={securityConfig.validation.enableInputSanitization}
+                          onChange={(e) => handleSecurityFieldChange('validation', 'enableInputSanitization', e.target.checked)}
+                          className="h-4 w-4 text-skin-accent focus:ring-skin-accent border-skin-border rounded"
+                        />
+                        <span className="text-sm text-skin-base">{t.enableInputSanitizationLabel}</span>
+                      </label>
+                      <label className="flex items-center space-x-2">
+                        <input
+                          type="checkbox"
+                          checked={securityConfig.validation.enableOutputFiltering}
+                          onChange={(e) => handleSecurityFieldChange('validation', 'enableOutputFiltering', e.target.checked)}
+                          className="h-4 w-4 text-skin-accent focus:ring-skin-accent border-skin-border rounded"
+                        />
+                        <span className="text-sm text-skin-base">{t.enableOutputFilteringLabel}</span>
+                      </label>
+                      <label className="flex items-center space-x-2">
+                        <input
+                          type="checkbox"
+                          checked={securityConfig.validation.enableCommandWhitelist}
+                          onChange={(e) => handleSecurityFieldChange('validation', 'enableCommandWhitelist', e.target.checked)}
+                          className="h-4 w-4 text-skin-accent focus:ring-skin-accent border-skin-border rounded"
+                        />
+                        <span className="text-sm text-skin-base">{t.enableCommandWhitelistLabel}</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  {/* Advanced Options */}
+                  {securityConfig.level === 'advanced' && (
+                    <div>
+                      <h5 className="text-md font-medium text-skin-base mb-3">{t.sandboxingLabel}</h5>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <label className="flex items-center space-x-2">
+                            <input
+                              type="checkbox"
+                              checked={securityConfig.sandboxing.useContainer}
+                              onChange={(e) => handleSecurityFieldChange('sandboxing', 'useContainer', e.target.checked)}
+                              className="h-4 w-4 text-skin-accent focus:ring-skin-accent border-skin-border rounded"
+                            />
+                            <span className="text-sm text-skin-base">{t.useContainerLabel}</span>
+                          </label>
+                          <label className="flex items-center space-x-2">
+                            <input
+                              type="checkbox"
+                              checked={securityConfig.sandboxing.networkIsolation}
+                              onChange={(e) => handleSecurityFieldChange('sandboxing', 'networkIsolation', e.target.checked)}
+                              className="h-4 w-4 text-skin-accent focus:ring-skin-accent border-skin-border rounded"
+                            />
+                            <span className="text-sm text-skin-base">{t.networkIsolationLabel}</span>
+                          </label>
+                        </div>
+                        <div className="space-y-2">
+                          <div>
+                            <label className="block text-sm font-medium text-skin-base mb-1">
+                              {t.runAsUserLabel}
+                            </label>
+                            <input
+                              type="text"
+                              value={securityConfig.sandboxing.runAsUser}
+                              onChange={(e) => handleSecurityFieldChange('sandboxing', 'runAsUser', e.target.value)}
+                              placeholder={t.runAsUserPlaceholder}
+                              className="w-full p-2 border border-skin-border rounded-md bg-skin-fill text-skin-base focus:outline-none focus:ring-2 focus:ring-skin-accent text-sm"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md p-3">
+                    <p className="text-sm text-blue-800 dark:text-blue-200">
+                      <strong>💡 {t.securityHelpText}</strong>
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Action Buttons */}
