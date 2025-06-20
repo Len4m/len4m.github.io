@@ -166,6 +166,21 @@ const McpServerConfig: React.FC<Props> = ({ serverConfig, onChange, t, currentLa
             {t.versionHelp}
           </p>
         </div>
+        <div>
+          <label className="block text-sm font-medium text-skin-base mb-1">
+            {t.workingDirectoryLabel}
+          </label>
+          <input
+            type="text"
+            value={serverConfig.workingDirectory || ''}
+            onChange={e => onChange({ ...serverConfig, workingDirectory: e.target.value })}
+            placeholder={t.workingDirectoryPlaceholder}
+            className="w-full p-2 border border-skin-border rounded-md bg-skin-fill text-skin-base focus:outline-none focus:ring-2 focus:ring-skin-accent"
+          />
+          <p className="text-xs text-skin-base/60 mt-1">
+            {t.workingDirectoryHelp}
+          </p>
+        </div>
       </div>
     </div>
   );

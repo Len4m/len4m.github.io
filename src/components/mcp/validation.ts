@@ -1,8 +1,8 @@
 // Patrones de validación para nombres seguros
 export const VALIDATION_PATTERNS = {
-  // Nombres de binarios: solo letras, números, guiones y guiones bajos
+  // Nombres de binarios: letras, números, guiones, guiones bajos y puntos
   // No puede empezar con guión, no puede tener espacios ni caracteres especiales
-  binaryName: /^[a-zA-Z][a-zA-Z0-9_-]*$/,
+  binaryName: /^[a-zA-Z][a-zA-Z0-9._-]*$/,
   
   // Nombres de servidores: similar a binarios pero puede incluir puntos para subdominios
   // Formato: nombre-servidor o nombre.servidor
@@ -46,7 +46,7 @@ const ERROR_MESSAGES = {
     binaryNameEmpty: 'Binary name cannot be empty',
     binaryNameTooLong: (max: number) => `Binary name cannot exceed ${max} characters`,
     binaryNameForbiddenChars: 'Binary name contains forbidden characters',
-    binaryNameInvalidFormat: 'Binary name must start with a letter and can only contain letters, numbers, hyphens and underscores',
+    binaryNameInvalidFormat: 'Binary name must start with a letter and can only contain letters, numbers, dots, hyphens and underscores',
     binaryNameDangerousCommand: 'System commands are not allowed for security reasons',
     serverNameEmpty: 'Server name cannot be empty',
     serverNameTooLong: (max: number) => `Server name cannot exceed ${max} characters`,
@@ -61,7 +61,7 @@ const ERROR_MESSAGES = {
     binaryNameEmpty: 'El nombre del binario no puede estar vacío',
     binaryNameTooLong: (max: number) => `El nombre del binario no puede exceder ${max} caracteres`,
     binaryNameForbiddenChars: 'El nombre del binario contiene caracteres no permitidos',
-    binaryNameInvalidFormat: 'El nombre del binario debe empezar con una letra y solo puede contener letras, números, guiones y guiones bajos',
+    binaryNameInvalidFormat: 'El nombre del binario debe empezar con una letra y solo puede contener letras, números, puntos, guiones y guiones bajos',
     binaryNameDangerousCommand: 'No se permiten comandos del sistema por seguridad',
     serverNameEmpty: 'El nombre del servidor no puede estar vacío',
     serverNameTooLong: (max: number) => `El nombre del servidor no puede exceder ${max} caracteres`,
@@ -76,7 +76,7 @@ const ERROR_MESSAGES = {
     binaryNameEmpty: 'El nom del binari no pot estar buit',
     binaryNameTooLong: (max: number) => `El nom del binari no pot excedir ${max} caràcters`,
     binaryNameForbiddenChars: 'El nom del binari conté caràcters no permesos',
-    binaryNameInvalidFormat: 'El nom del binari ha de començar amb una lletra i només pot contenir lletres, números, guions i guions baixos',
+    binaryNameInvalidFormat: 'El nom del binari ha de començar amb una lletra i només pot contenir lletres, números, punts, guions i guions baixos',
     binaryNameDangerousCommand: 'No es permeten comandaments del sistema per seguretat',
     serverNameEmpty: 'El nom del servidor no pot estar buit',
     serverNameTooLong: (max: number) => `El nom del servidor no pot excedir ${max} caràcters`,
@@ -213,11 +213,6 @@ export function sanitizeInput(input: string, type: 'binaryName' | 'serverName'):
   
   // Remover caracteres prohibidos
   sanitized = sanitized.replace(FORBIDDEN_CHARS[type], '');
-  
-  // Para nombres de binarios, remover puntos
-  if (type === 'binaryName') {
-    sanitized = sanitized.replace(/\./g, '');
-  }
   
   // Asegurar que empiece con letra
   if (sanitized && !/^[a-zA-Z]/.test(sanitized)) {

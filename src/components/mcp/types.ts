@@ -145,6 +145,9 @@ export interface Translations {
   securityEnabledServer: string;
   securityDisabledBinary: string;
   securityDisabledServer: string;
+  workingDirectoryLabel: string;
+  workingDirectoryPlaceholder: string;
+  workingDirectoryHelp: string;
 }
 
 export interface ParsedParameter {
@@ -162,6 +165,7 @@ export interface ServerConfig {
   description: string;
   version: string;
   binaryName: string;
+  workingDirectory?: string;
 }
 
 export interface ParameterSecurity {

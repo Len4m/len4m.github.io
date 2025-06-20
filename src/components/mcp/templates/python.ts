@@ -71,12 +71,14 @@ export function generatePythonTemplate(config: ServerConfig, params: ParsedParam
                 }` :
     `            # Execute command
             try:
+                cwd = config.workingDirectory if hasattr(config, 'workingDirectory') and config.workingDirectory else None
                 result = subprocess.run(
                     command, 
                     capture_output=True, 
                     text=True, 
                     check=True,
-                    timeout=300  # 5 minute timeout
+                    timeout=300,  # 5 minute timeout
+                    cwd=cwd
                 )
                 
                 if result.stderr:

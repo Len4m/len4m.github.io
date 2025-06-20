@@ -56,7 +56,7 @@ export function generateNodeJSTemplate(config: ServerConfig, params: ParsedParam
         
         // Ejecutar comando de forma segura
         try {
-          const result = await executeSecurely('${config.binaryName}', command.split(' ').slice(1));
+          const result = await executeSecurely('${config.binaryName}', command.split(' ').slice(1), '${config.workingDirectory}');
           return {
             content: [{
               type: 'text',
@@ -73,7 +73,11 @@ export function generateNodeJSTemplate(config: ServerConfig, params: ParsedParam
         }` :
     `        // Execute command
         try {
-          const { stdout, stderr } = await execAsync(command);
+          const options = {};
+          if ('workingDirectory' in config && config.workingDirectory) {
+            options.cwd = config.workingDirectory;
+          }
+          const { stdout, stderr } = await execAsync(command, options);
           
           if (stderr) {
             console.warn('Command stderr:', stderr);
@@ -260,14 +264,17 @@ function validateSecurityConstraints(params, command) {`;
 }
 
 // Función para ejecutar comandos de forma segura
-async function executeSecurely(binaryName, args) {
+async function executeSecurely(binaryName, args, workingDirectory) {
   return new Promise((resolve, reject) => {
     const timeout = ${securityConfig.restrictions.maxExecutionTime * 1000};
-    
-    const child = exec(binaryName + ' ' + args.join(' '), {
+    const options = {
       timeout: timeout,
       maxBuffer: ${securityConfig.restrictions.maxMemoryMB * 1024 * 1024}
-    }, (error, stdout, stderr) => {
+    };
+    if (workingDirectory) {
+      options.cwd = workingDirectory;
+    }
+    const child = exec(binaryName + ' ' + args.join(' '), options, (error, stdout, stderr) => {
       if (error) {
         if (error.code === 'ETIMEDOUT') {
           reject(new Error('Comando excedió el tiempo límite de ejecución'));
