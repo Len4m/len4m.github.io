@@ -1,4 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import Editor from 'react-simple-code-editor';
+import Prism from 'prismjs';
+import 'prismjs/components/prism-clike';
+import 'prismjs/components/prism-javascript';
+import 'prismjs/components/prism-python';
 
 interface Translations {
   title: string;
@@ -104,6 +109,8 @@ interface Translations {
   chatgptText: string;
   chatgptLink: string;
   chatgptHelpText: string;
+  editCodeLabel: string;
+  generatedCodeLabel: string;
 }
 
 interface ParsedParameter {
@@ -227,7 +234,9 @@ const translations: Record<string, Translations> = {
     configureMCPText: "Configure MCP servers",
     chatgptText: "ChatGPT:",
     chatgptLink: "https://platform.openai.com/docs/mcp",
-    chatgptHelpText: "See 'Connectors in ChatGPT' section in help center"
+    chatgptHelpText: "See 'Connectors in ChatGPT' section in help center",
+    editCodeLabel: "Edit Code",
+    generatedCodeLabel: "Generated MCP Code:"
   },
   es: {
     title: "Creador de MCP",
@@ -332,7 +341,9 @@ const translations: Record<string, Translations> = {
     configureMCPText: "Configurar MCP servers",
     chatgptText: "ChatGPT:",
     chatgptLink: "https://platform.openai.com/docs/mcp",
-    chatgptHelpText: "Ver sección 'Connectors in ChatGPT' en el centro de ayuda"
+    chatgptHelpText: "Ver sección 'Connectors in ChatGPT' en el centro de ayuda",
+    editCodeLabel: "Editar Código",
+    generatedCodeLabel: "Código MCP Generado:"
   },
   ca: {
     title: "Creador de MCP",
@@ -437,7 +448,9 @@ const translations: Record<string, Translations> = {
     configureMCPText: "Configurar servidors MCP",
     chatgptText: "ChatGPT:",
     chatgptLink: "https://platform.openai.com/docs/mcp",
-    chatgptHelpText: "Veure secció 'Connectors in ChatGPT' al centre d'ajuda"
+    chatgptHelpText: "Veure secció 'Connectors in ChatGPT' al centre d'ajuda",
+    editCodeLabel: "Editar Codi",
+    generatedCodeLabel: "Codi MCP Generat:"
   }
 };
 
@@ -457,7 +470,28 @@ export default function McpCreator() {
   const [isParsing, setIsParsing] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedCode, setGeneratedCode] = useState('');
+  const [editableCode, setEditableCode] = useState('');
   const [copied, setCopied] = useState(false);
+  const [currentTheme, setCurrentTheme] = useState<'light' | 'dark'>('light');
+
+  // Función para cargar dinámicamente los temas de PrismJS
+  const loadPrismTheme = (theme: 'light' | 'dark') => {
+    // Remover tema anterior
+    const existingTheme = document.getElementById('prism-theme');
+    if (existingTheme) {
+      existingTheme.remove();
+    }
+
+    // Cargar nuevo tema
+    const link = document.createElement('link');
+    link.id = 'prism-theme';
+    link.rel = 'stylesheet';
+    link.href = theme === 'dark' 
+      ? 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-okaidia.min.css'
+      : 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css';
+    
+    document.head.appendChild(link);
+  };
   const [filterType, setFilterType] = useState<'all' | 'flag' | 'option' | 'argument'>('all');
   const [editingParameter, setEditingParameter] = useState<ParsedParameter | null>(null);
   const [editedParameter, setEditedParameter] = useState<ParsedParameter | null>(null);
@@ -482,7 +516,100 @@ export default function McpCreator() {
       setCurrentLang('en');
     }
     setIsHydrated(true);
+    
+    // Detectar tema inicial
+    const detectTheme = () => {
+      const theme = document.documentElement.getAttribute('data-theme') || 'light';
+      setCurrentTheme(theme as 'light' | 'dark');
+      loadPrismTheme(theme as 'light' | 'dark');
+    };
+    
+    detectTheme();
+    
+    // Observar cambios de tema
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'data-theme') {
+          const newTheme = document.documentElement.getAttribute('data-theme') || 'light';
+          setCurrentTheme(newTheme as 'light' | 'dark');
+          loadPrismTheme(newTheme as 'light' | 'dark');
+        }
+      });
+    });
+    
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme']
+    });
+    
+    return () => observer.disconnect();
   }, []);
+
+  // Aplicar estilos CSS al textarea y pre del editor para evitar ajuste de líneas
+  useEffect(() => {
+    const applyStyles = () => {
+      // Estilos para el contenedor principal
+      const containers = document.querySelectorAll('.code-editor-container');
+      containers.forEach((container) => {
+        const element = container as HTMLDivElement;
+        element.style.overflow = 'auto';
+        element.style.overflowX = 'auto';
+        element.style.overflowY = 'auto';
+      });
+
+      // Estilos para el textarea
+      const textareas = document.querySelectorAll('.code-editor-textarea');
+      textareas.forEach((textarea) => {
+        const element = textarea as HTMLTextAreaElement;
+        element.style.whiteSpace = 'pre';
+        element.style.wordWrap = 'normal';
+        element.style.overflowWrap = 'normal';
+        element.style.overflow = 'hidden';
+        element.style.resize = 'none';
+        element.style.minWidth = '100%';
+        element.style.width = '100%';
+      });
+
+      // Estilos para el elemento pre (resaltado de sintaxis)
+      const preElements = document.querySelectorAll('.code-editor-pre');
+      preElements.forEach((pre) => {
+        const element = pre as HTMLPreElement;
+        element.style.whiteSpace = 'pre';
+        element.style.wordWrap = 'normal';
+        element.style.overflowWrap = 'normal';
+        element.style.wordBreak = 'normal';
+        element.style.overflow = 'visible';
+        element.style.minWidth = '100%';
+        element.style.width = 'max-content';
+      });
+
+      // Estilos para elementos code dentro del pre
+      const codeElements = document.querySelectorAll('.code-editor-pre code');
+      codeElements.forEach((code) => {
+        const element = code as HTMLElement;
+        element.style.whiteSpace = 'pre';
+        element.style.wordWrap = 'normal';
+        element.style.overflowWrap = 'normal';
+        element.style.wordBreak = 'normal';
+      });
+
+      // Estilos para el div wrapper del editor
+      const editorWrappers = document.querySelectorAll('.code-editor-container > div');
+      editorWrappers.forEach((wrapper) => {
+        const element = wrapper as HTMLDivElement;
+        element.style.overflow = 'visible';
+        element.style.minWidth = '100%';
+      });
+    };
+
+    // Aplicar estilos inmediatamente
+    applyStyles();
+    
+    // Aplicar estilos después de un pequeño delay para asegurar que el DOM esté listo
+    const timeout = setTimeout(applyStyles, 100);
+    
+    return () => clearTimeout(timeout);
+  }, [editableCode, generatedCode]);
 
   const t = translations[currentLang];
 
@@ -952,6 +1079,7 @@ if __name__ == "__main__":
         : generatePythonTemplate(serverConfig, parsedParameters);
       
       setGeneratedCode(template);
+      setEditableCode(template);
     } catch (error) {
       console.error('Error generating:', error);
     } finally {
@@ -960,9 +1088,10 @@ if __name__ == "__main__":
   };
 
   const handleDownload = () => {
-    if (!generatedCode) return;
+    const codeToDownload = editableCode || generatedCode;
+    if (!codeToDownload) return;
     
-    const blob = new Blob([generatedCode], { type: 'text/plain' });
+    const blob = new Blob([codeToDownload], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -974,9 +1103,10 @@ if __name__ == "__main__":
   };
 
   const handleCopyToClipboard = async () => {
-    if (generatedCode) {
+    const codeToCopy = editableCode || generatedCode;
+    if (codeToCopy) {
       try {
-        await navigator.clipboard.writeText(generatedCode);
+        await navigator.clipboard.writeText(codeToCopy);
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
       } catch (err) {
@@ -1062,6 +1192,45 @@ if __name__ == "__main__":
 
   return (
     <div className="my-8 p-6 border border-skin-border rounded-lg bg-skin-card shadow-sm">
+      {/* Estilos CSS para el editor de código */}
+      <style dangerouslySetInnerHTML={{
+        __html: `
+          .code-editor-container {
+            overflow: auto !important;
+            overflow-x: auto !important;
+            overflow-y: auto !important;
+          }
+          .code-editor-container > div {
+            overflow: visible !important;
+            min-width: 100% !important;
+          }
+          .code-editor-textarea {
+            white-space: pre !important;
+            word-wrap: normal !important;
+            overflow-wrap: normal !important;
+            overflow: hidden !important;
+            resize: none !important;
+            min-width: 100% !important;
+            width: 100% !important;
+          }
+          .code-editor-pre {
+            white-space: pre !important;
+            word-wrap: normal !important;
+            overflow-wrap: normal !important;
+            word-break: normal !important;
+            overflow: visible !important;
+            min-width: 100% !important;
+            width: max-content !important;
+          }
+          .code-editor-pre code {
+            white-space: pre !important;
+            word-wrap: normal !important;
+            overflow-wrap: normal !important;
+            word-break: normal !important;
+          }
+        `
+      }} />
+      
       {isHydrated && (
         <>
           <h3 className="text-base font-semibold mb-4 text-skin-accent">
@@ -1649,11 +1818,11 @@ if __name__ == "__main__":
               </div>
             )}
 
-            {/* Generated Code Display */}
+            {/* Generated Code Display with Editor */}
             {generatedCode && (
               <div className="mt-6">
                 <div className="flex justify-between items-center mb-3">
-                  <h4 className="text-lg font-medium text-skin-base">Generated MCP Code:</h4>
+                  <h4 className="text-lg font-medium text-skin-base">{t.generatedCodeLabel}</h4>
                   <div className="flex space-x-2">
                     <button
                       type="button"
@@ -1671,9 +1840,45 @@ if __name__ == "__main__":
                     </button>
                   </div>
                 </div>
-                <pre className="bg-skin-fill p-4 rounded-lg border border-skin-border overflow-x-auto text-sm">
-                  <code className="text-skin-base">{generatedCode}</code>
-                </pre>
+                <div 
+                  className="code-editor-container border border-skin-border rounded-lg"
+                  style={{
+                    height: '500px',
+                    maxHeight: '600px',
+                    overflow: 'auto',
+                    position: 'relative'
+                  }}
+                >
+                  <div style={{ 
+                    minWidth: 'max-content',
+                    minHeight: '500px',
+                    width: '100%'
+                  }}>
+                    <Editor
+                      value={editableCode}
+                      onValueChange={code => setEditableCode(code)}
+                      highlight={code => Prism.highlight(code, language === 'nodejs' ? Prism.languages.js : Prism.languages.python, language === 'nodejs' ? 'javascript' : 'python')}
+                      padding={16}
+                      textareaClassName="code-editor-textarea"
+                      preClassName="code-editor-pre"
+                      style={{
+                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace',
+                        fontSize: 14,
+                        backgroundColor: currentTheme === 'dark' ? 'rgb(39, 40, 34)' : 'rgb(250, 250, 250)',
+                        color: currentTheme === 'dark' ? 'rgb(248, 248, 242)' : 'rgb(51, 51, 51)',
+                        minHeight: '500px',
+                        border: 'none',
+                        outline: 'none',
+                        resize: 'none',
+                        width: '100%',
+                        minWidth: 'max-content'
+                      }}
+                    />
+                  </div>
+                </div>
+                <p className="text-xs text-skin-base/60 mt-2">
+                  {t.editCodeLabel}: Puedes editar el código directamente en el editor de arriba
+                </p>
               </div>
             )}
           </form>
