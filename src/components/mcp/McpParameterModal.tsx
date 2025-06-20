@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import type { ParsedParameter } from './types';
 
 interface Props {
   isOpen: boolean;
   parameter: ParsedParameter | null;
-  onSave: () => void;
+  onSave: (updatedParameter: ParsedParameter) => void;
   onCancel: () => void;
   onChange: (field: keyof ParsedParameter, value: any) => void;
   t: any;
@@ -20,7 +20,66 @@ const McpParameterModal: React.FC<Props> = ({
   t, 
   isNew = false 
 }) => {
-  if (!isOpen || !parameter) return null;
+  const [localParameter, setLocalParameter] = useState<ParsedParameter | null>(null);
+  const modalKeyRef = useRef<string>('');
+
+  // Inicializar el parámetro local solo cuando se abre el modal con un parámetro diferente
+  useEffect(() => {
+    if (isOpen && parameter) {
+      const newKey = `${parameter.name}-${parameter.type}-${parameter.description}`;
+      if (newKey !== modalKeyRef.current) {
+        modalKeyRef.current = newKey;
+        setLocalParameter({ ...parameter });
+      }
+    } else if (!isOpen) {
+      modalKeyRef.current = '';
+      setLocalParameter(null);
+    }
+  }, [isOpen, parameter]);
+
+  if (!isOpen || !localParameter) return null;
+
+  const handleTypeChange = (newType: 'option' | 'argument' | 'flag') => {
+    // Actualizar el parámetro local
+    const updatedParameter = { ...localParameter, type: newType };
+    
+    // Auto-configurar valores según el tipo
+    if (newType === 'flag') {
+      updatedParameter.takesValue = false;
+      updatedParameter.expectsValue = false;
+      updatedParameter.required = false;
+    } else if (newType === 'option') {
+      updatedParameter.takesValue = true;
+      updatedParameter.expectsValue = true;
+      updatedParameter.required = false;
+    } else if (newType === 'argument') {
+      updatedParameter.takesValue = true;
+      updatedParameter.expectsValue = true;
+      // required se mantiene como esté
+    }
+    
+    setLocalParameter(updatedParameter);
+    
+    // Propagar cambios al padre
+    onChange('type', newType);
+    onChange('takesValue', updatedParameter.takesValue);
+    onChange('expectsValue', updatedParameter.expectsValue);
+    if (newType !== 'argument') {
+      onChange('required', updatedParameter.required);
+    }
+  };
+
+  const handleFieldChange = (field: keyof ParsedParameter, value: any) => {
+    const updatedParameter = { ...localParameter, [field]: value };
+    setLocalParameter(updatedParameter);
+    onChange(field, value);
+  };
+
+  const handleSave = () => {
+    if (localParameter) {
+      onSave(localParameter);
+    }
+  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -36,8 +95,8 @@ const McpParameterModal: React.FC<Props> = ({
             </label>
             <input
               type="text"
-              value={parameter.name}
-              onChange={(e) => onChange('name', e.target.value)}
+              value={localParameter.name}
+              onChange={(e) => handleFieldChange('name', e.target.value)}
               placeholder={isNew ? t.newParameterPlaceholder : undefined}
               className="w-full p-2 border border-skin-border rounded-md bg-skin-fill text-skin-base focus:outline-none focus:ring-2 focus:ring-skin-accent"
             />
@@ -48,8 +107,8 @@ const McpParameterModal: React.FC<Props> = ({
               {t.parameterDescriptionLabel}
             </label>
             <textarea
-              value={parameter.description}
-              onChange={(e) => onChange('description', e.target.value)}
+              value={localParameter.description}
+              onChange={(e) => handleFieldChange('description', e.target.value)}
               placeholder={isNew ? t.newParameterDescriptionPlaceholder : undefined}
               className="w-full p-2 border border-skin-border rounded-md bg-skin-fill text-skin-base focus:outline-none focus:ring-2 focus:ring-skin-accent resize-vertical"
               rows={3}
@@ -61,33 +120,8 @@ const McpParameterModal: React.FC<Props> = ({
               {t.parameterTypeLabel}
             </label>
             <select
-              value={parameter.type}
-              onChange={(e) => {
-                const newType = e.target.value as 'option' | 'argument' | 'flag';
-                
-                // Crear un nuevo objeto con todos los cambios
-                const updatedParameter = { ...parameter, type: newType };
-                
-                // Auto-configurar valores según el tipo
-                if (newType === 'flag') {
-                  updatedParameter.takesValue = false;
-                  updatedParameter.expectsValue = false;
-                  updatedParameter.required = false;
-                } else if (newType === 'option') {
-                  updatedParameter.takesValue = true;
-                  updatedParameter.expectsValue = true;
-                  updatedParameter.required = false;
-                } else if (newType === 'argument') {
-                  updatedParameter.takesValue = true;
-                  updatedParameter.expectsValue = true;
-                  // required se mantiene como esté
-                }
-                
-                // Aplicar todos los cambios
-                Object.entries(updatedParameter).forEach(([key, value]) => {
-                  onChange(key as keyof ParsedParameter, value);
-                });
-              }}
+              value={localParameter.type}
+              onChange={(e) => handleTypeChange(e.target.value as 'option' | 'argument' | 'flag')}
               className="w-full p-2 border border-skin-border rounded-md bg-skin-fill text-skin-base focus:outline-none focus:ring-2 focus:ring-skin-accent"
             >
               <option value="flag">{t.flagDescription}</option>
@@ -97,13 +131,13 @@ const McpParameterModal: React.FC<Props> = ({
           </div>
           
           <div className="grid grid-cols-1 gap-4">
-            {parameter.type === 'argument' && (
+            {localParameter.type === 'argument' && (
               <div>
                 <label className="flex items-center">
                   <input
                     type="checkbox"
-                    checked={parameter.required}
-                    onChange={(e) => onChange('required', e.target.checked)}
+                    checked={localParameter.required}
+                    onChange={(e) => handleFieldChange('required', e.target.checked)}
                     className="mr-2"
                   />
                   {t.parameterRequiredLabel} (Argumento obligatorio)
@@ -114,7 +148,7 @@ const McpParameterModal: React.FC<Props> = ({
               </div>
             )}
             
-            {parameter.type === 'option' && (
+            {localParameter.type === 'option' && (
               <div>
                 <div className="text-sm text-skin-base/70 mb-2">
                   <strong>{t.optionHelp}</strong>
@@ -127,7 +161,7 @@ const McpParameterModal: React.FC<Props> = ({
               </div>
             )}
             
-            {parameter.type === 'flag' && (
+            {localParameter.type === 'flag' && (
               <div>
                 <div className="text-sm text-skin-base/70 mb-2">
                   <strong>{t.flagHelp}</strong>
@@ -145,8 +179,8 @@ const McpParameterModal: React.FC<Props> = ({
         <div className="flex space-x-3 mt-6">
           <button
             type="button"
-            onClick={onSave}
-            disabled={isNew && (!parameter.name.trim() || !parameter.description.trim())}
+            onClick={handleSave}
+            disabled={isNew && (!localParameter.name.trim() || !localParameter.description.trim())}
             className="px-4 py-2 bg-green-600 text-white font-medium rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {t.saveChangesLabel}

@@ -571,10 +571,10 @@ export default function McpCreator() {
     setEditedParameter({ ...paramToEdit });
   };
 
-  const handleSaveParameter = () => {
-    if (editingParameter && editedParameter) {
+  const handleSaveParameter = (updatedParameter: ParsedParameter) => {
+    if (editingParameter) {
       const updatedParameters = parsedParameters.map(p =>
-        p === editingParameter ? editedParameter : p
+        p === editingParameter ? updatedParameter : p
       );
       setParsedParameters(updatedParameters);
       setEditingParameter(null);
@@ -589,7 +589,8 @@ export default function McpCreator() {
 
   const handleParameterChange = (field: keyof ParsedParameter, value: any) => {
     if (editedParameter) {
-      setEditedParameter({ ...editedParameter, [field]: value });
+      const newEditedParameter = { ...editedParameter, [field]: value };
+      setEditedParameter(newEditedParameter);
     }
   };
 
@@ -610,9 +611,10 @@ export default function McpCreator() {
     });
   };
 
-  const handleSaveNewParameter = () => {
-    if (newParameter.name.trim() && newParameter.description.trim()) {
-      setParsedParameters([...parsedParameters, newParameter]);
+  const handleSaveNewParameter = (newParam?: ParsedParameter) => {
+    const parameterToSave = newParam || newParameter;
+    if (parameterToSave.name.trim() && parameterToSave.description.trim()) {
+      setParsedParameters([...parsedParameters, parameterToSave]);
       setAddingNewParameter(false);
       setNewParameter({
         name: '',
@@ -928,6 +930,7 @@ export default function McpCreator() {
 
       {/* Modales de parámetros */}
       <McpParameterModal
+        key={`edit-${editingParameter?.name || 'none'}`}
         isOpen={!!editingParameter}
         parameter={editedParameter}
         onSave={handleSaveParameter}
@@ -938,6 +941,7 @@ export default function McpCreator() {
       />
 
       <McpParameterModal
+        key="new-parameter"
         isOpen={addingNewParameter}
         parameter={newParameter}
         onSave={handleSaveNewParameter}
