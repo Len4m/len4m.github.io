@@ -1,0 +1,56 @@
+---
+import Layout from "@layouts/Layout.astro";
+import Header from "@components/Header.astro";
+import Footer from "@components/Footer.astro";
+import McpCreatorComponent from "@components/McpCreator";
+import { SITE } from "@config";
+---
+
+<Layout 
+  title="Generador de Servidores MCP - Crear Servidores MCP (Model Context Protocol) desde Ayuda de Binarios | Lenam"
+  description="Genera automáticamente servidores MCP (Model Context Protocol) completos desde texto de ayuda de binarios. Soporta plantillas Node.js y Python. Analiza opciones de línea de comandos, flags y argumentos para crear servidores MCP listos para desarrollo para cualquier herramienta CLI."
+>
+  <Header />
+  
+  <main id="main-content">
+    <article id="article" class="prose mx-auto mt-8 max-w-3xl">
+      <div class="mb-8">
+        <h1 class="text-3xl font-bold text-skin-accent mb-4">
+          Generador de Servidores MCP
+        </h1>
+        <blockquote class="mb-6 pl-4 border-l-4 border-skin-accent">
+          <p class="text-sm text-skin-base mb-2">
+            MCP (Model Context Protocol) es un protocolo que permite a los LLMs conectarse con herramientas externas, fuentes de datos y sistemas.
+          </p>
+          <a 
+            href="https://modelcontextprotocol.io/docs/mcp" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            class="text-sm text-skin-accent hover:underline font-medium"
+          >
+            Documentación oficial de MCP →
+          </a>
+        </blockquote>
+        <p class="mb-4">
+          Genera automáticamente servidores MCP (Model Context Protocol) desde documentación 
+          de ayuda de binarios. Analiza opciones de línea de comandos, flags y argumentos para crear 
+          servidores MCP listos para desarrollo para cualquier herramienta o comando CLI.
+        </p>
+        <div class="bg-skin-muted px-4 rounded-lg">
+          <h2 class="text-lg font-semibold mb-2">Cómo funciona:</h2>
+          <ol class="list-decimal list-inside space-y-1 text-sm text-skin-muted">
+            <li>Pega la salida de ayuda de cualquier comando (ej: <code class="bg-skin-fill px-1 rounded">ls --help</code>)</li>
+            <li>Configura los parámetros de tu servidor MCP (nombre, descripción, versión)</li>
+            <li>Elige tu lenguaje de programación preferido (Node.js o Python)</li>
+            <li>Genera un servidor MCP completo para desarrollo y pruebas</li>
+          </ol>
+        </div>
+      </div>
+      
+      <McpCreatorComponent client:load />
+  </article>
+   
+  </main>
+  
+  <Footer />
+</Layout> 

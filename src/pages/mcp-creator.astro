@@ -1,0 +1,55 @@
+---
+import Layout from "@layouts/Layout.astro";
+import Header from "@components/Header.astro";
+import Footer from "@components/Footer.astro";
+import McpCreatorComponent from "@components/McpCreator";
+import { SITE } from "@config";
+---
+
+<Layout 
+  title="MCP Server Generator - Create Model Context Protocol Servers from Binary Help | Lenam"
+  description="Generate complete MCP (Model Context Protocol) servers automatically from binary help text. Supports Node.js and Python templates. Parse command-line options, flags, and arguments to create production-ready MCP servers for any CLI tool."
+>
+  <Header />
+  
+  <main id="main-content">
+    <article id="article" class="prose mx-auto mt-8 max-w-3xl">
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-skin-accent mb-4">
+        MCP Server Generator
+      </h1>
+      <blockquote class="mb-6 pl-4 border-l-4 border-skin-accent">
+        <p class="text-sm text-skin-base mb-2">
+          MCP (Model Context Protocol) is a protocol that enables LLMs to connect with external tools, data sources, and systems.
+        </p>
+        <a 
+          href="https://modelcontextprotocol.io/docs/mcp" 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          class="text-sm text-skin-accent hover:underline font-medium"
+        >
+          Official MCP documentation →
+        </a>
+      </blockquote>
+      <p>
+        Automatically generate Model Context Protocol (MCP) servers from binary help documentation. 
+        Parse command-line options, flags, and arguments to create development-ready MCP servers 
+        for any CLI tool or command.
+      </p>
+      <div class="bg-skin-muted px-4 rounded-lg">
+        <h2 class="text-lg font-semibold mb-2">How it works:</h2>
+        <ol class="list-decimal list-inside space-y-1 text-sm text-skin-muted">
+          <li>Paste the help output from any command (e.g., <code class="bg-skin-fill px-1 rounded">ls --help</code>)</li>
+          <li>Configure your MCP server parameters (name, description, version)</li>
+          <li>Choose your preferred programming language (Node.js or Python)</li>
+          <li>Generate a complete MCP server for development and testing</li>
+        </ol>
+      </div>
+    </div>
+    
+    <McpCreatorComponent client:load />
+    </article>
+  </main>
+  
+  <Footer />
+</Layout> 
