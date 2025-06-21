@@ -3,11 +3,14 @@ import type { ServerConfig, ParsedParameter, SecurityConfig } from '../types';
 export function generatePythonTemplate(config: ServerConfig, params: ParsedParameter[], securityConfig: SecurityConfig): string {
   const securityCode = generateSecurityCode(securityConfig);
   
+  // Limpiar el nombre para que sea válido como nombre de clase en Python
+  const className = config.name.replace(/[^a-zA-Z0-9]/g, '') + 'Server';
+  
   const paramDefinitions = params.map(param => {
     const cleanName = param.name.replace(/[^a-zA-Z0-9]/g, '_');
     const type = param.type === 'flag' ? 'bool' : 'str';
     const required = param.required ? 'True' : 'False';
-    const description = param.description.replace('"', '\\"');
+    const description = param.description.replace(/"/g, '\\"');
     
     return `        "${cleanName}": {
             "type": "${type}",
@@ -23,23 +26,29 @@ export function generatePythonTemplate(config: ServerConfig, params: ParsedParam
     const cleanName = param.name.replace(/[^a-zA-Z0-9]/g, '_');
     
     if (param.type === 'flag') {
-      return `if ${cleanName}:\n            command.append("${param.name}")`;
+      return `        if ${cleanName}:
+            command.append("${param.name}")`;
     } else if (param.type === 'option') {
       if (param.takesValue && param.expectsValue) {
         if (param.name.includes('=')) {
-          return `if ${cleanName}:\n            command.extend(["${param.name.replace('=', '')}=", str(${cleanName})])`;
+          return `        if ${cleanName}:
+            command.extend(["${param.name.replace('=', '')}=", str(${cleanName})])`;
         } else {
-          return `if ${cleanName}:\n            command.extend(["${param.name}", str(${cleanName})])`;
+          return `        if ${cleanName}:
+            command.extend(["${param.name}", str(${cleanName})])`;
         }
       } else if (param.takesValue) {
-        return `if ${cleanName}:\n            command.append("${param.name}")`;
+        return `        if ${cleanName}:
+            command.append("${param.name}")`;
       } else {
-        return `if ${cleanName}:\n            command.append("${param.name}")`;
+        return `        if ${cleanName}:
+            command.append("${param.name}")`;
       }
     } else {
-      return `if ${cleanName}:\n            command.append(str(${cleanName}))`;
+      return `        if ${cleanName}:
+            command.append(str(${cleanName}))`;
     }
-  }).join('\n        ');
+  }).join('\n');
 
   const executionCode = securityConfig.enabled ?
     `            # Validar seguridad antes de ejecutar
@@ -71,7 +80,7 @@ export function generatePythonTemplate(config: ServerConfig, params: ParsedParam
                 }` :
     `            # Execute command
             try:
-                cwd = config.workingDirectory if hasattr(config, 'workingDirectory') and config.workingDirectory else None
+                cwd = "${config.workingDirectory}" if "${config.workingDirectory}" else None
                 result = subprocess.run(
                     command, 
                     capture_output=True, 
@@ -117,60 +126,67 @@ import subprocess
 from typing import Dict, Any
 from mcp.server import Server
 from mcp.server.stdio import stdio_server
-from mcp.types import Tool
+from mcp.types import Tool, InitializationOptions, NotificationOptions
 ${securityCode}
 
-class ${config.name.charAt(0).toUpperCase() + config.name.slice(1)}Server(Server):
-    def __init__(self):
-        super().__init__(
-            name="${config.name}",
-            version="${config.version}",
-            description="${config.description}"
-        )
+server = Server("${config.name}")
 
-    async def initialize(self):
-        # Register tools
-        await self.register_tool(
-            Tool(
-                name="execute_${config.binaryName}",
-                description="Execute ${config.binaryName} command with parameters. This tool allows you to run ${config.binaryName} commands with various options and arguments.",
-                input_schema={
-                    "type": "object",
-                    "properties": {
+@server.list_tools()
+async def handle_list_tools() -> list[Tool]:
+    return [
+        Tool(
+            name="execute_${config.binaryName}",
+            description="Execute ${config.binaryName} command with parameters. This tool allows you to run ${config.binaryName} commands with various options and arguments.",
+            inputSchema={
+                "type": "object",
+                "properties": {
 ${paramDefinitions}
-                    },
-                    "required": [${requiredParams.join(', ')}]
-                }
-            ),
-            self.execute_${config.binaryName}
-        )
-
-    async def execute_${config.binaryName}(self, args: Dict[str, Any]):
-        try:
-            # Extract parameters
-            ${paramNames.map(name => `${name} = args.get("${name}")`).join('\n            ')}
-            
-            # Build command
-            command = ["${config.binaryName}"]
-            ${commandBuilding}
-            
-${executionCode}
-            
-        except Exception as e:
-            return {
-                "content": [{
-                    "type": "text",
-                    "text": f"❌ Unexpected error: {str(e)}"
-                }]
+                },
+                "required": [${requiredParams.join(', ')}]
             }
+        )
+    ]
 
-async def main():
-    server = ${config.name.charAt(0).toUpperCase() + config.name.slice(1)}Server()
+@server.call_tool()
+async def handle_call_tool(name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
+    if name != "execute_${config.binaryName}":
+        raise ValueError(f"Unknown tool: {name}")
+    
+    try:
+        # Extract parameters
+        ${paramNames.map(name => `${name} = arguments.get("${name}")`).join('\n        ')}
+        
+        # Build command
+        command = ["${config.binaryName}"]
+${commandBuilding}
+        
+${executionCode}
+        
+    except Exception as e:
+        return {
+            "content": [{
+                "type": "text",
+                "text": f"❌ Unexpected error: {str(e)}"
+            }]
+        }
+
+async def run():
     async with stdio_server() as (read_stream, write_stream):
-        await server.run(read_stream, write_stream)
+        await server.run(
+            read_stream,
+            write_stream,
+            InitializationOptions(
+                server_name="${config.name}",
+                server_version="${config.version}",
+                capabilities=server.get_capabilities(
+                    notification_options=NotificationOptions(),
+                    experimental_capabilities={},
+                ),
+            ),
+        )
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    asyncio.run(run())
 `;
 }
 

@@ -3,6 +3,9 @@ import type { ServerConfig, ParsedParameter, SecurityConfig } from '../types';
 export function generateNodeJSTemplate(config: ServerConfig, params: ParsedParameter[], securityConfig: SecurityConfig): string {
   const securityCode = generateSecurityCode(securityConfig);
   
+  // Limpiar el nombre para que sea válido como nombre de clase en JavaScript
+  const className = config.name.replace(/[^a-zA-Z0-9]/g, '') + 'Server';
+  
   const paramDefinitions = params.map(param => {
     const cleanName = param.name.replace(/[^a-zA-Z0-9]/g, '_');
     const type = param.type === 'flag' ? 'boolean' : 'string';
@@ -106,7 +109,7 @@ const { promisify } = require('util');
 const execAsync = promisify(exec);
 ${securityCode}
 
-class ${config.name.charAt(0).toUpperCase() + config.name.slice(1)}Server extends Server {
+class ${className} extends Server {
   constructor() {
     super({
       name: '${config.name}',
@@ -149,8 +152,10 @@ ${executionCode}
   }
 }
 
-const server = new ${config.name.charAt(0).toUpperCase() + config.name.slice(1)}Server();
-server.listen(new StdioServerTransport());
+(async () => {
+  const server = new ${className}();
+  await server.connect(new StdioServerTransport());
+})();
 `;
 }
 
@@ -291,7 +296,7 @@ async function executeSecurely(binaryName, args, workingDirectory) {
       resolve(stdout || 'Command executed successfully');
     });
   });
-}`;
-
-  return securityCode;
-} 
+}
+`;
+  return '';
+}
