@@ -1,7 +1,7 @@
 import type { ServerConfig, ParsedParameter, SecurityConfig } from '../types';
 
 export function generateNodeJSTemplate(config: ServerConfig, params: ParsedParameter[], securityConfig: SecurityConfig): string {
-  const securityCode = generateSecurityCode(securityConfig);
+  const securityCode = generateSecurityCode(config);
   
   // Limpiar el nombre para que sea válido como nombre de clase en JavaScript
   const className = config.name.replace(/[^a-zA-Z0-9]/g, '') + 'Server';
@@ -241,6 +241,44 @@ function validateSecurityConstraints(params, command) {`;
       // Remover caracteres peligrosos básicos
       params[key] = value.replace(/[;&|]/g, '').replace(/\`/g, '').replace(/\$/g, '');
     }
+  }`;
+  }
+
+  if (securityConfig.validation.enableOutputFiltering) {
+    securityCode += `
+  // Función para filtrar salida
+  function filterOutput(output) {
+    if (!output) return output;
+    
+    // Remover información sensible
+    const sensitivePatterns = [
+      /password\\s*[:=]\\s*[^\\s]+/gi,
+      /token\\s*[:=]\\s*[^\\s]+/gi,
+      /key\\s*[:=]\\s*[^\\s]+/gi,
+      /secret\\s*[:=]\\s*[^\\s]+/gi
+    ];
+    
+    let filteredOutput = output;
+    sensitivePatterns.forEach(pattern => {
+      filteredOutput = filteredOutput.replace(pattern, (match) => {
+        const parts = match.split(/[:=]/);
+        return parts[0] + ': [REDACTED]';
+      });
+    });
+    
+    return filteredOutput;
+  }`;
+  }
+
+  if (securityConfig.validation.enableCommandWhitelist) {
+    securityCode += `
+  // Lista blanca de comandos permitidos
+  const allowedCommands = ['${config.binaryName}'];
+  const commandParts = command.split(' ');
+  const baseCommand = commandParts[0];
+  
+  if (!allowedCommands.includes(baseCommand)) {
+    throw new Error('Comando no permitido: ' + baseCommand);
   }`;
   }
 

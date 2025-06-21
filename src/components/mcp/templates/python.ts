@@ -267,6 +267,40 @@ def validate_security_constraints(params, command):`;
             params[key] = value`;
   }
 
+  if (securityConfig.validation.enableOutputFiltering) {
+    securityCode += `
+    # Función para filtrar salida
+    def filter_output(output):
+        if not output:
+            return output
+        
+        # Remover información sensible
+        import re
+        sensitive_patterns = [
+            r'password\\s*[:=]\\s*[^\\s]+',
+            r'token\\s*[:=]\\s*[^\\s]+',
+            r'key\\s*[:=]\\s*[^\\s]+',
+            r'secret\\s*[:=]\\s*[^\\s]+'
+        ]
+        
+        filtered_output = output
+        for pattern in sensitive_patterns:
+            filtered_output = re.sub(pattern, lambda m: m.group().split('=')[0] + '= [REDACTED]', filtered_output, flags=re.IGNORECASE)
+        
+        return filtered_output`;
+  }
+
+  if (securityConfig.validation.enableCommandWhitelist) {
+    securityCode += `
+    # Lista blanca de comandos permitidos
+    allowed_commands = ['${config.binaryName}']
+    command_parts = command.split(' ')
+    base_command = command_parts[0]
+    
+    if base_command not in allowed_commands:
+        raise ValueError(f'Comando no permitido: {base_command}')`;
+  }
+
   // Validaciones de parámetros específicos
   if (securityConfig.parameterSecurity.length > 0) {
     securityCode += `

@@ -99,11 +99,11 @@ const McpParameters: React.FC<Props> = ({
         </button>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredParameters.map((param) => (
           <div key={param.name} className="p-4 bg-skin-fill rounded-lg border border-skin-border flex flex-col justify-between hover:border-skin-accent transition-colors">
             <div>
-              <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center justify-between">
                 <div className="font-mono text-base text-skin-accent break-all">{param.name}</div>
                 <div className="flex items-center space-x-1">
                   <button
@@ -130,7 +130,7 @@ const McpParameters: React.FC<Props> = ({
                   </button>
                 </div>
               </div>
-              <p className="text-sm text-skin-base mb-3 line-clamp-3">{param.description}</p>
+              <p className="text-sm text-skin-base mb-3 line-clamp-3 mt-1">{param.description}</p>
             </div>
             <div className="flex items-center space-x-3 text-xs">
               <span className={`px-2 py-1 rounded-full text-white font-medium ${

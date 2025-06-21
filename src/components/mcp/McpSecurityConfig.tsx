@@ -228,21 +228,23 @@ const McpSecurityConfig: React.FC<Props> = ({ securityConfig, onChange, t }) => 
               <h5 className="text-md font-medium text-skin-base mb-3">{t.sandboxingLabel}</h5>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="flex items-center space-x-2">
+                  <label className="flex items-center space-x-2 opacity-50 cursor-not-allowed">
                     <input
                       type="checkbox"
                       checked={securityConfig.sandboxing.useContainer}
                       onChange={(e) => handleSecurityFieldChange('sandboxing', 'useContainer', e.target.checked)}
                       className="h-4 w-4 text-skin-accent focus:ring-skin-accent border-skin-border rounded"
+                      disabled
                     />
                     <span className="text-sm text-skin-base">{t.useContainerLabel}</span>
                   </label>
-                  <label className="flex items-center space-x-2">
+                  <label className="flex items-center space-x-2 opacity-50 cursor-not-allowed">
                     <input
                       type="checkbox"
                       checked={securityConfig.sandboxing.networkIsolation}
                       onChange={(e) => handleSecurityFieldChange('sandboxing', 'networkIsolation', e.target.checked)}
                       className="h-4 w-4 text-skin-accent focus:ring-skin-accent border-skin-border rounded"
+                      disabled
                     />
                     <span className="text-sm text-skin-base">{t.networkIsolationLabel}</span>
                   </label>
