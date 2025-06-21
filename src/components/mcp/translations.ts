@@ -149,9 +149,11 @@ export const translations: Record<string, Translations> = {
     workingDirectoryLabel: "Working Directory:",
     workingDirectoryPlaceholder: "e.g., /home/user/projects, ./scripts",
     workingDirectoryHelp: "Directory where commands will be executed (optional, uses current directory if empty)",
-    parameterNamePlaceholderFlag: "--flagname or -f",
-    parameterNamePlaceholderOption: "--optionname or -o",
-    parameterNamePlaceholderArgument: "ARGUMENT_NAME"
+    parameterNamePlaceholderFlag: '--verbose, -v',
+    parameterNamePlaceholderOption: '--output, -o',
+    parameterNamePlaceholderArgument: 'nom_fitxer',
+    filesystemRestrictionsPlaceholder: 'Introdueix rutes restringides, una per línia',
+    runAsUserPlaceholder: 'Introdueix el nom d\'usuari per executar comandaments'
   },
   es: {
     title: "Creador de MCP",
@@ -301,9 +303,11 @@ export const translations: Record<string, Translations> = {
     workingDirectoryLabel: "Directorio de Trabajo:",
     workingDirectoryPlaceholder: "ej: /home/usuario/proyectos, ./scripts",
     workingDirectoryHelp: "Directorio donde se ejecutarán los comandos (opcional, usa el directorio actual si está vacío)",
-    parameterNamePlaceholderFlag: "--nombrebandera o -n",
-    parameterNamePlaceholderOption: "--nombreopcion o -n",
-    parameterNamePlaceholderArgument: "NOMBRE_ARGUMENTO"
+    parameterNamePlaceholderFlag: '--verbose, -v',
+    parameterNamePlaceholderOption: '--output, -o',
+    parameterNamePlaceholderArgument: 'nombre_archivo',
+    filesystemRestrictionsPlaceholder: 'Introduce rutas restringidas, una por línea',
+    runAsUserPlaceholder: 'Introduce el nombre de usuario para ejecutar comandos'
   },
   ca: {
     title: "Creador de MCP",
@@ -411,7 +415,7 @@ export const translations: Record<string, Translations> = {
     editCodeLabel: "Editar Codi",
     generatedCodeLabel: "MCP Server generat",
     securityConfigLabel: "Configuració de Seguretat",
-    enableSecurityLabel: "Habilitar Seguretat",
+    enableSecurityLabel: "Habilitar Característiques de Seguretat",
     securityLevelLabel: "Nivell de Seguretat",
     securityLevelBasic: "Bàsic",
     securityLevelIntermediate: "Intermedi",
@@ -435,7 +439,7 @@ export const translations: Record<string, Translations> = {
     enableOutputFilteringLabel: "Habilitar Filtrat de Sortida",
     enableCommandWhitelistLabel: "Habilitar Llista Blanca de Comandaments",
     parameterSecurityLabel: "Seguretat de Paràmetres",
-    addParameterSecurityLabel: "Afegir Validació de Paràmetre",
+    addParameterSecurityLabel: "Afegir Regla de Seguretat de Paràmetre",
     securityHelpText: "Les característiques de seguretat ajuden a protegir el teu sistema d'execució maliciosa o no intencionada de comandaments.",
     validationErrors: "Errors de validació:",
     binaryNameHelp: "Lletres, números, punts, guions i guions baixos. Ha de començar amb lletra. Suporta binaris i scripts (ex: tool.sh, script.py).",
@@ -453,8 +457,10 @@ export const translations: Record<string, Translations> = {
     workingDirectoryLabel: "Directori de Treball:",
     workingDirectoryPlaceholder: "ex: /home/usuari/projectes, ./scripts",
     workingDirectoryHelp: "Directori on s'executaran les comandes (opcional, usa el directori actual si està buit)",
-    parameterNamePlaceholderFlag: "--nombandera o -n",
-    parameterNamePlaceholderOption: "--nomopcio o -n",
-    parameterNamePlaceholderArgument: "NOM_ARGUMENT"
+    parameterNamePlaceholderFlag: '--verbose, -v',
+    parameterNamePlaceholderOption: '--output, -o',
+    parameterNamePlaceholderArgument: 'nom_fitxer',
+    filesystemRestrictionsPlaceholder: 'Introdueix rutes restringides, una per línia',
+    runAsUserPlaceholder: 'Introdueix el nom d\'usuari per executar comandaments'
   }
 }; 

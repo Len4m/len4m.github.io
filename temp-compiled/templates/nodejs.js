@@ -1,56 +1,50 @@
-import type { ServerConfig, ParsedParameter, SecurityConfig } from '../types';
-
-export function generateNodeJSTemplate(config: ServerConfig, params: ParsedParameter[], securityConfig: SecurityConfig): string {
-  const securityCode = generateSecurityCode(config, securityConfig);
-  
-  // Limpiar el nombre para que sea válido como nombre de clase en JavaScript
-  const className = config.name.replace(/[^a-zA-Z0-9]/g, '') + 'Server';
-  
-  const paramDefinitions = params.map(param => {
-    const cleanName = param.name.replace(/[^a-zA-Z0-9]/g, '_');
-    const type = param.type === 'flag' ? 'boolean' : 'string';
-    const required = param.required ? 'true' : 'false';
-    // Escapar descripción para comillas simples: saltos de línea, comillas y caracteres especiales
-    const description = param.description
-      .replace(/'/g, "\\'")
-      .replace(/\n/g, '\\n')
-      .replace(/\r/g, '\\r')
-      .replace(/\t/g, '\\t');
-    
-    return `    ${cleanName}: {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.generateNodeJSTemplate = generateNodeJSTemplate;
+function generateNodeJSTemplate(config, params, securityConfig) {
+    const securityCode = generateSecurityCode(config, securityConfig);
+    // Limpiar el nombre para que sea válido como nombre de clase en JavaScript
+    const className = config.name.replace(/[^a-zA-Z0-9]/g, '') + 'Server';
+    const paramDefinitions = params.map(param => {
+        const cleanName = param.name.replace(/[^a-zA-Z0-9]/g, '_');
+        const type = param.type === 'flag' ? 'boolean' : 'string';
+        const required = param.required ? 'true' : 'false';
+        const description = param.description.replace(/'/g, "\\'");
+        return `    ${cleanName}: {
       type: '${type}',
       description: '${description}',
       required: ${required}
     }`;
-  }).join(',\n');
-
-  const paramNames = params.map(p => p.name.replace(/[^a-zA-Z0-9]/g, '_'));
-  const requiredParams = params.filter(p => p.required).map(p => `'${p.name.replace(/[^a-zA-Z0-9]/g, '_')}'`);
-
-  const commandBuilding = params.map(param => {
-    const cleanName = param.name.replace(/[^a-zA-Z0-9]/g, '_');
-    
-    if (param.type === 'flag') {
-      return `          if (${cleanName}) command += ' ${param.name}';`;
-    } else if (param.type === 'option') {
-      if (param.takesValue && param.expectsValue) {
-        if (param.name.includes('=')) {
-          return `          if (${cleanName}) command += ' ${param.name.replace('=', '')}=' + ${cleanName};`;
-        } else {
-          return `          if (${cleanName}) command += ' ${param.name} ' + ${cleanName};`;
+    }).join(',\n');
+    const paramNames = params.map(p => p.name.replace(/[^a-zA-Z0-9]/g, '_'));
+    const requiredParams = params.filter(p => p.required).map(p => `'${p.name.replace(/[^a-zA-Z0-9]/g, '_')}'`);
+    const commandBuilding = params.map(param => {
+        const cleanName = param.name.replace(/[^a-zA-Z0-9]/g, '_');
+        if (param.type === 'flag') {
+            return `          if (${cleanName}) command += ' ${param.name}';`;
         }
-      } else if (param.takesValue) {
-        return `          if (${cleanName}) command += ' ${param.name}';`;
-      } else {
-        return `          if (${cleanName}) command += ' ${param.name}';`;
-      }
-    } else {
-      return `          if (${cleanName}) command += ' ' + ${cleanName};`;
-    }
-  }).join('\n');
-
-  const executionCode = securityConfig.enabled ? 
-    `          // Validar seguridad antes de ejecutar
+        else if (param.type === 'option') {
+            if (param.takesValue && param.expectsValue) {
+                if (param.name.includes('=')) {
+                    return `          if (${cleanName}) command += ' ${param.name.replace('=', '')}=' + ${cleanName};`;
+                }
+                else {
+                    return `          if (${cleanName}) command += ' ${param.name} ' + ${cleanName};`;
+                }
+            }
+            else if (param.takesValue) {
+                return `          if (${cleanName}) command += ' ${param.name}';`;
+            }
+            else {
+                return `          if (${cleanName}) command += ' ${param.name}';`;
+            }
+        }
+        else {
+            return `          if (${cleanName}) command += ' ' + ${cleanName};`;
+        }
+    }).join('\n');
+    const executionCode = securityConfig.enabled ?
+        `          // Validar seguridad antes de ejecutar
           try {
             validateSecurityConstraints({ ${paramNames.join(', ')} }, command);
           } catch (securityError) {
@@ -79,7 +73,7 @@ export function generateNodeJSTemplate(config: ServerConfig, params: ParsedParam
               }]
             };
           }` :
-    `          // Execute command
+        `          // Execute command
           try {
             const options = {};
             if ('${config.workingDirectory || ''}' && '${config.workingDirectory || ''}' !== '') {
@@ -105,8 +99,7 @@ export function generateNodeJSTemplate(config: ServerConfig, params: ParsedParam
               }]
             };
           }`;
-
-  return `#!/usr/bin/env node
+    return `#!/usr/bin/env node
 const { Server } = require('@modelcontextprotocol/sdk/server/index.js');
 const { StdioServerTransport } = require('@modelcontextprotocol/sdk/server/stdio.js');
 const {
@@ -195,11 +188,10 @@ main().catch((error) => {
 });
 `;
 }
-
-function generateSecurityCode(config: ServerConfig, securityConfig: SecurityConfig): string {
-  if (!securityConfig.enabled) return '';
-
-  let securityCode = `
+function generateSecurityCode(config, securityConfig) {
+    if (!securityConfig.enabled)
+        return '';
+    let securityCode = `
 // ==================== CONFIGURACIÓN DE SEGURIDAD ====================
 
 // Validaciones de seguridad
@@ -258,6 +250,5 @@ async function executeSecurely(binary, args, workingDir) {
 
 // ==================== FIN CONFIGURACIÓN DE SEGURIDAD ====================
 `;
-
-  return securityCode;
+    return securityCode;
 }
