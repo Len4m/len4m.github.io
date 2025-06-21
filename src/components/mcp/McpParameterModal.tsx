@@ -81,6 +81,20 @@ const McpParameterModal: React.FC<Props> = ({
     }
   };
 
+  // Función para generar placeholder dinámico según el tipo
+  const getParameterNamePlaceholder = (type: 'option' | 'argument' | 'flag'): string => {
+    switch (type) {
+      case 'flag':
+        return '--nombrebandera o -n';
+      case 'option':
+        return '--nombreopcion o -n';
+      case 'argument':
+        return 'NOMBRE_ARGUMENTO';
+      default:
+        return '';
+    }
+  };
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-skin-fill p-6 rounded-lg max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
@@ -97,7 +111,7 @@ const McpParameterModal: React.FC<Props> = ({
               type="text"
               value={localParameter.name}
               onChange={(e) => handleFieldChange('name', e.target.value)}
-              placeholder={isNew ? t.newParameterPlaceholder : undefined}
+              placeholder={getParameterNamePlaceholder(localParameter.type)}
               className="w-full p-2 border border-skin-border rounded-md bg-skin-fill text-skin-base focus:outline-none focus:ring-2 focus:ring-skin-accent"
             />
           </div>

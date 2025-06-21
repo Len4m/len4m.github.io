@@ -14,6 +14,7 @@ import McpParameterModal from './mcp/McpParameterModal';
 import McpInstructions from './mcp/McpInstructions';
 import { generateNodeJSTemplate, generatePythonTemplate } from './mcp/templates';
 import McpGenerateButton from './mcp/McpGenerateButton';
+import { parseBinaryHelp } from './mcp/parseBinaryHelp';
 
 interface ParsedParameter {
   name: string;
@@ -246,239 +247,6 @@ export default function McpCreator() {
   }, [editableCode, generatedCode]);
 
   const t = translations[currentLang];
-
-  // Función para parsear la ayuda del binario
-  const parseBinaryHelp = (helpText: string): ParsedParameter[] => {
-    const parameters: ParsedParameter[] = [];
-    const lines = helpText.split('\n');
-    
-    // Patrones mejorados para diferentes tipos de opciones y argumentos
-    const patterns = [
-      // Opciones largas con argumentos: --option=VALUE o --option VALUE
-      /^\s*([-]{2}[a-zA-Z0-9-]+)(?:[= ]([^,\n]+))?\s*(.+)?$/,
-      // Opciones cortas y largas combinadas: -a, --all
-      /^\s*([-][a-zA-Z0-9]),\s*([-]{2}[a-zA-Z0-9-]+)\s+(.+)$/,
-      // Opciones cortas individuales: -a
-      /^\s*([-][a-zA-Z0-9])\s+(.+)$/,
-      // Opciones largas individuales: --all
-      /^\s*([-]{2}[a-zA-Z0-9-]+)\s+(.+)$/,
-      // Argumentos posicionales en mayúsculas: [FICHERO] o {target} o SERIALPORT
-      /^\s*([A-Z_]+|[\[{][A-Z_]+[\]}])\s+(.+)$/,
-      // Opciones con formato especial: -p <port ranges>
-      /^\s*([-][a-zA-Z0-9])\s*[<\[][^>\]]+[>\]]\s+(.+)$/,
-      // Opciones largas con formato especial: --script=<Lua scripts>
-      /^\s*([-]{2}[a-zA-Z0-9-]+)\s*[<\[][^>\]]+[>\]]\s+(.+)$/,
-      // Opciones con valores específicos: -m ascii, -t 0
-      /^\s*([-][a-zA-Z0-9])\s+([a-zA-Z0-9:]+)\s+(.+)$/,
-      // Opciones con valores numéricos: -a #, -r #
-      /^\s*([-][a-zA-Z0-9])\s+#\s+(.+)$/,
-      // Opciones largas con valores específicos: --from=PROPIETARIO_ACTUAL:GRUPO_ACTUAL
-      /^\s*([-]{2}[a-zA-Z0-9-]+)=([A-Z_]+(?::[A-Z_]+)?)\s+(.+)$/,
-      // Comandos disponibles: dir, dns, fuzz
-      /^\s*([a-zA-Z0-9-]+)\s+(.+)$/,
-      // Argumentos de uso: [OPCIÓN]..., MODO[,MODO]...
-      /^\s*([\[{][A-Z_]+[\]}][.,]*)\s+(.+)$/
-    ];
-
-    let currentSection = '';
-    let inUsageSection = false;
-    let inOptionsSection = false;
-    let inCommandsSection = false;
-    
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i].trim();
-      
-      // Detectar secciones importantes
-      if (line.match(/^Usage:/) || line.match(/^Modo de empleo:/)) {
-        inUsageSection = true;
-        inOptionsSection = false;
-        inCommandsSection = false;
-        continue;
-      }
-      
-      if (line.match(/^(Available Commands|Commands):/)) {
-        inCommandsSection = true;
-        inUsageSection = false;
-        inOptionsSection = false;
-        continue;
-      }
-      
-      if (line.match(/^(General options|Options|Flags):/)) {
-        inOptionsSection = true;
-        inUsageSection = false;
-        inCommandsSection = false;
-        continue;
-      }
-      
-      // Detectar secciones (títulos en mayúsculas)
-      if (line.match(/^[A-Z][A-Z\s]+:$/)) {
-        currentSection = line.replace(':', '').trim();
-        inUsageSection = false;
-        inOptionsSection = false;
-        inCommandsSection = false;
-        continue;
-      }
-      
-      // Saltar líneas vacías o que no contengan opciones
-      if (!line || 
-          line.startsWith('Copyright') ||
-          line.startsWith('Visit') ||
-          line.startsWith('ayuda en línea') ||
-          line.startsWith('Full documentation') ||
-          line.startsWith('Report any') ||
-          line.startsWith('Examples:') ||
-          line.startsWith('Ejemplos:') ||
-          line.startsWith('Use "') ||
-          line.startsWith('Cada MODO') ||
-          line.startsWith('El propietario') ||
-          line.startsWith('Arguments:') ||
-          line.startsWith('Options for')) {
-        continue;
-      }
-      
-      // Procesar cada patrón
-      for (const pattern of patterns) {
-        const match = line.match(pattern);
-        if (match) {
-          const [, option1, option2, description] = match;
-          
-          // Si tenemos dos opciones (formato -a, --all)
-          if (option2 && option2.startsWith('--')) {
-            // Añadir la opción corta
-            parameters.push({
-              name: option1,
-              description: description || '',
-              type: 'flag',
-              required: false,
-              takesValue: false,
-              expectsValue: false
-            });
-            
-            // Añadir la opción larga
-            parameters.push({
-              name: option2,
-              description: description || '',
-              type: option2.includes('=') ? 'option' : 'flag',
-              required: false,
-              takesValue: false,
-              expectsValue: false
-            });
-            break;
-          }
-          
-          // Opción individual
-          if (option1) {
-            const name = option1.trim();
-            const desc = (option2 || description || '').trim();
-            
-            // Determinar el tipo de parámetro
-            let type: 'option' | 'argument' | 'flag' = 'flag';
-            let required = false;
-            
-            if (name.startsWith('--')) {
-              // Opción larga
-              if (name.includes('=') || desc.includes('<') || desc.includes('[') || desc.includes('#')) {
-                type = 'option';
-              } else {
-                type = 'flag';
-              }
-            } else if (name.startsWith('-')) {
-              // Opción corta
-              if (desc.includes('<') || desc.includes('[') || desc.includes('=') || desc.includes('#')) {
-                type = 'option';
-              } else if (desc.match(/^[a-zA-Z0-9:]+/)) {
-                // Si la descripción empieza con un valor específico, es una opción
-                type = 'option';
-              } else {
-                type = 'flag';
-              }
-            } else {
-              // Argumento posicional o comando
-              if (inCommandsSection) {
-                type = 'argument';
-                required = false; // Los comandos son opcionales
-              } else if (name.match(/^[A-Z_]+$/) || name.match(/^[\[{][A-Z_]+[\]}]/)) {
-                type = 'argument';
-                required = !name.includes('['); // Los argumentos entre [] son opcionales
-              } else {
-                type = 'argument';
-                required = false;
-              }
-            }
-            
-            // Verificar si ya existe este parámetro
-            const exists = parameters.find(p => p.name === name);
-            if (!exists) {
-              parameters.push({
-                name,
-                description: desc,
-                type,
-                required,
-                takesValue: false,
-                expectsValue: false
-              });
-            }
-          }
-          break;
-        }
-      }
-      
-      // Buscar líneas de continuación (descripciones multilínea)
-      if (line.startsWith(' ') && parameters.length > 0) {
-        const lastParam = parameters[parameters.length - 1];
-        if (lastParam.description) {
-          lastParam.description += ' ' + line.trim();
-        }
-      }
-    }
-    
-    // Post-procesamiento: limpiar y mejorar descripciones
-    parameters.forEach(param => {
-      // Limpiar descripciones
-      param.description = param.description
-        .replace(/^\s*[,;]\s*/, '') // Remover comas y puntos y coma al inicio
-        .replace(/\s+/, ' ') // Normalizar espacios
-        .replace(/\([^)]*\)/g, '') // Remover paréntesis con contenido
-        .trim();
-      
-      // Mejorar detección de tipos según convenciones
-      if (param.name.startsWith('-') || param.name.startsWith('--')) {
-        // Es una opción o flag
-        if (param.description.includes('<') || 
-            param.description.includes('=') || 
-            param.description.includes('#') ||
-            param.description.match(/^[a-zA-Z0-9:]+/)) {
-          param.type = 'option';
-          param.takesValue = true;
-          param.expectsValue = true;
-          param.required = false;
-        } else {
-          param.type = 'flag';
-          param.takesValue = false;
-          param.expectsValue = false;
-          param.required = false;
-        }
-      } else {
-        // Es un argumento posicional
-        param.type = 'argument';
-        param.takesValue = true;
-        param.expectsValue = true;
-        // required se mantiene como se detectó originalmente
-      }
-      
-      // Limpiar nombres de parámetros
-      param.name = param.name.replace(/[\[\]{}]/g, '');
-    });
-    
-    // Filtrar parámetros duplicados y vacíos
-    const uniqueParams = parameters.filter((param, index, self) => 
-      param.name && 
-      param.description && 
-      index === self.findIndex(p => p.name === param.name)
-    );
-    
-    return uniqueParams;
-  };
 
   const handleParse = async () => {
     if (!inputText.trim()) return;
@@ -759,7 +527,7 @@ export default function McpCreator() {
       
       {isHydrated && (
         <>
-          <h3 className="text-base font-semibold mb-4 text-skin-accent">
+          <h3 className="font-semibold mb-4 mt-0 text-skin-accent">
             {t.title}
           </h3>
           
@@ -803,6 +571,14 @@ export default function McpCreator() {
             <div className="flex space-x-4">
               <button
                 type="button"
+                onClick={handleAddNewParameter}
+                className="px-4 py-2 bg-green-600 text-white font-medium rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors duration-200"
+              >
+                {t.addNewParameterLabel}
+              </button>
+
+              <button
+                type="button"
                 onClick={handleParse}
                 disabled={isParsing || !inputText.trim()}
                 className="px-4 py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
@@ -819,19 +595,22 @@ export default function McpCreator() {
                   t.parseButtonText
                 )}
               </button>
-
-              <McpGenerateButton
-                isGenerating={isGenerating}
-                disabled={isGenerating || parsedParameters.length === 0 || !serverConfig.name || !serverConfig.binaryName}
-                onClick={handleGenerate}
-                t={t}
-                className="px-4 py-2 bg-green-600 text-white font-medium rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
-              />
             </div>
 
-            {/* Parsed Parameters Display */}
-            {parsedParameters.length > 0 && (
-              <>
+            {/* Parameters Section - Always show if there are parameters or to encourage adding them */}
+            <div className="border-t border-skin-border pt-6">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="font-semibold text-skin-base">{t.analyzedParametersLabel}</h3>
+                <button
+                  type="button"
+                  onClick={handleAddNewParameter}
+                  className="px-3 py-1 bg-green-600 text-white text-sm rounded hover:bg-green-700 transition-colors"
+                >
+                  {t.addNewParameterLabel}
+                </button>
+              </div>
+              
+              {parsedParameters.length > 0 ? (
                 <McpParameters
                   parsedParameters={parsedParameters}
                   filterType={filterType}
@@ -841,44 +620,59 @@ export default function McpCreator() {
                   onAddNewParameter={handleAddNewParameter}
                   t={t}
                 />
-                
-                {/* Botón de generar MCP al final de los parámetros */}
-                  <div className="mt-6 pt-4 border-t border-skin-border">
-                    <div className="flex justify-center">
-                    <McpGenerateButton
-                      isGenerating={isGenerating}
-                        disabled={isGenerating || !serverConfig.name || !serverConfig.binaryName}
-                      onClick={handleGenerate}
-                      t={t}
-                    />
-                    </div>
-                    <p className="text-xs text-skin-base/60 text-center mt-2">
-                      {t.generateMCPHelp}
-                    </p>
-                  </div>
-              </>
-                )}
+              ) : (
+                <div className="text-center py-8 border-2 border-dashed border-skin-border rounded-lg">
+                  <p className="text-skin-base/60 mb-4">{t.noParametersFound}</p>
+                  <button
+                    type="button"
+                    onClick={handleAddNewParameter}
+                    className="px-4 py-2 bg-green-600 text-white font-medium rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors duration-200"
+                  >
+                    {t.addNewParameterLabel}
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Generate MCP Button - Show when we have parameters and config */}
+            {parsedParameters.length > 0 && (
+              <div className="flex justify-center pt-4">
+                <McpGenerateButton
+                  isGenerating={isGenerating}
+                  disabled={isGenerating || !serverConfig.name || !serverConfig.binaryName}
+                  onClick={handleGenerate}
+                  t={t}
+                  className="px-6 py-3 bg-green-600 text-white font-medium rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+                />
+              </div>
+            )}
           </form>
 
             {/* Generated Code Display with Editor */}
             {generatedCode && (
               <div className="mt-6">
                 <div className="flex justify-between items-center mb-3">
-                  <h4 className="text-lg font-medium text-skin-base">{t.generatedCodeLabel}</h4>
+                  <h2 className="font-semibold mt-0">{t.generatedCodeLabel}</h2>
                   <div className="flex space-x-2">
                     <button
                       type="button"
                       onClick={handleCopyToClipboard}
+                      title={copied ? t.copiedToClipboard : t.copyToClipboard}
                       className="px-3 py-1 bg-skin-accent text-skin-inverted text-sm rounded hover:bg-skin-accent-hover transition-colors"
                     >
-                      {copied ? t.copiedToClipboard : t.copyToClipboard}
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                      </svg>
                     </button>
                     <button
                       type="button"
                       onClick={handleDownload}
+                      title={t.downloadButtonText}
                       className="px-3 py-1 bg-green-600 text-white text-sm rounded hover:bg-green-700 transition-colors"
                     >
-                      {t.downloadButtonText}
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
                     </button>
                   </div>
                 </div>

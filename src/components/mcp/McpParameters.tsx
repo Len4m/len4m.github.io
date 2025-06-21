@@ -29,7 +29,7 @@ const McpParameters: React.FC<Props> = ({
       {/* Parámetros Analizados */}
       <div className="mb-4">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-xl font-semibold text-skin-base">
+          <h3 className="mt-0">
             {t.analyzedParametersLabel}
           </h3>
           <button

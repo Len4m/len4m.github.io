@@ -7,7 +7,7 @@ interface Props {
 const McpInstructions: React.FC<Props> = ({ t }) => {
   return (
     <div className="mt-8 p-4 bg-skin-fill rounded-lg border border-skin-border">
-      <h2 className="text-base font-semibold mb-2">{t.installationTitle}</h2>
+      <h2 className="font-semibold mb-2 mt-0">{t.installationTitle}</h2>
       <div className="space-y-4">
         <div>
           <h3 className="font-medium text-skin-base mb-2">{t.prerequisitesTitle}</h3>

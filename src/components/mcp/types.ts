@@ -89,6 +89,9 @@ export interface Translations {
   newParameterPlaceholder: string;
   newParameterDescriptionLabel: string;
   newParameterDescriptionPlaceholder: string;
+  parameterNamePlaceholderFlag: string;
+  parameterNamePlaceholderOption: string;
+  parameterNamePlaceholderArgument: string;
   analyzedParametersLabel: string;
   mcpDescription: string;
   mcpOfficialDocs: string;
