@@ -1,7 +1,7 @@
 ---
 author: Lenam
 pubDatetime: 2025-07-22T15:22:00Z
-title: Creador de servidores MCP de binarios o scripts
+title: Creador de Servidores MCP - Genera servidores para binarios y scripts
 slug: mcp-creator-es
 featured: true
 draft: false
@@ -17,13 +17,13 @@ lang: es
 
 ¡Hola, desarrolladores curiosos! 👋 
 
-Te presento el **Creador de Servidores MCP**, una herramienta web que convierte la creación de servidores MCP en algo tan fácil como hacer un café ☕ (bueno, casi). Esta herramienta está diseñada para **dar superpoderes a los LLMs**, permitiéndoles ejecutar binarios y scripts directamente en la consola y obtener los resultados. Genera código de servidores MCP en Node.js y Python que actúan como puente entre los modelos de lenguaje y tus herramientas favoritas de línea de comandos.
-
 ![Creador de Servidores MCP](/assets/mcp-creator/OpenGraph.png)
+
+Te presento el **Creador de Servidores MCP**, una herramienta web que convierte la creación de servidores MCP en algo tan fácil como hacer un café ☕ (bueno, casi). Esta herramienta está diseñada para **dar superpoderes a los LLMs**, permitiéndoles ejecutar binarios y scripts directamente en la consola y obtener los resultados. Genera código de servidores MCP en Node.js y Python que actúan como puente entre los modelos de lenguaje y tus herramientas favoritas de línea de comandos.
 
 ## ⚠️ Disclaimer importante
 
-Antes de que te emociones demasiado: esta herramienta es para **pruebas de concepto, aprendizaje y desarrollo experimental**. No nos hacemos responsables si decides usarla para algo que no deberías. Úsala con responsabilidad y solo en entornos controlados. ¡Gracias por tu comprensión! 🙏
+Antes de que te emociones demasiado: esta herramienta es para **pruebas de concepto, aprendizaje y desarrollo experimental**. No me hago responsable si decides usarla para algo que no deberías. Úsala con responsabilidad y solo en entornos controlados. ¡Gracias por tu comprensión! 🙏
 
 **[🔗 MCP Creator - Generador de Servidores MCP](/es/mcp-creator/)**
 
@@ -93,10 +93,10 @@ Recuerda: esto es para aprender y experimentar. ¡Diviértete, pero sé responsa
 
 ## 🚧 **En desarrollo activo (pero no muy serio)**
 
-Esta herramienta está en constante evolución y mejora, aunque tampoco es que estemos trabajando día y noche en ella 😅. Si tienes sugerencias, encuentras algún bug o quieres contribuir con mejoras, ¡nos encantaría escucharte!
+Esta herramienta está en constante evolución y mejora, aunque tampoco es que esté trabajando día y noche en ella 😅. Si tienes sugerencias, encuentras algún bug o quieres contribuir con mejoras, ¡me encantaría escucharte!
 
-**¿Cómo contactarnos?**
+**¿Cómo contactarme?**
 - **Discord**: Búscame en Discord y comparte tus ideas (si es que tienes tiempo libre)
-- **Email**: Envíanos un mensaje con tus sugerencias o reportes (respondemos cuando podemos)
+- **Email**: Envíame un mensaje con tus sugerencias o reportes (respondo cuando puedo)
 
-¡Tu feedback es invaluable para hacer esta herramienta aún mejor! 🚀 (Aunque no prometemos implementar todo lo que sugieras)
+¡Tu feedback es invaluable para hacer esta herramienta aún mejor! 🚀 (Aunque no prometo implementar todo lo que sugieras)
