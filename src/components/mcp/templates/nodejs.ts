@@ -204,43 +204,45 @@ function generateSecurityCode(config: ServerConfig, securityConfig: SecurityConf
 
 // Validaciones de seguridad
 function validateSecurityConstraints(args, command) {
-  // Validar argumentos prohibidos
-  const forbiddenArgs = ${JSON.stringify(securityConfig.forbiddenArgs || [])};
-  for (const arg of forbiddenArgs) {
-    if (command.includes(arg)) {
-      throw new Error(\`Forbidden argument detected: \${arg}\`);
+  // Validar patrones prohibidos
+  const forbiddenPatterns = ${JSON.stringify(securityConfig.restrictions.forbiddenPatterns || [])};
+  for (const pattern of forbiddenPatterns) {
+    if (command.includes(pattern)) {
+      throw new Error(\`Forbidden pattern detected: \${pattern}\`);
     }
   }
   
-  // Validar patrones peligrosos
-  const dangerousPatterns = ${JSON.stringify(securityConfig.dangerousPatterns || [])};
-  for (const pattern of dangerousPatterns) {
-    if (new RegExp(pattern).test(command)) {
-      throw new Error(\`Dangerous pattern detected: \${pattern}\`);
+  // Validar hosts permitidos
+  const allowedHosts = ${JSON.stringify(securityConfig.restrictions.allowedHosts || [])};
+  if (allowedHosts.length > 0) {
+    const hostArg = args.host || args.target || args.url;
+    if (hostArg && !allowedHosts.includes(hostArg)) {
+      throw new Error(\`Host not allowed: \${hostArg}\`);
     }
   }
   
-  // Validar directorios prohibidos
-  const forbiddenDirs = ${JSON.stringify(securityConfig.forbiddenDirs || [])};
-  for (const dir of forbiddenDirs) {
-    if (command.includes(dir)) {
-      throw new Error(\`Forbidden directory detected: \${dir}\`);
+  // Validar usuarios permitidos
+  const allowedUsers = ${JSON.stringify(securityConfig.restrictions.allowedUsers || [])};
+  if (allowedUsers.length > 0) {
+    const currentUser = process.env.USER || process.env.USERNAME || 'unknown';
+    if (!allowedUsers.includes(currentUser)) {
+      throw new Error(\`User not allowed: \${currentUser}\`);
     }
   }
 }
 
 // Ejecución segura de comandos
 async function executeSecurely(binary, args, workingDir) {
-  // Validar que el binario está permitido
-  const allowedBinaries = ${JSON.stringify(securityConfig.allowedBinaries || [config.binaryName])};
-  if (!allowedBinaries.includes(binary)) {
+  // Validar que el binario está permitido (solo el binario configurado)
+  const allowedBinary = '${config.binaryName}';
+  if (binary !== allowedBinary) {
     throw new Error(\`Binary not allowed: \${binary}\`);
   }
   
   // Ejecutar con restricciones
   const options = {
-    timeout: ${securityConfig.timeout || 30000},
-    maxBuffer: ${securityConfig.maxBuffer || 1024 * 1024}
+    timeout: ${securityConfig.restrictions.maxExecutionTime * 1000 || 30000},
+    maxBuffer: ${securityConfig.restrictions.maxMemoryMB * 1024 * 1024 || 1024 * 1024}
   };
   
   if (workingDir && workingDir !== '') {
