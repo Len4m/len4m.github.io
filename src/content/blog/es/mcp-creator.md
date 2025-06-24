@@ -1,7 +1,7 @@
 ---
 author: Lenam
 pubDatetime: 2025-07-22T15:22:00Z
-title: Creador de Servidores MCP - Genera servidores para binarios y scripts
+title: Creador de Servidores MCP, superpoderes para tu LLM
 slug: mcp-creator-es
 featured: true
 draft: false

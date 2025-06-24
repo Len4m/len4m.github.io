@@ -1,66 +1,64 @@
-import type { ServerConfig, ParsedParameter, SecurityConfig } from '../types';
-
-export function generatePythonTemplate(config: ServerConfig, params: ParsedParameter[], securityConfig: SecurityConfig): string {
-  const securityCode = generateSecurityCode(config, securityConfig);
-  
-  // Limpiar el nombre para que sea válido como nombre de clase en Python
-  const className = config.name.replace(/[^a-zA-Z0-9]/g, '') + 'Server';
-  
-  const paramDefinitions = params.map(param => {
-    const cleanName = param.name.replace(/[^a-zA-Z0-9]/g, '_');
-    const type = param.type === 'flag' ? 'boolean' : 'string';
-    const required = param.required ? 'True' : 'False';
-    // Escapar descripción para comillas dobles en Python: saltos de línea, comillas y caracteres especiales
-    const description = param.description
-      .replace(/"/g, '\\"')
-      .replace(/\n/g, '\\n')
-      .replace(/\r/g, '\\r')
-      .replace(/\t/g, '\\t');
-    
-    return `            "${cleanName}": {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.generatePythonTemplate = generatePythonTemplate;
+function generatePythonTemplate(config, params, securityConfig) {
+    const securityCode = generateSecurityCode(config, securityConfig);
+    // Limpiar el nombre para que sea válido como nombre de clase en Python
+    const className = config.name.replace(/[^a-zA-Z0-9]/g, '') + 'Server';
+    const paramDefinitions = params.map(param => {
+        const cleanName = param.name.replace(/[^a-zA-Z0-9]/g, '_');
+        const type = param.type === 'flag' ? 'boolean' : 'string';
+        const required = param.required ? 'True' : 'False';
+        // Escapar descripción para comillas dobles en Python: saltos de línea, comillas y caracteres especiales
+        const description = param.description
+            .replace(/"/g, '\\"')
+            .replace(/\n/g, '\\n')
+            .replace(/\r/g, '\\r')
+            .replace(/\t/g, '\\t');
+        return `            "${cleanName}": {
                 "type": "${type}",
                 "description": "${description}",
                 "required": ${required}
             }`;
-  }).join(',\n');
-
-  const paramNames = params.map(p => p.name.replace(/[^a-zA-Z0-9]/g, '_'));
-  const requiredParams = params.filter(p => p.required).map(p => `"${p.name.replace(/[^a-zA-Z0-9]/g, '_')}"`);
-
-  const commandBuilding = params.map(param => {
-    const cleanName = param.name.replace(/[^a-zA-Z0-9]/g, '_');
-    
-    if (param.type === 'flag') {
-      return `        if ${cleanName}:
+    }).join(',\n');
+    const paramNames = params.map(p => p.name.replace(/[^a-zA-Z0-9]/g, '_'));
+    const requiredParams = params.filter(p => p.required).map(p => `"${p.name.replace(/[^a-zA-Z0-9]/g, '_')}"`);
+    const commandBuilding = params.map(param => {
+        const cleanName = param.name.replace(/[^a-zA-Z0-9]/g, '_');
+        if (param.type === 'flag') {
+            return `        if ${cleanName}:
             command.append("${param.name}")`;
-    } else if (param.type === 'option') {
-      if (param.takesValue && param.expectsValue) {
-        if (param.name.includes('=')) {
-          return `        if ${cleanName}:
-            command.append("${param.name.replace('=', '')}=" + str(${cleanName}))`;
-        } else {
-          return `        if ${cleanName}:
-            command.extend(["${param.name}", str(${cleanName})])`;
         }
-      } else if (param.takesValue) {
-        return `        if ${cleanName}:
+        else if (param.type === 'option') {
+            if (param.takesValue && param.expectsValue) {
+                if (param.name.includes('=')) {
+                    return `        if ${cleanName}:
+            command.append("${param.name.replace('=', '')}=" + str(${cleanName}))`;
+                }
+                else {
+                    return `        if ${cleanName}:
+            command.extend(["${param.name}", str(${cleanName})])`;
+                }
+            }
+            else if (param.takesValue) {
+                return `        if ${cleanName}:
             command.append("${param.name}")`;
-      } else {
-        return `        if ${cleanName}:
+            }
+            else {
+                return `        if ${cleanName}:
             command.append("${param.name}")`;
-      }
-    } else {
-      return `        if ${cleanName}:
+            }
+        }
+        else {
+            return `        if ${cleanName}:
             command.append(str(${cleanName}))`;
-    }
-  }).join('\n');
-
-  // Manejar caso cuando no hay parámetros
-  const paramExtraction = paramNames.length > 0 ? paramNames.map(name => `${name} = arguments.get("${name}")`).join('\n            ') : '# No parameters to extract';
-  const requiredArray = requiredParams.length > 0 ? `[${requiredParams.join(', ')}]` : '[]';
-
-  const executionCode = securityConfig.enabled ? 
-    `        # Validar seguridad antes de ejecutar
+        }
+    }).join('\n');
+    // Manejar caso cuando no hay parámetros
+    const paramExtraction = paramNames.length > 0 ? paramNames.map(name => `${name} = arguments.get("${name}")`).join('\n            ') : '# No parameters to extract';
+    const requiredArray = requiredParams.length > 0 ? `[${requiredParams.join(', ')}]` : '[]';
+    const executionCode = securityConfig.enabled ?
+        `        # Validar seguridad antes de ejecutar
         try:
             validate_security_constraints({${paramNames.length > 0 ? paramNames.map(name => `"${name}": ${name}`).join(', ') : ''}}, command)
         except Exception as security_error:
@@ -81,7 +79,7 @@ export function generatePythonTemplate(config: ServerConfig, params: ParsedParam
                 type="text",
                 text=f"❌ Command execution failed: {exec_error}"
             )]` :
-    `        # Execute command
+        `        # Execute command
         try:
             working_dir = "${config.workingDirectory || ''}" if "${config.workingDirectory || ''}" else None
             result = subprocess.run(
@@ -109,8 +107,7 @@ export function generatePythonTemplate(config: ServerConfig, params: ParsedParam
                 type="text",
                 text=f"❌ Command execution failed: {error}"
             )]`;
-
-  return `#!/usr/bin/env python3
+    return `#!/usr/bin/env python3
 """
 ${config.name} MCP Server
 ${config.description}
@@ -207,36 +204,36 @@ if __name__ == "__main__":
     main()
 `;
 }
-
-function generateSecurityCode(config: ServerConfig, securityConfig: SecurityConfig): string {
-  if (!securityConfig.enabled) return '';
-
-  let securityCode = `
+function generateSecurityCode(config, securityConfig) {
+    if (!securityConfig.enabled)
+        return '';
+    let securityCode = `
 # ==================== CONFIGURACIÓN DE SEGURIDAD ====================
 
 # Validaciones de seguridad
 def validate_security_constraints(params: Dict[str, Any], command: List[str]) -> None:
     """Validate security constraints before command execution."""`;
-
-  // Validaciones básicas según el nivel de seguridad
-  if (securityConfig.level === 'basic') {
-    securityCode += `
+    // Validaciones básicas según el nivel de seguridad
+    if (securityConfig.level === 'basic') {
+        securityCode += `
     # Validaciones básicas de seguridad
     dangerous_commands = ['rm -rf', 'format', 'dd if=']
     command_str = ' '.join(command)
     for dangerous in dangerous_commands:
         if dangerous in command_str:
             raise Exception(f'Comando peligroso detectado: {dangerous}')`;
-  } else if (securityConfig.level === 'intermediate') {
-    securityCode += `
+    }
+    else if (securityConfig.level === 'intermediate') {
+        securityCode += `
     # Validaciones intermedias de seguridad
     dangerous_commands = ['rm -rf', 'format', 'dd if=', 'mkfs', 'fdisk', 'parted']
     command_str = ' '.join(command)
     for dangerous in dangerous_commands:
         if dangerous in command_str:
             raise Exception(f'Comando peligroso detectado: {dangerous}')`;
-  } else if (securityConfig.level === 'advanced') {
-    securityCode += `
+    }
+    else if (securityConfig.level === 'advanced') {
+        securityCode += `
     # Validaciones avanzadas de seguridad
     dangerous_commands = ['rm -rf', 'format', 'dd if=', 'mkfs', 'fdisk', 'parted', 'chmod 777', 'chown root']
     dangerous_patterns = [
@@ -255,47 +252,42 @@ def validate_security_constraints(params: Dict[str, Any], command: List[str]) ->
     for pattern in dangerous_patterns:
         if re.search(pattern, command_str):
             raise Exception('Patrón peligroso detectado en comando')`;
-  }
-
-  if (securityConfig.restrictions.allowedHosts.length > 0) {
-    securityCode += `
+    }
+    if (securityConfig.restrictions.allowedHosts.length > 0) {
+        securityCode += `
     # Validar hosts permitidos
     allowed_hosts = ${JSON.stringify(securityConfig.restrictions.allowedHosts)}
     if 'host' in params and params['host'] not in allowed_hosts:
         raise Exception(f'Host no autorizado: {params["host"]}')`;
-  }
-
-  if (securityConfig.restrictions.forbiddenPatterns.length > 0) {
-    securityCode += `
+    }
+    if (securityConfig.restrictions.forbiddenPatterns.length > 0) {
+        securityCode += `
     # Validar patrones prohibidos
     forbidden_patterns = ${JSON.stringify(securityConfig.restrictions.forbiddenPatterns)}
     command_str = ' '.join(command).lower()
     for pattern in forbidden_patterns:
         if pattern.lower() in command_str:
             raise Exception(f'Comando contiene patrón prohibido: {pattern}')`;
-  }
-
-  if (securityConfig.restrictions.allowedUsers.length > 0) {
-    securityCode += `
+    }
+    if (securityConfig.restrictions.allowedUsers.length > 0) {
+        securityCode += `
     # Validar usuarios permitidos
     allowed_users = ${JSON.stringify(securityConfig.restrictions.allowedUsers)}
     current_user = os.environ.get('USER') or os.environ.get('USERNAME') or 'unknown'
     if current_user not in allowed_users:
         raise Exception(f'Usuario no autorizado: {current_user}')`;
-  }
-
-  if (securityConfig.validation.enableInputSanitization) {
-    securityCode += `
+    }
+    if (securityConfig.validation.enableInputSanitization) {
+        securityCode += `
     # Sanitizar entrada
     for key, value in params.items():
         if isinstance(value, str):
             # Remover caracteres peligrosos básicos
             dangerous_chars = r"[;&|` + "`" + `$]"
             params[key] = re.sub(dangerous_chars, "", str(value))`;
-  }
-
-  if (securityConfig.validation.enableOutputFiltering) {
-    securityCode += `
+    }
+    if (securityConfig.validation.enableOutputFiltering) {
+        securityCode += `
     
 def filter_output(output: str) -> str:
     """Filter sensitive information from command output."""
@@ -315,21 +307,19 @@ def filter_output(output: str) -> str:
         filtered_output = re.sub(pattern, lambda m: m.group().split(':', 1)[0] + ': [REDACTED]', filtered_output, flags=re.IGNORECASE)
     
     return filtered_output`;
-  }
-
-  if (securityConfig.validation.enableCommandWhitelist) {
-    securityCode += `
+    }
+    if (securityConfig.validation.enableCommandWhitelist) {
+        securityCode += `
     # Lista blanca de comandos permitidos
     allowed_commands = ['${config.binaryName}']
     base_command = command[0] if command else ''
     
     if base_command not in allowed_commands:
         raise Exception(f'Comando no permitido: {base_command}')`;
-  }
-
-  // Validaciones de parámetros específicos
-  if (securityConfig.parameterSecurity.length > 0) {
-    securityCode += `
+    }
+    // Validaciones de parámetros específicos
+    if (securityConfig.parameterSecurity.length > 0) {
+        securityCode += `
     # Validaciones de parámetros específicos
     parameter_validations = ${JSON.stringify(securityConfig.parameterSecurity)}
     for validation in parameter_validations:
@@ -342,9 +332,8 @@ def filter_output(output: str) -> str:
                 raise Exception(f'Formato inválido para {param_name}: {param_value}')
             if 'maxLength' in validation and len(str(param_value)) > validation['maxLength']:
                 raise Exception(f'{param_name} excede la longitud máxima de {validation["maxLength"]} caracteres')`;
-  }
-
-  securityCode += `
+    }
+    securityCode += `
 
 def execute_securely(binary_name: str, args: List[str], working_directory: Optional[str] = None) -> str:
     """Execute commands securely with restrictions."""
@@ -376,6 +365,5 @@ def execute_securely(binary_name: str, args: List[str], working_directory: Optio
     except Exception as error:
         raise Exception(f'Error ejecutando comando: {error}')
 `;
-
-  return securityCode;
-} 
+    return securityCode;
+}

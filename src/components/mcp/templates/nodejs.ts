@@ -49,10 +49,14 @@ export function generateNodeJSTemplate(config: ServerConfig, params: ParsedParam
     }
   }).join('\n');
 
+  // Manejar caso cuando no hay parámetros
+  const paramDestructuring = paramNames.length > 0 ? `const { ${paramNames.join(', ')} } = request.params.arguments || {};` : '// No parameters to extract';
+  const requiredArray = requiredParams.length > 0 ? `[${requiredParams.join(', ')}]` : '[]';
+
   const executionCode = securityConfig.enabled ? 
     `          // Validar seguridad antes de ejecutar
           try {
-            validateSecurityConstraints({ ${paramNames.join(', ')} }, command);
+            validateSecurityConstraints({ ${paramNames.length > 0 ? paramNames.join(', ') : ''} }, command);
           } catch (securityError) {
             return {
               content: [{
@@ -145,7 +149,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           properties: {
 ${paramDefinitions}
           },
-          required: [${requiredParams.join(', ')}]
+          required: ${requiredArray}
         }
       }
     ]
@@ -157,7 +161,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   if (request.params.name === 'execute_${config.binaryName}') {
     try {
       // Extraer parámetros
-      const { ${paramNames.join(', ')} } = request.params.arguments || {};
+      ${paramDestructuring}
       
       // Construir comando
       let command = '${config.binaryName}';
