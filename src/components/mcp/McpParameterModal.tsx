@@ -129,25 +129,6 @@ const McpParameterModal: React.FC<Props> = ({
             />
           </div>
           
-          {/* Campo valor por defecto solo para option y argument */}
-          {(localParameter.type === 'option' || localParameter.type === 'argument') && (
-            <div>
-              <label className="block text-sm font-medium text-skin-base mb-1">
-                {t.parameterDefaultValueLabel || 'Default Value'}
-              </label>
-              <input
-                type="text"
-                value={localParameter.defaultValue || ''}
-                onChange={(e) => handleFieldChange('defaultValue', e.target.value || undefined)}
-                placeholder={t.parameterDefaultValuePlaceholder || 'e.g., true, false, "default text"'}
-                className="w-full p-2 border border-skin-border rounded-md bg-skin-fill text-skin-base focus:outline-none focus:ring-2 focus:ring-skin-accent"
-              />
-              <p className="text-xs text-skin-base/60 mt-1">
-                {t.parameterDefaultValueHelp || 'Optional default value for this parameter'}
-              </p>
-            </div>
-          )}
-          
           <div>
             <label className="block text-sm font-medium text-skin-base mb-1">
               {t.parameterTypeLabel}
@@ -198,6 +179,25 @@ const McpParameterModal: React.FC<Props> = ({
               </div>
             )}
           </div>
+          
+          {/* Campo valor por defecto al final, solo para option y argument, y solo si no es requerido */}
+          {(localParameter.type === 'option' || localParameter.type === 'argument') && !localParameter.required && (
+            <div>
+              <label className="block text-sm font-medium text-skin-base mb-1">
+                {t.parameterDefaultValueLabel || 'Default Value'}
+              </label>
+              <input
+                type="text"
+                value={localParameter.defaultValue || ''}
+                onChange={(e) => handleFieldChange('defaultValue', e.target.value || undefined)}
+                placeholder={t.parameterDefaultValuePlaceholder || 'e.g., true, false, "default text"'}
+                className="w-full p-2 border border-skin-border rounded-md bg-skin-fill text-skin-base focus:outline-none focus:ring-2 focus:ring-skin-accent"
+              />
+              <p className="text-xs text-skin-base/60 mt-1">
+                {t.parameterDefaultValueHelp || 'Optional default value for this parameter'}
+              </p>
+            </div>
+          )}
         </div>
         
         <div className="flex space-x-3 mt-6">

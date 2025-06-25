@@ -32,7 +32,6 @@ export interface Translations {
   generateButtonText: string;
   generatingText: string;
   downloadButtonText: string;
-  parsedParametersLabel: string;
   noParametersFound: string;
   copyToClipboard: string;
   copiedToClipboard: string;
@@ -40,7 +39,6 @@ export interface Translations {
   filterFlags: string;
   filterOptions: string;
   filterArguments: string;
-  takesValue: string;
   noParametersOfType: string;
   installationTitle: string;
   prerequisitesTitle: string;
@@ -70,8 +68,6 @@ export interface Translations {
   parameterDefaultValueHelp: string;
   parameterTypeLabel: string;
   parameterRequiredLabel: string;
-  parameterTakesValueLabel: string;
-  parameterExpectsValueLabel: string;
   parameterPositionLabel: string;
   parameterPositionPlaceholder: string;
   saveChangesLabel: string;
@@ -80,7 +76,6 @@ export interface Translations {
   no: string;
   flag: string;
   option: string;
-  argument: string;
   flagDescription: string;
   optionDescription: string;
   argumentDescription: string;
@@ -99,20 +94,17 @@ export interface Translations {
   parameterNamePlaceholderOption: string;
   parameterNamePlaceholderArgument: string;
   analyzedParametersLabel: string;
-  mcpDescription: string;
   mcpOfficialDocs: string;
   mcpOfficialDocsLink: string;
   claudeDesktopText: string;
   otherLLMsText: string;
   ollamaText: string;
   ollamaLink: string;
-  configureMCPText: string;
   chatgptText: string;
   chatgptLink: string;
   chatgptHelpText: string;
   editCodeLabel: string;
   generatedCodeLabel: string;
-  securityConfigLabel: string;
   enableSecurityLabel: string;
   securityLevelLabel: string;
   securityLevelBasic: string;
@@ -124,13 +116,10 @@ export interface Translations {
   forbiddenPatternsLabel: string;
   forbiddenPatternsPlaceholder: string;
   maxExecutionTimeLabel: string;
-  allowedUsersLabel: string;
-  allowedUsersPlaceholder: string;
   maxMemoryLabel: string;
   sandboxingLabel: string;
   useContainerLabel: string;
   networkIsolationLabel: string;
-  filesystemRestrictionsLabel: string;
   filesystemRestrictionsPlaceholder: string;
   runAsUserLabel: string;
   runAsUserPlaceholder: string;
@@ -138,8 +127,6 @@ export interface Translations {
   enableInputSanitizationLabel: string;
   enableOutputFilteringLabel: string;
   enableCommandWhitelistLabel: string;
-  parameterSecurityLabel: string;
-  addParameterSecurityLabel: string;
   securityHelpText: string;
   securityBasicHelp: string;
   securityIntermediateHelp: string;
@@ -149,7 +136,6 @@ export interface Translations {
   serverNameHelp: string;
   versionHelp: string;
   descriptionHelp: string;
-  securityTitle: string;
   securityEnabledBinary: string;
   securityEnabledServer: string;
   securityDisabledBinary: string;
@@ -193,7 +179,6 @@ export interface SecurityConfig {
     allowedHosts: string[];
     forbiddenPatterns: string[];
     maxExecutionTime: number;
-    allowedUsers: string[];
     maxMemoryMB: number;
   };
   sandboxing: {
