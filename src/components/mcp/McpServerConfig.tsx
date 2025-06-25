@@ -181,6 +181,23 @@ const McpServerConfig: React.FC<Props> = ({ serverConfig, onChange, t, currentLa
             {t.workingDirectoryHelp}
           </p>
         </div>
+        <div>
+          <label className="block text-sm font-medium text-skin-base mb-1">
+            {t.timeoutLabel}
+          </label>
+          <input
+            type="number"
+            min="1"
+            max="3600"
+            value={serverConfig.timeout || 30}
+            onChange={e => onChange({ ...serverConfig, timeout: parseInt(e.target.value) || 30 })}
+            placeholder={t.timeoutPlaceholder}
+            className="w-full p-2 border border-skin-border rounded-md bg-skin-fill text-skin-base focus:outline-none focus:ring-2 focus:ring-skin-accent"
+          />
+          <p className="text-xs text-skin-base/60 mt-1">
+            {t.timeoutHelp}
+          </p>
+        </div>
       </div>
     </div>
   );

@@ -89,7 +89,7 @@ export function generateNodeJSTemplate(config: ServerConfig, params: ParsedParam
           
           // Ejecutar comando de forma segura
           try {
-            const result = await executeSecurely('${config.binaryName}', command.split(' ').slice(1), '${config.workingDirectory || ''}');
+            const result = await executeSecurely('${config.binaryName}', command.split(' ').slice(1), '${config.workingDirectory || ''}', ${config.timeout || 30});
             return {
               content: [{
                 type: 'text',
@@ -106,7 +106,9 @@ export function generateNodeJSTemplate(config: ServerConfig, params: ParsedParam
           }` :
     `          // Execute command
           try {
-            const options = {};
+            const options = {
+              timeout: ${config.timeout || 30} * 1000
+            };
             if ('${config.workingDirectory || ''}' && '${config.workingDirectory || ''}' !== '') {
               options.cwd = '${config.workingDirectory || ''}';
             }
@@ -245,19 +247,10 @@ function validateSecurityConstraints(args, command) {
       throw new Error(\`Host not allowed: \${hostArg}\`);
     }
   }
-  
-  // Validar usuarios permitidos
-  const allowedUsers = ${JSON.stringify(securityConfig.restrictions.allowedUsers || [])};
-  if (allowedUsers.length > 0) {
-    const currentUser = process.env.USER || process.env.USERNAME || 'unknown';
-    if (!allowedUsers.includes(currentUser)) {
-      throw new Error(\`User not allowed: \${currentUser}\`);
-    }
-  }
 }
 
 // Ejecución segura de comandos
-async function executeSecurely(binary, args, workingDir) {
+async function executeSecurely(binary, args, workingDir, timeout) {
   // Validar que el binario está permitido (solo el binario configurado)
   const allowedBinary = '${config.binaryName}';
   if (binary !== allowedBinary) {
@@ -266,7 +259,7 @@ async function executeSecurely(binary, args, workingDir) {
   
   // Ejecutar con restricciones
   const options = {
-    timeout: ${securityConfig.restrictions.maxExecutionTime * 1000 || 30000},
+    timeout: timeout * 1000,
     maxBuffer: ${securityConfig.restrictions.maxMemoryMB * 1024 * 1024 || 1024 * 1024}
   };
   

@@ -44,10 +44,12 @@ export interface Translations {
   prerequisitesTitle: string;
   prerequisites1: string;
   prerequisites2: string;
+  prerequisites3: string;
   installationStepsTitle: string;
   installationStep1: string;
   installationStep2: string;
   installationStep3: string;
+  installationStep4: string;
   usingWithLLMsTitle: string;
   claudeDesktop: string;
   otherLLMs: string;
@@ -145,6 +147,11 @@ export interface Translations {
   workingDirectoryHelp: string;
   showBinaryHelp: string;
   hideBinaryHelp: string;
+  timeoutLabel: string;
+  timeoutPlaceholder: string;
+  timeoutHelp: string;
+  claudeConfigExample: string;
+  claudeConfigHelp: string;
 }
 
 export interface ParsedParameter {
@@ -164,6 +171,7 @@ export interface ServerConfig {
   version: string;
   binaryName: string;
   workingDirectory?: string;
+  timeout?: number;
 }
 
 export interface ParameterSecurity {

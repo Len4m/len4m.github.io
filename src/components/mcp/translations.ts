@@ -46,11 +46,23 @@ export const translations: Record<string, Translations> = {
     installationTitle: "Installation & Usage Instructions:",
     prerequisitesTitle: "Prerequisites:",
     prerequisites1: "Node.js 18+ or Python 3.8+",
-    prerequisites2: "MCP dependencies installed globally: <code>npm install -g @modelcontextprotocol/sdk</code> (Node.js) or <code>pip install mcp</code> (Python)",
+    prerequisites2: "MCP dependencies installed locally in the same folder as the MCP server script: <code>npm install @modelcontextprotocol/sdk</code> (Node.js) or <code>pip install mcp</code> (Python)",
+    prerequisites3: "The binary/script specified in the configuration must be accessible from the MCP server location (in PATH or provide full path)",
     installationStepsTitle: "Installation Steps:",
     installationStep1: "Download the generated file",
     installationStep2: "Install necessary dependencies",
     installationStep3: "Configure MCP server in your LLM client",
+    installationStep4: "Example Claude Desktop configuration:",
+    claudeConfigExample: `{
+  "mcpServers": {
+    "my-server": {
+      "command": "node",
+      "args": ["server.js"],
+      "cwd": "/path/to/your/mcp/server/folder"
+    }
+  }
+}`,
+    claudeConfigHelp: "Reemplaza \"my-server\" con el nombre de tu servidor, \"server.js\" con el nombre de tu archivo generado, y \"/path/to/your/mcp/server/folder\" con la ruta real donde colocaste los archivos del servidor MCP.",
     usingWithLLMsTitle: "Using with LLMs:",
     claudeDesktop: "Claude Desktop:",
     otherLLMs: "Other LLMs:",
@@ -147,7 +159,10 @@ export const translations: Record<string, Translations> = {
     runAsUserPlaceholder: 'Introduce the name of the user to execute commands',
     argumentDescription: "Positional argument",
     showBinaryHelp: "Auto-Detect",
-    hideBinaryHelp: "Hide"
+    hideBinaryHelp: "Hide",
+    timeoutLabel: "Command Timeout (seconds):",
+    timeoutPlaceholder: "e.g., 30, 60, 120",
+    timeoutHelp: "Maximum time to wait for command execution (default: 30 seconds)"
   },
   es: {
     title: "Creador de MCP",
@@ -194,11 +209,23 @@ export const translations: Record<string, Translations> = {
     installationTitle: "Instalación & Instrucciones de Uso:",
     prerequisitesTitle: "Requisitos:",
     prerequisites1: "Node.js 18+ o Python 3.8+",
-    prerequisites2: "Dependencias MCP instaladas globalmente: <code>npm install -g @modelcontextprotocol/sdk</code> (Node.js) o <code>pip install mcp</code> (Python)",
+    prerequisites2: "Dependencias MCP instaladas localmente en la misma carpeta que el script del servidor MCP: <code>npm install @modelcontextprotocol/sdk</code> (Node.js) o <code>pip install mcp</code> (Python)",
+    prerequisites3: "El binario/script especificado en la configuración debe ser accesible desde la ubicación del servidor MCP (en PATH o proporcionar ruta completa)",
     installationStepsTitle: "Pasos de Instalación:",
     installationStep1: "Descarga el archivo generado",
     installationStep2: "Instala las dependencias necesarias",
     installationStep3: "Configura el servidor MCP en tu cliente LLM",
+    installationStep4: "Ejemplo de configuración de Claude Desktop:",
+    claudeConfigExample: `{
+  "mcpServers": {
+    "my-server": {
+      "command": "node",
+      "args": ["server.js"],
+      "cwd": "/path/to/your/mcp/server/folder"
+    }
+  }
+}`,
+    claudeConfigHelp: "Reemplaza \"my-server\" con el nombre de tu servidor, \"server.js\" con el nombre de tu archivo generado, y \"/path/to/your/mcp/server/folder\" con la ruta real donde colocaste los archivos del servidor MCP.",
     usingWithLLMsTitle: "Uso con LLMs:",
     claudeDesktop: "Claude Desktop:",
     otherLLMs: "Otros LLMs:",
@@ -295,7 +322,10 @@ export const translations: Record<string, Translations> = {
     validationErrors: "Errores de validación:",
     argumentDescription: "Argumento posicional",
     showBinaryHelp: "Auto-Detectar",
-    hideBinaryHelp: "Ocultar"
+    hideBinaryHelp: "Ocultar",
+    timeoutLabel: "Timeout del Comando (segundos):",
+    timeoutPlaceholder: "ej: 30, 60, 120",
+    timeoutHelp: "Tiempo máximo de espera para la ejecución del comando (por defecto: 30 segundos)"
   },
   ca: {
     title: "Creador de MCP",
@@ -342,11 +372,23 @@ export const translations: Record<string, Translations> = {
     installationTitle: "Instal·lació & Instruccions d'Ús:",
     prerequisitesTitle: "Requisits:",
     prerequisites1: "Node.js 18+ o Python 3.8+",
-    prerequisites2: "Dependències MCP instal·lades globalment: <code>npm install -g @modelcontextprotocol/sdk</code> (Node.js) o <code>pip install mcp</code> (Python)",
+    prerequisites2: "Dependències MCP instal·lades localment a la mateixa carpeta que l'script del servidor MCP: <code>npm install @modelcontextprotocol/sdk</code> (Node.js) o <code>pip install mcp</code> (Python)",
+    prerequisites3: "El binari/script especificat a la configuració ha de ser accessible des de la ubicació del servidor MCP (a PATH o proporcionar ruta completa)",
     installationStepsTitle: "Passos d'Instal·lació:",
     installationStep1: "Descarrega l'arxiu generat",
     installationStep2: "Instal·la les dependències necessàries",
     installationStep3: "Configura el servidor MCP en el teu client LLM",
+    installationStep4: "Exemple de configuració de Claude Desktop:",
+    claudeConfigExample: `{
+  "mcpServers": {
+    "my-server": {
+      "command": "node",
+      "args": ["server.js"],
+      "cwd": "/path/to/your/mcp/server/folder"
+    }
+  }
+}`,
+    claudeConfigHelp: "Substitueix \"my-server\" amb el nom del teu servidor, \"server.js\" amb el nom del teu arxiu generat, i \"/path/to/your/mcp/server/folder\" amb la ruta real on has col·locat els arxius del servidor MCP.",
     usingWithLLMsTitle: "Ús amb LLMs:",
     claudeDesktop: "Claude Desktop:",
     otherLLMs: "Altres LLMs:",
@@ -443,6 +485,9 @@ export const translations: Record<string, Translations> = {
     validationErrors: "Errors de validació:",
     argumentDescription: "Argument posicional",
     showBinaryHelp: "Auto-Detectar",
-    hideBinaryHelp: "Amagar"
+    hideBinaryHelp: "Amagar",
+    timeoutLabel: "Timeout del Comandament (segons):",
+    timeoutPlaceholder: "ex: 30, 60, 120",
+    timeoutHelp: "Temps màxim d'espera per a l'execució del comandament (per defecte: 30 segons)"
   }
 }; 

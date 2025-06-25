@@ -27,7 +27,8 @@ export default function McpCreator() {
     name: '',
     description: '',
     version: '1.0.0',
-    binaryName: ''
+    binaryName: '',
+    timeout: 30
   });
   const [parsedParameters, setParsedParameters] = useState<ParsedParameter[]>([]);
   const [isParsing, setIsParsing] = useState(false);

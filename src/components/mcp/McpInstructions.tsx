@@ -14,6 +14,7 @@ const McpInstructions: React.FC<Props> = ({ t }) => {
           <ul className="list-disc list-inside space-y-1 text-sm text-skin-base/70">
             <li>{t.prerequisites1}</li>
             <li dangerouslySetInnerHTML={{ __html: t.prerequisites2 }} />
+            <li>{t.prerequisites3}</li>
           </ul>
         </div>
         
@@ -23,6 +24,17 @@ const McpInstructions: React.FC<Props> = ({ t }) => {
             <li>{t.installationStep1}</li>
             <li dangerouslySetInnerHTML={{ __html: t.installationStep2 }} />
             <li dangerouslySetInnerHTML={{ __html: t.installationStep3 }} />
+            <li>
+              {t.installationStep4}
+              <div className="mt-2 ml-4">
+                <pre className="bg-skin-card border border-skin-border rounded p-3 text-xs overflow-x-auto">
+                  <code>{t.claudeConfigExample}</code>
+                </pre>
+                <p className="text-xs text-skin-base/60 mt-1">
+                  {t.claudeConfigHelp}
+                </p>
+              </div>
+            </li>
           </ol>
         </div>
         

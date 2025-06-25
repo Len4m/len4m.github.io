@@ -6,7 +6,7 @@ export function generatePythonTemplate(config: ServerConfig, params: ParsedParam
   // Limpiar el nombre para que sea válido como nombre de clase en Python
   const className = config.name.replace(/[^a-zA-Z0-9]/g, '') + 'Server';
   
-  const paramDefinitions = params.map(param => {
+  const paramDefinitions = params && params.length > 0 ? params.map(param => {
     const cleanName = param.name.replace(/[^a-zA-Z0-9]/g, '_');
     const type = param.type === 'flag' ? 'boolean' : 'string';
     const required = param.required ? 'True' : 'False';
@@ -43,12 +43,12 @@ export function generatePythonTemplate(config: ServerConfig, params: ParsedParam
     paramDef += `\n            }`;
     
     return paramDef;
-  }).join(',\n');
+  }).join(',\n') : '';
 
-  const paramNames = params.map(p => p.name.replace(/[^a-zA-Z0-9]/g, '_'));
-  const requiredParams = params.filter(p => p.required).map(p => `"${p.name.replace(/[^a-zA-Z0-9]/g, '_')}"`);
+  const paramNames = params && params.length > 0 ? params.map(p => p.name.replace(/[^a-zA-Z0-9]/g, '_')) : [];
+  const requiredParams = params && params.length > 0 ? params.filter(p => p.required).map(p => `"${p.name.replace(/[^a-zA-Z0-9]/g, '_')}"`) : [];
 
-  const commandBuilding = params.map(param => {
+  const commandBuilding = params && params.length > 0 ? params.map(param => {
     const cleanName = param.name.replace(/[^a-zA-Z0-9]/g, '_');
     
     if (param.type === 'flag') {
@@ -74,7 +74,7 @@ export function generatePythonTemplate(config: ServerConfig, params: ParsedParam
       return `        if ${cleanName}:
             command.append(str(${cleanName}))`;
     }
-  }).join('\n');
+  }).join('\n') : '';
 
   // Manejar caso cuando no hay parámetros
   const paramExtraction = paramNames.length > 0 ? paramNames.map(name => `${name} = arguments.get("${name}")`).join('\n            ') : '# No parameters to extract';
@@ -92,7 +92,7 @@ export function generatePythonTemplate(config: ServerConfig, params: ParsedParam
         
         # Ejecutar comando de forma segura
         try:
-            result = execute_securely("${config.binaryName}", command[1:] if len(command) > 1 else [], "${config.workingDirectory || ''}")
+            result = execute_securely("${config.binaryName}", command[1:] if len(command) > 1 else [], "${config.workingDirectory || ''}", ${config.timeout || 30})
             return [TextContent(
                 type="text",
                 text=result or "Command executed successfully"
@@ -110,7 +110,7 @@ export function generatePythonTemplate(config: ServerConfig, params: ParsedParam
                 capture_output=True,
                 text=True,
                 cwd=working_dir,
-                timeout=30  # 30 second timeout
+                timeout=${config.timeout || 30}  # Configurable timeout
             )
             
             if result.stderr:
@@ -278,7 +278,7 @@ def validate_security_constraints(params: Dict[str, Any], command: List[str]) ->
             raise Exception('Patrón peligroso detectado en comando')`;
   }
 
-  if (securityConfig.restrictions.allowedHosts.length > 0) {
+  if (securityConfig.restrictions.allowedHosts && securityConfig.restrictions.allowedHosts.length > 0) {
     securityCode += `
     # Validar hosts permitidos
     allowed_hosts = ${JSON.stringify(securityConfig.restrictions.allowedHosts)}
@@ -286,7 +286,7 @@ def validate_security_constraints(params: Dict[str, Any], command: List[str]) ->
         raise Exception(f'Host no autorizado: {params["host"]}')`;
   }
 
-  if (securityConfig.restrictions.forbiddenPatterns.length > 0) {
+  if (securityConfig.restrictions.forbiddenPatterns && securityConfig.restrictions.forbiddenPatterns.length > 0) {
     securityCode += `
     # Validar patrones prohibidos
     forbidden_patterns = ${JSON.stringify(securityConfig.restrictions.forbiddenPatterns)}
@@ -296,22 +296,13 @@ def validate_security_constraints(params: Dict[str, Any], command: List[str]) ->
             raise Exception(f'Comando contiene patrón prohibido: {pattern}')`;
   }
 
-  if (securityConfig.restrictions.allowedUsers.length > 0) {
-    securityCode += `
-    # Validar usuarios permitidos
-    allowed_users = ${JSON.stringify(securityConfig.restrictions.allowedUsers)}
-    current_user = os.environ.get('USER') or os.environ.get('USERNAME') or 'unknown'
-    if current_user not in allowed_users:
-        raise Exception(f'Usuario no autorizado: {current_user}')`;
-  }
-
   if (securityConfig.validation.enableInputSanitization) {
     securityCode += `
     # Sanitizar entrada
     for key, value in params.items():
         if isinstance(value, str):
             # Remover caracteres peligrosos básicos
-            dangerous_chars = r"[;&|` + "`" + `$]"
+            dangerous_chars = r"[;&|\`$]"
             params[key] = re.sub(dangerous_chars, "", str(value))`;
   }
 
@@ -349,7 +340,7 @@ def filter_output(output: str) -> str:
   }
 
   // Validaciones de parámetros específicos
-  if (securityConfig.parameterSecurity.length > 0) {
+  if (securityConfig.parameterSecurity && securityConfig.parameterSecurity.length > 0) {
     securityCode += `
     # Validaciones de parámetros específicos
     parameter_validations = ${JSON.stringify(securityConfig.parameterSecurity)}
@@ -367,11 +358,9 @@ def filter_output(output: str) -> str:
 
   securityCode += `
 
-def execute_securely(binary_name: str, args: List[str], working_directory: Optional[str] = None) -> str:
+def execute_securely(binary_name: str, args: List[str], working_directory: Optional[str] = None, timeout: Optional[int] = None) -> str:
     """Execute commands securely with restrictions."""
     try:
-        timeout = ${securityConfig.restrictions.maxExecutionTime}
-        
         # Build full command
         full_command = [binary_name] + args
         
