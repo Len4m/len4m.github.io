@@ -65,10 +65,15 @@ export interface Translations {
   editParameterLabel: string;
   parameterNameLabel: string;
   parameterDescriptionLabel: string;
+  parameterDefaultValueLabel: string;
+  parameterDefaultValuePlaceholder: string;
+  parameterDefaultValueHelp: string;
   parameterTypeLabel: string;
   parameterRequiredLabel: string;
   parameterTakesValueLabel: string;
   parameterExpectsValueLabel: string;
+  parameterPositionLabel: string;
+  parameterPositionPlaceholder: string;
   saveChangesLabel: string;
   cancelLabel: string;
   yes: string;
@@ -162,6 +167,7 @@ export interface ParsedParameter {
   defaultValue?: string;
   takesValue: boolean;
   expectsValue: boolean;
+  position?: number;
 }
 
 export interface ServerConfig {

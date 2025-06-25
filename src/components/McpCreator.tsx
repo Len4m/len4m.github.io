@@ -15,55 +15,7 @@ import McpInstructions from './mcp/McpInstructions';
 import { generateNodeJSTemplate, generatePythonTemplate } from './mcp/templates';
 import McpGenerateButton from './mcp/McpGenerateButton';
 import { parseBinaryHelp } from './mcp/parseBinaryHelp';
-
-interface ParsedParameter {
-  name: string;
-  description: string;
-  type: 'option' | 'argument' | 'flag';
-  required: boolean;
-  defaultValue?: string;
-  takesValue: boolean;
-  expectsValue: boolean;
-}
-
-interface ServerConfig {
-  name: string;
-  description: string;
-  version: string;
-  binaryName: string;
-}
-
-interface ParameterSecurity {
-  name: string;
-  allowedValues?: string[];
-  pattern?: string;
-  maxLength?: number;
-  sanitize?: boolean;
-}
-
-interface SecurityConfig {
-  enabled: boolean;
-  level: 'basic' | 'intermediate' | 'advanced';
-  restrictions: {
-    allowedHosts: string[];
-    forbiddenPatterns: string[];
-    maxExecutionTime: number;
-    allowedUsers: string[];
-    maxMemoryMB: number;
-  };
-  sandboxing: {
-    useContainer: boolean;
-    networkIsolation: boolean;
-    filesystemRestrictions: string[];
-    runAsUser: string;
-  };
-  parameterSecurity: ParameterSecurity[];
-  validation: {
-    enableInputSanitization: boolean;
-    enableOutputFiltering: boolean;
-    enableCommandWhitelist: boolean;
-  };
-}
+import type { ParsedParameter, ServerConfig, SecurityConfig, ParameterSecurity } from './mcp/types';
 
 export default function McpCreator() {
   const [inputText, setInputText] = useState('');
@@ -113,7 +65,8 @@ export default function McpCreator() {
     type: 'option',
     required: false,
     takesValue: true,
-    expectsValue: true
+    expectsValue: true,
+    position: undefined
   });
 
   const [securityConfig, setSecurityConfig] = useState<SecurityConfig>({
@@ -375,7 +328,8 @@ export default function McpCreator() {
       type: 'option',
       required: false,
       takesValue: true,
-      expectsValue: true
+      expectsValue: true,
+      position: undefined
     });
   };
 
@@ -390,7 +344,8 @@ export default function McpCreator() {
         type: 'option',
         required: false,
         takesValue: true,
-        expectsValue: true
+        expectsValue: true,
+        position: undefined
       });
     }
   };
@@ -403,7 +358,8 @@ export default function McpCreator() {
       type: 'option',
       required: false,
       takesValue: true,
-      expectsValue: true
+      expectsValue: true,
+      position: undefined
     });
   };
 

@@ -129,6 +129,25 @@ const McpParameterModal: React.FC<Props> = ({
             />
           </div>
           
+          {/* Campo valor por defecto solo para option y argument */}
+          {(localParameter.type === 'option' || localParameter.type === 'argument') && (
+            <div>
+              <label className="block text-sm font-medium text-skin-base mb-1">
+                {t.parameterDefaultValueLabel || 'Default Value'}
+              </label>
+              <input
+                type="text"
+                value={localParameter.defaultValue || ''}
+                onChange={(e) => handleFieldChange('defaultValue', e.target.value || undefined)}
+                placeholder={t.parameterDefaultValuePlaceholder || 'e.g., true, false, "default text"'}
+                className="w-full p-2 border border-skin-border rounded-md bg-skin-fill text-skin-base focus:outline-none focus:ring-2 focus:ring-skin-accent"
+              />
+              <p className="text-xs text-skin-base/60 mt-1">
+                {t.parameterDefaultValueHelp || 'Optional default value for this parameter'}
+              </p>
+            </div>
+          )}
+          
           <div>
             <label className="block text-sm font-medium text-skin-base mb-1">
               {t.parameterTypeLabel}
@@ -145,7 +164,7 @@ const McpParameterModal: React.FC<Props> = ({
           </div>
           
           <div className="grid grid-cols-1 gap-4">
-            {localParameter.type === 'argument' && (
+            {(localParameter.type === 'argument' || localParameter.type === 'option' || localParameter.type === 'flag') && (
               <div>
                 <label className="flex items-center">
                   <input
@@ -154,37 +173,28 @@ const McpParameterModal: React.FC<Props> = ({
                     onChange={(e) => handleFieldChange('required', e.target.checked)}
                     className="mr-2"
                   />
-                  {t.parameterRequiredLabel} (Argumento obligatorio)
+                  {t.parameterRequiredLabel}
                 </label>
                 <p className="text-xs text-skin-base/60 mt-1">
-                  {t.argumentHelp}
+                  {localParameter.type === 'argument' && t.argumentHelp}
+                  {localParameter.type === 'option' && t.optionHelp}
+                  {localParameter.type === 'flag' && t.flagHelp}
                 </p>
               </div>
             )}
-            
-            {localParameter.type === 'option' && (
+            {localParameter.type === 'argument' && (
               <div>
-                <div className="text-sm text-skin-base/70 mb-2">
-                  <strong>{t.optionHelp}</strong>
-                </div>
-                <div className="text-xs text-skin-base/60 space-y-1">
-                  <div>• takesValue: true (siempre)</div>
-                  <div>• expectsValue: true (siempre)</div>
-                  <div>• required: false (siempre)</div>
-                </div>
-              </div>
-            )}
-            
-            {localParameter.type === 'flag' && (
-              <div>
-                <div className="text-sm text-skin-base/70 mb-2">
-                  <strong>{t.flagHelp}</strong>
-                </div>
-                <div className="text-xs text-skin-base/60 space-y-1">
-                  <div>• takesValue: false (siempre)</div>
-                  <div>• expectsValue: false (siempre)</div>
-                  <div>• required: false (siempre)</div>
-                </div>
+                <label className="block text-sm font-medium text-skin-base mb-1">
+                  {t.parameterPositionLabel}
+                </label>
+                <input
+                  type="number"
+                  min={1}
+                  value={localParameter.position || ''}
+                  onChange={(e) => handleFieldChange('position', e.target.value ? parseInt(e.target.value, 10) : undefined)}
+                  placeholder={t.parameterPositionPlaceholder}
+                  className="w-full p-2 border border-skin-border rounded-md bg-skin-fill text-skin-base focus:outline-none focus:ring-2 focus:ring-skin-accent"
+                />
               </div>
             )}
           </div>

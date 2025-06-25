@@ -15,11 +15,30 @@ function generateNodeJSTemplate(config, params, securityConfig) {
             .replace(/\n/g, '\\n')
             .replace(/\r/g, '\\r')
             .replace(/\t/g, '\\t');
-        return `    ${cleanName}: {
+        // Construir definición de parámetro con todos los campos
+        let paramDef = `    ${cleanName}: {
       type: '${type}',
       description: '${description}',
-      required: ${required}
+      required: ${required}`;
+        // Añadir defaultValue si existe
+        if (param.defaultValue !== undefined) {
+            const defaultValue = param.type === 'flag' ? param.defaultValue : `'${param.defaultValue.replace(/'/g, "\\'")}'`;
+            paramDef += `,
+      default: ${defaultValue}`;
+        }
+        // Añadir campos específicos del tipo
+        if (param.type === 'option') {
+            paramDef += `,
+      takesValue: ${param.takesValue},
+      expectsValue: ${param.expectsValue}`;
+        }
+        else if (param.type === 'argument' && param.position !== undefined) {
+            paramDef += `,
+      position: ${param.position}`;
+        }
+        paramDef += `
     }`;
+        return paramDef;
     }).join(',\n');
     const paramNames = params.map(p => p.name.replace(/[^a-zA-Z0-9]/g, '_'));
     const requiredParams = params.filter(p => p.required).map(p => `'${p.name.replace(/[^a-zA-Z0-9]/g, '_')}'`);

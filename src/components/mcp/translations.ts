@@ -68,6 +68,9 @@ export const translations: Record<string, Translations> = {
     editParameterLabel: "Edit Parameter",
     parameterNameLabel: "Name:",
     parameterDescriptionLabel: "Description:",
+    parameterDefaultValueLabel: "Default Value:",
+    parameterDefaultValuePlaceholder: "e.g., true, false, \"default text\"",
+    parameterDefaultValueHelp: "Optional default value for this parameter",
     parameterTypeLabel: "Type:",
     parameterRequiredLabel: "Required:",
     parameterTakesValueLabel: "Takes value:",
@@ -154,7 +157,9 @@ export const translations: Record<string, Translations> = {
     parameterNamePlaceholderOption: '--output, -o',
     parameterNamePlaceholderArgument: 'nom_fitxer',
     filesystemRestrictionsPlaceholder: 'Introdueix rutes restringides, una per línia',
-    runAsUserPlaceholder: 'Introdueix el nom d\'usuari per executar comandaments'
+    runAsUserPlaceholder: 'Introdueix el nom d\'usuari per executar comandaments',
+    parameterPositionLabel: "Position:",
+    parameterPositionPlaceholder: "e.g., 1, 2, 3"
   },
   es: {
     title: "Creador de MCP",
@@ -223,6 +228,9 @@ export const translations: Record<string, Translations> = {
     editParameterLabel: "Editar Parámetro",
     parameterNameLabel: "Nombre:",
     parameterDescriptionLabel: "Descripción:",
+    parameterDefaultValueLabel: "Valor por defecto:",
+    parameterDefaultValuePlaceholder: "e.g., true, false, \"default text\"",
+    parameterDefaultValueHelp: "Valor por defecto opcional para este parámetro",
     parameterTypeLabel: "Tipo:",
     parameterRequiredLabel: "Requerido:",
     parameterTakesValueLabel: "Toma valor:",
@@ -309,7 +317,9 @@ export const translations: Record<string, Translations> = {
     parameterNamePlaceholderOption: '--output, -o',
     parameterNamePlaceholderArgument: 'nombre_archivo',
     filesystemRestrictionsPlaceholder: 'Introduce rutas restringidas, una por línea',
-    runAsUserPlaceholder: 'Introduce el nombre de usuario para ejecutar comandos'
+    runAsUserPlaceholder: 'Introduce el nombre de usuario para ejecutar comandos',
+    parameterPositionLabel: "Posición:",
+    parameterPositionPlaceholder: "ej: 1, 2, 3"
   },
   ca: {
     title: "Creador de MCP",
@@ -378,6 +388,9 @@ export const translations: Record<string, Translations> = {
     editParameterLabel: "Editar Paràmetre",
     parameterNameLabel: "Nom:",
     parameterDescriptionLabel: "Descripció:",
+    parameterDefaultValueLabel: "Valor per defecte:",
+    parameterDefaultValuePlaceholder: "e.g., true, false, \"default text\"",
+    parameterDefaultValueHelp: "Valor per defecte opcional para este paràmetre",
     parameterTypeLabel: "Tipus:",
     parameterRequiredLabel: "Requerit:",
     parameterTakesValueLabel: "Toma valor:",
@@ -464,6 +477,8 @@ export const translations: Record<string, Translations> = {
     parameterNamePlaceholderOption: '--output, -o',
     parameterNamePlaceholderArgument: 'nom_fitxer',
     filesystemRestrictionsPlaceholder: 'Introdueix rutes restringides, una per línia',
-    runAsUserPlaceholder: 'Introdueix el nom d\'usuari per executar comandaments'
+    runAsUserPlaceholder: 'Introdueix el nom d\'usuari per executar comandaments',
+    parameterPositionLabel: "Posición:",
+    parameterPositionPlaceholder: "ej: 1, 2, 3"
   }
 }; 

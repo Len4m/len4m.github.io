@@ -15,11 +15,29 @@ function generatePythonTemplate(config, params, securityConfig) {
             .replace(/\n/g, '\\n')
             .replace(/\r/g, '\\r')
             .replace(/\t/g, '\\t');
-        return `            "${cleanName}": {
+        // Construir definición de parámetro con todos los campos
+        let paramDef = `            "${cleanName}": {
                 "type": "${type}",
                 "description": "${description}",
-                "required": ${required}
-            }`;
+                "required": ${required}`;
+        // Añadir defaultValue solo si no es flag
+        if (param.defaultValue !== undefined && param.type !== 'flag') {
+            const defaultValue = `"${param.defaultValue.replace(/"/g, '\\"')}"`;
+            paramDef += `,
+                "default": ${defaultValue}`;
+        }
+        // Añadir campos específicos del tipo
+        if (param.type === 'option') {
+            paramDef += `,
+                "takesValue": ${param.takesValue},
+                "expectsValue": ${param.expectsValue}`;
+        }
+        else if (param.type === 'argument' && param.position !== undefined) {
+            paramDef += `,
+                "position": ${param.position}`;
+        }
+        paramDef += `\n            }`;
+        return paramDef;
     }).join(',\n');
     const paramNames = params.map(p => p.name.replace(/[^a-zA-Z0-9]/g, '_'));
     const requiredParams = params.filter(p => p.required).map(p => `"${p.name.replace(/[^a-zA-Z0-9]/g, '_')}"`);

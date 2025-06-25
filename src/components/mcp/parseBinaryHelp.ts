@@ -103,7 +103,8 @@ function createParameter(name: string, description: string, type: 'flag' | 'opti
     type,
     required,
     takesValue,
-    expectsValue
+    expectsValue,
+    position: undefined
   };
 }
 
