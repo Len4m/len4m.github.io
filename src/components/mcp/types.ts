@@ -143,6 +143,8 @@ export interface Translations {
   workingDirectoryLabel: string;
   workingDirectoryPlaceholder: string;
   workingDirectoryHelp: string;
+  showBinaryHelp: string;
+  hideBinaryHelp: string;
 }
 
 export interface ParsedParameter {

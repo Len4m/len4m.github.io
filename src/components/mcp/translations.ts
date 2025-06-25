@@ -84,12 +84,12 @@ export const translations: Record<string, Translations> = {
     generateMCPHelp: "Generate MCP server with current configuration",
     addParameterLabel: "Add",
     deleteParameterLabel: "Delete",
-    addNewParameterLabel: "Add New Parameter",
+    addNewParameterLabel: "Add Parameter",
     newParameterLabel: "New Parameter",
     newParameterPlaceholder: "Parameter name",
     newParameterDescriptionLabel: "Description:",
     newParameterDescriptionPlaceholder: "Parameter description",
-    analyzedParametersLabel: "Analyzed Parameters",
+    analyzedParametersLabel: "Parameters",
     mcpOfficialDocs: "Official MCP documentation",
     mcpOfficialDocsLink: "https://modelcontextprotocol.io/docs/mcp",
     claudeDesktopText: "Configure Claude Desktop to use your MCP server",
@@ -145,7 +145,9 @@ export const translations: Record<string, Translations> = {
     securityHelpText: "Security features help protect your system from malicious or unintended command execution.",
     validationErrors: "Validation errors:",
     runAsUserPlaceholder: 'Introduce the name of the user to execute commands',
-    argumentDescription: "Positional argument"
+    argumentDescription: "Positional argument",
+    showBinaryHelp: "Auto-Detect",
+    hideBinaryHelp: "Hide"
   },
   es: {
     title: "Creador de MCP",
@@ -230,12 +232,12 @@ export const translations: Record<string, Translations> = {
     generateMCPHelp: "Genera el servidor MCP con la configuración actual",
     addParameterLabel: "Añadir",
     deleteParameterLabel: "Eliminar",
-    addNewParameterLabel: "Añadir Nuevo Parámetro",
+    addNewParameterLabel: "Añadir Parámetro",
     newParameterLabel: "Nuevo Parámetro",
     newParameterPlaceholder: "Nombre del parámetro",
     newParameterDescriptionLabel: "Descripción:",
     newParameterDescriptionPlaceholder: "Descripción del parámetro",
-    analyzedParametersLabel: "Parámetros Analizados",
+    analyzedParametersLabel: "Parámetros",
     mcpOfficialDocs: "Documentación oficial de MCP",
     mcpOfficialDocsLink: "https://modelcontextprotocol.io/docs/mcp",
     claudeDesktopText: "Configura Claude Desktop para usar tu servidor MCP",
@@ -291,7 +293,9 @@ export const translations: Record<string, Translations> = {
     filesystemRestrictionsPlaceholder: "Introduce rutas restringidas, una por línea",
     securityHelpText: "Las características de seguridad ayudan a proteger tu sistema de ejecución maliciosa o no intencionada de comandos.",
     validationErrors: "Errores de validación:",
-    argumentDescription: "Argumento posicional"
+    argumentDescription: "Argumento posicional",
+    showBinaryHelp: "Auto-Detectar",
+    hideBinaryHelp: "Ocultar"
   },
   ca: {
     title: "Creador de MCP",
@@ -376,12 +380,12 @@ export const translations: Record<string, Translations> = {
     generateMCPHelp: "Genera el servidor MCP amb la configuració actual",
     addParameterLabel: "Afegir",
     deleteParameterLabel: "Eliminar",
-    addNewParameterLabel: "Afegir Nou Paràmetre",
+    addNewParameterLabel: "Afegir Paràmetre",
     newParameterLabel: "Nou Paràmetre",
     newParameterPlaceholder: "Nom del paràmetre",
     newParameterDescriptionLabel: "Descripció:",
     newParameterDescriptionPlaceholder: "Descripció del paràmetre",
-    analyzedParametersLabel: "Paràmetres Analitzats",
+    analyzedParametersLabel: "Paràmetres",
     mcpOfficialDocs: "Documentació oficial de MCP",
     mcpOfficialDocsLink: "https://modelcontextprotocol.io/docs/mcp",
     claudeDesktopText: "Configura Claude Desktop per usar el teu servidor MCP",
@@ -437,6 +441,8 @@ export const translations: Record<string, Translations> = {
     filesystemRestrictionsPlaceholder: "Introdueix rutes restringides, una per línia",
     securityHelpText: "Les característiques de seguretat ajuden a protegir el teu sistema d'execució maliciosa o no intencionada de comandaments.",
     validationErrors: "Errors de validació:",
-    argumentDescription: "Argument posicional"
+    argumentDescription: "Argument posicional",
+    showBinaryHelp: "Auto-Detectar",
+    hideBinaryHelp: "Amagar"
   }
 }; 

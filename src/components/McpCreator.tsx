@@ -36,6 +36,7 @@ export default function McpCreator() {
   const [editableCode, setEditableCode] = useState('');
   const [copied, setCopied] = useState(false);
   const [currentTheme, setCurrentTheme] = useState<'light' | 'dark'>('light');
+  const [showBinaryHelp, setShowBinaryHelp] = useState(false);
 
   // Función para cargar dinámicamente los temas de PrismJS
   const loadPrismTheme = (theme: 'light' | 'dark') => {
@@ -516,56 +517,68 @@ export default function McpCreator() {
             {/* Parameters Section - Grouped with binary help input and detection */}
             <div className="border-t border-skin-border pt-6">
               <div className="flex justify-between items-center mb-4">
-                <h3 className="font-semibold text-skin-base">{t.analyzedParametersLabel}</h3>
-                <button
-                  type="button"
-                  onClick={handleAddNewParameter}
-                  className="px-3 py-1 bg-green-600 text-white text-sm rounded hover:bg-green-700 transition-colors"
-                >
-                  {t.addNewParameterLabel}
-                </button>
-              </div>
-
-              {/* Binary Help Input and Detection */}
-              <div className="mb-6 p-4 bg-skin-fill rounded-lg border border-skin-border">
-                <div className="mb-4">
-                  <McpBinaryHelpInput
-                    value={inputText}
-                    onChange={(e) => setInputText(e.target.value)}
-                    placeholder={t.binaryHelpPlaceholder}
-                    label={t.binaryHelpLabel}
-                    disabled={isParsing}
-                  />
-                </div>
-                
-                <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                <h3 className="font-semibold text-skin-base mt-3">{t.analyzedParametersLabel}</h3>
+                <div className="flex space-x-2">
                   <button
                     type="button"
-                    onClick={handleParse}
-                    disabled={isParsing || !inputText.trim()}
-                    className="px-4 py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 self-start"
+                    onClick={() => setShowBinaryHelp(!showBinaryHelp)}
+                    className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors flex items-center space-x-1"
                   >
-                    {isParsing ? (
-                      <span className="flex items-center">
-                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        {t.parsingText}
-                      </span>
-                    ) : (
-                      t.parseButtonText
-                    )}
+                    <span className="text-sm">{showBinaryHelp ? '▼' : '▶'}</span>
+                    <span>{showBinaryHelp ? t.hideBinaryHelp : t.showBinaryHelp}</span>
                   </button>
-                  
-                  <div className="flex items-center text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-md px-3 py-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 text-amber-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                    </svg>
-                    <span>{t.autoDetectionWarning}</span>
-                  </div>
+                  <button
+                    type="button"
+                    onClick={handleAddNewParameter}
+                    className="px-3 py-1 bg-green-600 text-white text-sm rounded hover:bg-green-700 transition-colors"
+                  >
+                    {t.addNewParameterLabel}
+                  </button>
                 </div>
               </div>
+
+              {/* Binary Help Input and Detection - Collapsible */}
+              {showBinaryHelp && (
+                <div className="mb-6 p-4 bg-skin-fill rounded-lg border border-skin-border">
+                  <div className="mb-4">
+                    <McpBinaryHelpInput
+                      value={inputText}
+                      onChange={(e) => setInputText(e.target.value)}
+                      placeholder={t.binaryHelpPlaceholder}
+                      label={t.binaryHelpLabel}
+                      disabled={isParsing}
+                    />
+                  </div>
+                  
+                  <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                    <button
+                      type="button"
+                      onClick={handleParse}
+                      disabled={isParsing || !inputText.trim()}
+                      className="px-4 py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 self-start"
+                    >
+                      {isParsing ? (
+                        <span className="flex items-center">
+                          <svg className="animate-spin -ml-1 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          {t.parsingText}
+                        </span>
+                      ) : (
+                        t.parseButtonText
+                      )}
+                    </button>
+                    
+                    <div className="flex items-center text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-md px-3 py-2">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 text-amber-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                      </svg>
+                      <span>{t.autoDetectionWarning}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
               
               {parsedParameters.length > 0 ? (
                 <McpParameters
