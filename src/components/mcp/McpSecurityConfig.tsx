@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import type { SecurityConfig } from './types';
 
 interface Props {
@@ -8,6 +8,17 @@ interface Props {
 }
 
 const McpSecurityConfig: React.FC<Props> = ({ securityConfig, onChange, t }) => {
+  const [forbiddenPatternsInput, setForbiddenPatternsInput] = useState('');
+  const [allowedHostsInput, setAllowedHostsInput] = useState('');
+  const forbiddenPatternsTimeoutRef = useRef<NodeJS.Timeout>();
+  const allowedHostsTimeoutRef = useRef<NodeJS.Timeout>();
+
+  // Sincronizar el estado local con el estado global
+  useEffect(() => {
+    setForbiddenPatternsInput(securityConfig.restrictions.forbiddenPatterns.join(', '));
+    setAllowedHostsInput(securityConfig.restrictions.allowedHosts.join(', '));
+  }, [securityConfig.restrictions.forbiddenPatterns, securityConfig.restrictions.allowedHosts]);
+
   const handleSecurityToggle = () => {
     onChange({
       ...securityConfig,
@@ -50,25 +61,46 @@ const McpSecurityConfig: React.FC<Props> = ({ securityConfig, onChange, t }) => 
     }
   };
 
-  const handleArrayFieldChange = (section: keyof SecurityConfig, field: string, value: string) => {
-    const values = value.split(',').map(v => v.trim()).filter(v => v);
-    if (section === 'restrictions') {
+  const handleForbiddenPatternsChange = (value: string) => {
+    setForbiddenPatternsInput(value);
+    
+    // Limpiar timeout anterior
+    if (forbiddenPatternsTimeoutRef.current) {
+      clearTimeout(forbiddenPatternsTimeoutRef.current);
+    }
+    
+    // Procesar después de 750ms de inactividad
+    forbiddenPatternsTimeoutRef.current = setTimeout(() => {
+      const values = value.split(',').map(v => v.trim()).filter(v => v);
       onChange({
         ...securityConfig,
         restrictions: {
           ...securityConfig.restrictions,
-          [field]: values
+          forbiddenPatterns: values
         }
       });
-    } else if (section === 'sandboxing') {
+    }, 750);
+  };
+
+  const handleAllowedHostsChange = (value: string) => {
+    setAllowedHostsInput(value);
+    
+    // Limpiar timeout anterior
+    if (allowedHostsTimeoutRef.current) {
+      clearTimeout(allowedHostsTimeoutRef.current);
+    }
+    
+    // Procesar después de 750ms de inactividad
+    allowedHostsTimeoutRef.current = setTimeout(() => {
+      const values = value.split(',').map(v => v.trim()).filter(v => v);
       onChange({
         ...securityConfig,
-        sandboxing: {
-          ...securityConfig.sandboxing,
-          [field]: values
+        restrictions: {
+          ...securityConfig.restrictions,
+          allowedHosts: values
         }
       });
-    }
+    }, 750);
   };
 
   return (
@@ -141,8 +173,8 @@ const McpSecurityConfig: React.FC<Props> = ({ securityConfig, onChange, t }) => 
                 </label>
                 <input
                   type="text"
-                  value={securityConfig.restrictions.allowedHosts.join(', ')}
-                  onChange={(e) => handleArrayFieldChange('restrictions', 'allowedHosts', e.target.value)}
+                  value={allowedHostsInput}
+                  onChange={(e) => handleAllowedHostsChange(e.target.value)}
                   placeholder={t.allowedHostsPlaceholder}
                   className="w-full p-2 border border-skin-border rounded-md bg-skin-fill text-skin-base focus:outline-none focus:ring-2 focus:ring-skin-accent text-sm"
                 />
@@ -151,13 +183,17 @@ const McpSecurityConfig: React.FC<Props> = ({ securityConfig, onChange, t }) => 
                 <label className="block text-sm font-medium text-skin-base mb-1">
                   {t.forbiddenPatternsLabel}
                 </label>
-                <input
-                  type="text"
-                  value={securityConfig.restrictions.forbiddenPatterns.join(', ')}
-                  onChange={(e) => handleArrayFieldChange('restrictions', 'forbiddenPatterns', e.target.value)}
+                <textarea
+                  value={forbiddenPatternsInput}
+                  onChange={(e) => handleForbiddenPatternsChange(e.target.value)}
                   placeholder={t.forbiddenPatternsPlaceholder}
                   className="w-full p-2 border border-skin-border rounded-md bg-skin-fill text-skin-base focus:outline-none focus:ring-2 focus:ring-skin-accent text-sm"
+                  rows={3}
+                  style={{ resize: 'vertical' }}
                 />
+                <div className="text-xs text-gray-500 mt-1">
+                  Introduce patrones separados por comas (ej: rm -rf, DROP, DELETE)
+                </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-skin-base mb-1">
