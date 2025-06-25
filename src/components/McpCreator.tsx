@@ -607,7 +607,7 @@ export default function McpCreator() {
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 text-amber-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
                     </svg>
-                    <span>La detección automática no es perfecta. Revisa y ajusta los parámetros detectados según sea necesario.</span>
+                    <span>{t.autoDetectionWarning}</span>
                   </div>
                 </div>
               </div>

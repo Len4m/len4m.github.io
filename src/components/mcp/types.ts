@@ -28,6 +28,7 @@ export interface Translations {
   binaryNamePlaceholder: string;
   parseButtonText: string;
   parsingText: string;
+  autoDetectionWarning: string;
   generateButtonText: string;
   generatingText: string;
   downloadButtonText: string;
