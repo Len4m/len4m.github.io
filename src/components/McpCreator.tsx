@@ -76,7 +76,6 @@ export default function McpCreator() {
       allowedHosts: [],
       forbiddenPatterns: [],
       maxExecutionTime: 30,
-      allowedUsers: [],
       maxMemoryMB: 512
     },
     sandboxing: {

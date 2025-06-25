@@ -6,50 +6,48 @@ import McpCreatorComponent from "@components/McpCreator";
 import { SITE } from "@config";
 ---
 
-<Layout 
+<Layout
   title="Generador de Servidors MCP - Crear Servidors MCP (Model Context Protocol) des d'Ajuda de Binaris | Lenam"
   description="Genera automàticament servidors MCP (Model Context Protocol) complets des de text d'ajuda de binaris. Suporta plantilles Node.js i Python. Analitza opcions de línia de comandes, flags i arguments per crear servidors MCP llestos per a desenvolupament per a qualsevol eina CLI."
 >
   <Header />
-  
+
   <main id="main-content">
-    <article id="article" class="prose mx-auto mt-8 px-4 max-w-3xl">
-    <div class="mb-8">
-      <h1 class="text-3xl font-bold text-skin-accent mb-4">
-        Generador de Servidors MCP
-      </h1>
-      <blockquote class="mb-6 pl-4 border-l-4 border-skin-accent">
-        <p class="text-sm text-skin-base mb-2">
-          MCP (Model Context Protocol) és un protocol que permet als LLMs connectar-se amb eines externes, fonts de dades i sistemes.
+    <article id="article" class="prose mx-auto mt-8 max-w-3xl px-4">
+      <div class="mb-8">
+        <h1 class="mb-4 text-3xl font-bold text-skin-accent">
+          Generador de Servidors MCP
+        </h1>
+        <blockquote class="mb-6 border-l-4 border-skin-accent pl-4">
+          <p class="mb-2 text-sm text-skin-base">
+            MCP (Model Context Protocol) és un protocol que permet als LLMs
+            connectar-se amb eines externes, fonts de dades i sistemes.
+          </p>
+          <a
+            href="https://modelcontextprotocol.io/docs/mcp"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-sm font-medium text-skin-accent hover:underline"
+          >
+            Documentació oficial de MCP →
+          </a>
+        </blockquote>
+        <p>
+          <strong>⚠️ Versió Beta:</strong> Aquesta eina està en desenvolupament actiu.
+          Utilitza-la amb precaució i sempre revisa el codi generat abans d'executar-lo
+          en producció.
+          <br /><br />
+          Genera automàticament servidors MCP (Model Context Protocol) des de documentació
+          d'ajuda de binaris. L'analitzador d'ajuda és un punt de partida útil, però
+          també pots configurar manualment tots els paràmetres segons les teves necessitats
+          específiques.
         </p>
-        <a 
-          href="https://modelcontextprotocol.io/docs/mcp" 
-          target="_blank" 
-          rel="noopener noreferrer" 
-          class="text-sm text-skin-accent hover:underline font-medium"
-        >
-          Documentació oficial de MCP →
-        </a>
-      </blockquote>
-      <p class="mb-4">
-        Genera automàticament servidors MCP (Model Context Protocol) des de documentació 
-        d'ajuda de binaris. Analitza opcions de línia de comandes, flags i arguments per crear 
-        servidors MCP llestos per a desenvolupament per a qualsevol eina o comanda CLI.
-      </p>
-      <div class="bg-skin-muted px-4 rounded-lg">
-        <h2 class="text-lg font-semibold mb-2">Com funciona:</h2>
-        <ol class="list-decimal list-inside space-y-1 text-sm text-skin-muted">
-          <li>Enganxa la sortida d'ajuda de qualsevol comanda (ex: <code class="bg-skin-fill px-1 rounded">ls --help</code>)</li>
-          <li>Configura els paràmetres del teu servidor MCP (nom, descripció, versió)</li>
-          <li>Tria el teu llenguatge de programació preferit (Node.js o Python)</li>
-          <li>Genera un servidor MCP complet per a desenvolupament i proves</li>
-        </ol>
       </div>
-    </div>
-    
-    <McpCreatorComponent client:load />
+
+      <McpCreatorComponent client:load />
     </article>
   </main>
-  
+
   <Footer />
-</Layout> 
+</Layout>
+
