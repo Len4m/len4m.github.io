@@ -251,7 +251,7 @@ const McpSecurityConfig: React.FC<Props> = ({ securityConfig, onChange, t }) => 
                 </div>
                 <div className="space-y-2">
                   <div>
-                    <label className="block text-sm font-medium text-skin-base mb-1">
+                    <label className="block text-sm font-medium text-skin-base mb-1 opacity-50">
                       {t.runAsUserLabel}
                     </label>
                     <input
@@ -259,7 +259,8 @@ const McpSecurityConfig: React.FC<Props> = ({ securityConfig, onChange, t }) => 
                       value={securityConfig.sandboxing.runAsUser}
                       onChange={(e) => handleSecurityFieldChange('sandboxing', 'runAsUser', e.target.value)}
                       placeholder={t.runAsUserPlaceholder}
-                      className="w-full p-2 border border-skin-border rounded-md bg-skin-fill text-skin-base focus:outline-none focus:ring-2 focus:ring-skin-accent text-sm"
+                      className="w-full p-2 border border-skin-border rounded-md bg-skin-fill text-skin-base focus:outline-none focus:ring-2 focus:ring-skin-accent text-sm opacity-50 cursor-not-allowed"
+                      disabled
                     />
                   </div>
                 </div>
