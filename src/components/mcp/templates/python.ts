@@ -48,63 +48,66 @@ export function generatePythonTemplate(config: ServerConfig, params: ParsedParam
   const paramNames = params && params.length > 0 ? params.map(p => p.name.replace(/[^a-zA-Z0-9]/g, '_')) : [];
   const requiredParams = params && params.length > 0 ? params.filter(p => p.required).map(p => `"${p.name.replace(/[^a-zA-Z0-9]/g, '_')}"`) : [];
 
-  const commandBuilding = params && params.length > 0 ? params.map(param => {
+  // Separar argumentos posicionales de flags/opciones para construir el comando en el orden correcto
+  const positionalArgs = params && params.length > 0 ? params.filter(p => p.type === 'argument').sort((a, b) => (a.position || 0) - (b.position || 0)) : [];
+  const flagsAndOptions = params && params.length > 0 ? params.filter(p => p.type !== 'argument') : [];
+
+  const commandBuilding = `
+            # Add positional arguments first (in order)
+${positionalArgs.map(param => {
+    const cleanName = param.name.replace(/[^a-zA-Z0-9]/g, '_');
+    return `            if ${cleanName}:
+                command.append(str(${cleanName}))`;
+  }).join('\n')}
+            
+            # Add flags and options
+${flagsAndOptions.map(param => {
     const cleanName = param.name.replace(/[^a-zA-Z0-9]/g, '_');
     
     if (param.type === 'flag') {
-      return `        if ${cleanName}:
-            command.append("${param.name}")`;
+      return `            if ${cleanName}:
+                command.append("${param.name}")`;
     } else if (param.type === 'option') {
       if (param.takesValue && param.expectsValue) {
         if (param.name.includes('=')) {
-          return `        if ${cleanName}:
-            command.append("${param.name.replace('=', '')}=" + str(${cleanName}))`;
+          return `            if ${cleanName}:
+                command.append("${param.name.replace('=', '')}=" + str(${cleanName}))`;
         } else {
-          return `        if ${cleanName}:
-            command.extend(["${param.name}", str(${cleanName})])`;
+          return `            if ${cleanName}:
+                command.extend(["${param.name}", str(${cleanName})])`;
         }
       } else if (param.takesValue) {
-        return `        if ${cleanName}:
-            command.append("${param.name}")`;
+        return `            if ${cleanName}:
+                command.append("${param.name}")`;
       } else {
-        return `        if ${cleanName}:
-            command.append("${param.name}")`;
+        return `            if ${cleanName}:
+                command.append("${param.name}")`;
       }
     } else {
-      return `        if ${cleanName}:
-            command.append(str(${cleanName}))`;
+      return `            if ${cleanName}:
+                command.append(str(${cleanName}))`;
     }
-  }).join('\n') : '';
+  }).join('\n')}`;
 
   // Manejar caso cuando no hay parámetros
-  const paramExtraction = paramNames.length > 0 ? paramNames.map(name => `${name} = arguments.get("${name}")`).join('\n            ') : '# No parameters to extract';
+  const paramExtraction = paramNames.length > 0 ? paramNames.map(name => `            ${name} = arguments.get("${name}")`).join('\n') : '            # No parameters to extract';
   const requiredArray = requiredParams.length > 0 ? `[${requiredParams.join(', ')}]` : '[]';
 
+  // Código de ejecución corregido - sin bloques try-catch anidados
   const executionCode = securityConfig.enabled ? 
-    `        # Validar seguridad antes de ejecutar
-        try:
+    `            # Validar seguridad antes de ejecutar
             validate_security_constraints({${paramNames.length > 0 ? paramNames.map(name => `"${name}": ${name}`).join(', ') : ''}}, command)
-        except Exception as security_error:
-            return [TextContent(
-                type="text",
-                text=f"❌ Security validation failed: {security_error}\\n\\nThis command was blocked due to security restrictions. Please review the command and try again with different parameters."
-            )]
-        
-        # Ejecutar comando de forma segura
-        try:
+            
+            # Ejecutar comando de forma segura
             result = execute_securely("${config.binaryName}", command[1:] if len(command) > 1 else [], "${config.workingDirectory || ''}", ${config.timeout || 30})
             return [TextContent(
                 type="text",
                 text=result or "Command executed successfully"
-            )]
-        except Exception as exec_error:
-            return [TextContent(
-                type="text",
-                text=f"❌ Command execution failed: {exec_error}"
             )]` :
-    `        # Execute command
-        try:
-            working_dir = "${config.workingDirectory || ''}" if "${config.workingDirectory || ''}" else None
+    `            # Execute command
+            working_dir = "${config.workingDirectory || ''}"
+            if working_dir == "":
+                working_dir = None
             result = subprocess.run(
                 command,
                 capture_output=True,
@@ -112,23 +115,13 @@ export function generatePythonTemplate(config: ServerConfig, params: ParsedParam
                 cwd=working_dir,
                 timeout=${config.timeout || 30}  # Configurable timeout
             )
-            
+
             if result.stderr:
                 print(f"Command stderr: {result.stderr}", file=sys.stderr)
-            
+
             return [TextContent(
                 type="text",
                 text=result.stdout or "Command executed successfully"
-            )]
-        except subprocess.TimeoutExpired:
-            return [TextContent(
-                type="text",
-                text="❌ Command execution timed out"
-            )]
-        except Exception as error:
-            return [TextContent(
-                type="text",
-                text=f"❌ Command execution failed: {error}"
             )]`;
 
   return `#!/usr/bin/env python3
@@ -158,7 +151,6 @@ from mcp.types import (
     TextContent,
     ImageContent,
     EmbeddedResource,
-    LogLevel,
 )
 from pydantic import AnyUrl
 
@@ -302,7 +294,7 @@ def validate_security_constraints(params: Dict[str, Any], command: List[str]) ->
     for key, value in params.items():
         if isinstance(value, str):
             # Remover caracteres peligrosos básicos
-            dangerous_chars = r"[;&|\`$]"
+            dangerous_chars = r"[;&|$]"
             params[key] = re.sub(dangerous_chars, "", str(value))`;
   }
 
