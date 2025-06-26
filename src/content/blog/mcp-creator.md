@@ -33,7 +33,7 @@ I present to you the **MCP Server Creator**, a web tool that turns MCP server cr
 
 Before you get too excited: this tool is for **proof of concept, learning, and experimental development**. I'm not responsible if you decide to use it for something you shouldn't. Use it responsibly and only in controlled environments. Thanks for your understanding! 🙏
 
-**[🔗 MCP Creator - MCP Server Generator](/en/mcp-creator/)**
+**[🔗 MCP Creator - MCP Server Generator](/mcp-creator/)**
 
 ## Main features
 
