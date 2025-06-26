@@ -1,6 +1,6 @@
 ---
 author: Lenam
-pubDatetime: 2025-07-26T00:00:00Z
+pubDatetime: 2025-06-26T00:00:00Z
 title: "Creador de Servidores MCP: Convierte cualquier comando en una herramienta de IA en 5 minutos"
 slug: mcp-creator-es
 featured: true

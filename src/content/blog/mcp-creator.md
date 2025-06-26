@@ -1,6 +1,6 @@
 ---
 author: Lenam
-pubDatetime: 2025-07-26T00:00:00Z
+pubDatetime: 2025-06-26T00:00:00Z
 title: "MCP Server Creator: Turn Any Command into an AI Tool in 5 Minutes"
 slug: mcp-creator-en
 featured: true
