@@ -22,6 +22,7 @@ export default defineConfig({
   build: {
     format: "directory",
   },
+
   integrations: [
     tailwind({
       applyBaseStyles: false,
@@ -61,7 +62,6 @@ export default defineConfig({
     }),
   ],
   markdown: {
-
     remarkPlugins: [
       [remarkToc, { 
         heading: 'Table of contents|Tabla de contenido|Taula de continguts'
@@ -96,6 +96,13 @@ export default defineConfig({
     },
     optimizeDeps: {
       exclude: ["@resvg/resvg-js"],
+      include: [
+        "react-simple-code-editor",
+        "prismjs",
+        "prismjs/components/prism-clike",
+        "prismjs/components/prism-javascript", 
+        "prismjs/components/prism-python"
+      ],
     },
   },
   scopedStyleStrategy: "where",
