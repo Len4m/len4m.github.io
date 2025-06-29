@@ -19,7 +19,6 @@ import type { ParsedParameter, ServerConfig, SecurityConfig, ParameterSecurity }
 
 export default function McpCreator() {
   const [inputText, setInputText] = useState('');
-  const [isProcessing, setIsProcessing] = useState(false);
   const [currentLang, setCurrentLang] = useState<'en' | 'es' | 'ca'>('en');
   const [isHydrated, setIsHydrated] = useState(false);
   const [language, setLanguage] = useState<'nodejs' | 'python'>('nodejs');
@@ -369,76 +368,6 @@ export default function McpCreator() {
       ...prev,
       [field]: value
     }));
-  };
-
-  // Funciones de manejo para configuración de seguridad
-  const handleSecurityToggle = () => {
-    setSecurityConfig(prev => ({
-      ...prev,
-      enabled: !prev.enabled
-    }));
-  };
-
-  const handleSecurityLevelChange = (level: 'basic' | 'intermediate' | 'advanced') => {
-    setSecurityConfig(prev => ({
-      ...prev,
-      level
-    }));
-  };
-
-  const handleSecurityFieldChange = (section: keyof SecurityConfig, field: string, value: any) => {
-    setSecurityConfig(prev => {
-      if (section === 'restrictions') {
-        return {
-          ...prev,
-          restrictions: {
-            ...prev.restrictions,
-            [field]: value
-          }
-        };
-      } else if (section === 'sandboxing') {
-        return {
-          ...prev,
-          sandboxing: {
-            ...prev.sandboxing,
-            [field]: value
-          }
-        };
-      } else if (section === 'validation') {
-        return {
-          ...prev,
-          validation: {
-            ...prev.validation,
-            [field]: value
-          }
-        };
-      }
-      return prev;
-    });
-  };
-
-  const handleArrayFieldChange = (section: keyof SecurityConfig, field: string, value: string) => {
-    const values = value.split(',').map(v => v.trim()).filter(v => v);
-    setSecurityConfig(prev => {
-      if (section === 'restrictions') {
-        return {
-          ...prev,
-          restrictions: {
-            ...prev.restrictions,
-            [field]: values
-          }
-        };
-      } else if (section === 'sandboxing') {
-        return {
-          ...prev,
-          sandboxing: {
-            ...prev.sandboxing,
-            [field]: values
-          }
-        };
-      }
-      return prev;
-    });
   };
 
   return (
