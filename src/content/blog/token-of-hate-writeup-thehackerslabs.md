@@ -3,7 +3,7 @@ author: Lenam
 pubDatetime: 2025-03-22T00:00:00Z
 title: WriteUp Token Of Hate - TheHackersLabs
 slug: token-of-hate-writeup-thehackerslabs-en
-featured: true
+featured: false
 draft: false
 ogImage: "assets/token-of-hate/OpenGraph.png"
 tags:

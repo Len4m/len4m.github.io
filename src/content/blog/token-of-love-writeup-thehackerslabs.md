@@ -3,7 +3,7 @@ author: Lenam
 pubDatetime: 2025-02-20T15:22:00Z
 title: WriteUp Token Of Love - TheHackersLabs
 slug: token-of-love-writeup-thehackerslabs-en
-featured: true
+featured: false
 draft: false
 ogImage: "assets/token-of-love/OpenGraph.png"
 tags:
