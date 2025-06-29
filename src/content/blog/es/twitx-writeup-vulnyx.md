@@ -5,7 +5,7 @@ title: WriteUp Twitx - Vulnyx
 slug: twitx-writeup-vulnyx-es
 featured: false
 draft: false
-ogImage: "assets/twitx/OpenGraph.png"
+ogImage: "../../../assets/images/twitx/OpenGraph.png"
 tags:
   - writeup
   - vulnyx
@@ -32,29 +32,29 @@ Espero que lo disfrutes.
 
 `$ nmap -p- 192.168.1.195 -oN nmap.txt -vvv`
 
-![img_p1_1](/assets/twitx/img_p1_1.png)
+![img_p1_1](../../../assets/images/twitx/img_p1_1.png)
 
 Encontramos 2 puertos abiertos, 22 y 80 (SSH y HTTP). Echamos un vistazo más de cerca a estos dos puertos para intentar obtener más información.
 
 `$ nmap -sV -sC -A -p 80,22 192.168.1.195 -oN nmap2.txt -vvv`
 
-![img_p1_2](/assets/twitx/img_p1_2.png)
+![img_p1_2](../../../assets/images/twitx/img_p1_2.png)
 
 El servicio web en el puerto 80 parece tener la página predeterminada de:
 
-![img_p2_1](/assets/twitx/img_p2_1.png)
+![img_p2_1](../../../assets/images/twitx/img_p2_1.png)
 
 Realizamos una enumeración de directorios con dirb:
 
 `$ dirb http://192.168.1.195`
 
-![img_p2_2](/assets/twitx/img_p2_2.png)
+![img_p2_2](../../../assets/images/twitx/img_p2_2.png)
 
 Encontramos varias rutas, pero las que más nos interesan son: /note y /info.php.
 
 En “/info.php” encontramos la típica salida de “phpInfo()” con mucha información sobre el sistema, por lo que sabemos que el servidor tiene PHP instalado, qué módulos de PHP están habilitados, qué funciones del tipo exec, eval, include podemos usar, etc.
 
-![img_p3_1](/assets/twitx/img_p3_1.png)
+![img_p3_1](../../../assets/images/twitx/img_p3_1.png)
 
 En “/note” solo hay un archivo de texto con el siguiente mensaje:
 
@@ -64,13 +64,13 @@ Agregamos el dominio twitx.nyx al archivo hosts:
 
 `echo "192.168.1.195 twitx.nyx" >> /etc/hosts`
 
-![img_p3_2](/assets/twitx/img_p3_2.png)
+![img_p3_2](../../../assets/images/twitx/img_p3_2.png)
 
 ## Enumeración 2, servicio web
 
 Después de agregar el dominio “twitx.nyx” al archivo /etc/hosts, accedemos a él a través del navegador y encontramos un sitio web de streamers.
 
-![img_p4_1](/assets/twitx/img_p4_1.png)
+![img_p4_1](../../../assets/images/twitx/img_p4_1.png)
 
 En el sitio web, observamos varias cosas a primera vista:
 
@@ -94,25 +94,25 @@ Analizamos el código del sitio donde encontramos diferentes cosas interesantes 
 
 Hay dos códigos ofuscados dentro de la programación del sitio, el primero se encuentra en /index.php en la línea 522.
 
-![img_p5_1](/assets/twitx/img_p5_1.png)
+![img_p5_1](../../../assets/images/twitx/img_p5_1.png)
 
 El otro código ofuscado está al final del archivo /js/scripts.js.
 
-![img_p5_2](/assets/twitx/img_p5_2.png)
+![img_p5_2](../../../assets/images/twitx/img_p5_2.png)
 
 Este último tiene un comentario antes que dice "Countdown", lo que podría sugerir que tiene que ver con la cuenta regresiva en la página.
 
 También encontramos una variable declarada al final del archivo “/index.php” llamada `dateFinish`. Si buscamos esta variable en la programación, veremos que se usa dentro del código JavaScript ofuscado.
 
-![img_p5_3](/assets/twitx/img_p5_3.png)
+![img_p5_3](../../../assets/images/twitx/img_p5_3.png)
 
 Otra cosa interesante que vemos en la línea 245 es que el formulario se envía a “/?send”.
 
-![img_p5_4](/assets/twitx/img_p5_4.png)
+![img_p5_4](../../../assets/images/twitx/img_p5_4.png)
 
 Y quizás lo más interesante es el formulario de registro.
 
-![img_p5_5](/assets/twitx/img_p5_5.png)
+![img_p5_5](../../../assets/images/twitx/img_p5_5.png)
 
 En este formulario, debajo de "imagen del avatar" hay un comentario: Max upload: 2MB., solo PNG y 150x150 como máximo, se aceptan resoluciones más altas pero serán transformadas.
 
@@ -148,11 +148,11 @@ Para modificar esta variable, abrimos la consola del navegador presionando la te
 dateFinish = new Date();
 ```
 
-![img_p6_2](/assets/twitx/img_p6_2.png)
+![img_p6_2](../../../assets/images/twitx/img_p6_2.png)
 
 Haciendo esto se mostrará el enlace de Log-in para iniciar sesión con el usuario creado.
 
-![img_p7_1](/assets/twitx/img_p7_1.png)
+![img_p7_1](../../../assets/images/twitx/img_p7_1.png)
 
 Iniciamos sesión con el usuario creado anteriormente y ahora podemos ver el enlace "My Profile" en el menú.
 
@@ -160,7 +160,7 @@ El enlace nos lleva a una URL muy interesante donde podemos ver los datos de nue
 
 [](http://twitx.tv/private.php?folder=user&file=profile.php)http://twitx.nyx/private.php?folder=user&file=profile.php
 
-![img_p7_2](/assets/twitx/img_p7_2.png)
+![img_p7_2](../../../assets/images/twitx/img_p7_2.png)
 
 Este enlace parece tener un LFI pero está muy sanitizado y solo permite cargar un archivo (parámetro file) desde una carpeta (parámetro folder).
 
@@ -171,13 +171,13 @@ Cargamos la siguiente dirección en el navegador, modificando los parámetros fo
 
 http://twitx.nyx/private.php?folder=upload&file=17777047896641350dc29929.54816126.png&cmd=whoami
 
-![img_p8_1](/assets/twitx/img_p8_1.png)
+![img_p8_1](../../../assets/images/twitx/img_p8_1.png)
 
 Ahora es momento de intentar hacer una reverse shell con lo que hemos logrado.
 
 Empezamos configurando un listener netcat en el puerto deseado.
 
-![img_p8_2](/assets/twitx/img_p8_2.png)
+![img_p8_2](../../../assets/images/twitx/img_p8_2.png)
 
 Dado que sabemos que el servidor tiene PHP instalado, usamos la siguiente reverse shell:
 
@@ -195,39 +195,39 @@ Ahora solo necesitamos cargar la siguiente URL:
 
 Y obtenemos acceso a la shell:
 
-![img_p8_3](/assets/twitx/img_p8_3.png)
+![img_p8_3](../../../assets/images/twitx/img_p8_3.png)
 
 ## Movimiento lateral hacia el usuario timer
 
 Ahora podemos enumerar los usuarios del sistema.
 
-![img_p9_1](/assets/twitx/img_p9_1.png)
+![img_p9_1](../../../assets/images/twitx/img_p9_1.png)
 
 Vemos algunos usuarios interesantes: lenam y timer. También podemos ver toda la programación del sitio twitx.nyx, donde encontramos dos cosas muy interesantes en la carpeta `/var/www/twitx.nyx/includes`.
 
 Archivo **config.php** donde podemos ver las credenciales de la base de datos.
 
-![img_p9_2](/assets/twitx/img_p9_2.png)
+![img_p9_2](../../../assets/images/twitx/img_p9_2.png)
 
 Archivo **taak.php**, que parece muy interesante debido a los comentarios que aparecen en él. Tenemos permisos de escritura, y es muy probable que sea ejecutado por una tarea programada.
 
-![img_p9_3](/assets/twitx/img_p9_3.png)
+![img_p9_3](../../../assets/images/twitx/img_p9_3.png)
 
 ### Hash de la base de datos
 
 Ingresamos a la base de datos y verificamos que hay una tabla llamada `users` con los siguientes datos:
 
-![img_p10_1](/assets/twitx/img_p10_1.png)
+![img_p10_1](../../../assets/images/twitx/img_p10_1.png)
 
 Encontramos un hash para el usuario “Lenam”, quien tiene el rol de “adm”. Intentamos forzarlo con john y la wordlist rockyou.
 
 Primero, verificamos qué tipo de hash es; parece ser bcrypt.
 
-![img_p10_2](/assets/twitx/img_p10_2.png)
+![img_p10_2](../../../assets/images/twitx/img_p10_2.png)
 
 Intentamos forzarlo con john the ripper y encontramos la contraseña “patricia”, john la encontrará muy rápido.
 
-![img_p10_3](/assets/twitx/img_p10_3.png)
+![img_p10_3](../../../assets/images/twitx/img_p10_3.png)
 
 Esta contraseña actualmente no nos es útil, podemos iniciar sesión en el sitio con el usuario [lenamgenx@protonmail.com](mailto:lenamgenx@protonmail.com) y la contraseña “patricia”, pero no nos otorga más privilegios en este momento. Ya podemos ver toda la programación del sitio.
 
@@ -235,27 +235,27 @@ Esta contraseña actualmente no nos es útil, podemos iniciar sesión en el siti
 
 El archivo taak.php parece ser una tarea programada. También tenemos permisos de escritura en él:
 
-![img_p11_2](/assets/twitx/img_p11_2.png)
+![img_p11_2](../../../assets/images/twitx/img_p11_2.png)
 
 Preparamos una reverse shell en PHP para incluirla en el archivo taak.php y configuramos un listener. Usamos la reverse shell en PHP de rebshells.com por “PHP Ivan Sincek” y la incluimos al final del archivo taak.php, pero cuidado de no incluir el primer `<?`, como esto:
 
-![img_p11_3](/assets/twitx/img_p11_3.png)
+![img_p11_3](../../../assets/images/twitx/img_p11_3.png)
 
 Configuramos un listener y en un minuto o menos, somos el usuario timer.
 
 `$ nc -lvnp 8080`
 
-![img_p12_1](/assets/twitx/img_p12_1.png)
+![img_p12_1](../../../assets/images/twitx/img_p12_1.png)
 
 ## Movimiento lateral de timer a lenam
 
 Vemos la tarea programada que nos permitió movernos a este usuario:
 
-![img_p12_3](/assets/twitx/img_p12_3.png)
+![img_p12_3](../../../assets/images/twitx/img_p12_3.png)
 
 Además, el usuario timer tiene permisos sudo sin contraseña para ejecutar el binario `/usr/bin/ascii85`.
 
-![img_p12_2](/assets/twitx/img_p12_2.png)
+![img_p12_2](../../../assets/images/twitx/img_p12_2.png)
 
 Este ejecutable se utiliza para codificar bytes a texto en base85, y al no validar adecuadamente los permisos de sudo dentro del ejecutable, podemos leer cualquier archivo en el sistema.
 
@@ -265,13 +265,13 @@ Usamos esto para ver si algún usuario tiene una clave privada id_rsa, y encontr
 
 `timer@twitx:~$ sudo /usr/bin/ascii85 "/home/lenam/.ssh/id_rsa" | ascii85 –decode`
 
-![img_p13_1](/assets/twitx/img_p13_1.png)
+![img_p13_1](../../../assets/images/twitx/img_p13_1.png)
 
 Aprovechamos esta clave privada, la copiamos en un archivo en nuestra máquina y aplicamos los permisos necesarios para usarla vía ssh. Nos pide una contraseña, utilizamos la contraseña “patricia” obtenida al descifrar el hash de la base de datos de lenam.
 
 `$ ssh -i id_rsa lenam@192.168.1.195`
 
-![img_p13_2](/assets/twitx/img_p13_2.png)
+![img_p13_2](../../../assets/images/twitx/img_p13_2.png)
 
 Ahora somos el usuario lenam.
 
@@ -281,7 +281,7 @@ Buscamos archivos con SUID.
 
 `~$ find / -perm -u=s -type f 2>/dev/null`
 
-![img_p14_1](/assets/twitx/img_p14_1.png)
+![img_p14_1](../../../assets/images/twitx/img_p14_1.png)
 
 y encontramos el archivo `/home/lenam/look/inside/unshare`.
 
@@ -295,6 +295,6 @@ Entonces ejecutamos:
 
 `~/look/inside$ ./unshare -r /bin/sh`
 
-![img_p14_2](/assets/twitx/img_p14_2.png)
+![img_p14_2](../../../assets/images/twitx/img_p14_2.png)
 
 ¡Felicidades, CTF completado!

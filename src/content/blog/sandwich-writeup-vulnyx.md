@@ -5,7 +5,7 @@ title: WriteUp Sandwich - Vulnyx
 slug: sandwich-writeup-vulnyx-en
 featured: false
 draft: false
-ogImage: "assets/sandwich/OpenGraph.png"
+ogImage: "../../assets/images/sandwich/OpenGraph.png"
 tags:
     - Vulnyx
     - Writeup
@@ -16,7 +16,7 @@ description:
 lang: en
 ---
 
-![alt text](/assets/sandwich/OpenGraph.png)
+![alt text](../../assets/images/sandwich/OpenGraph.png)
 
 This writeup describes the exploitation and escalation of the Sandwich machine on the Vulnyx platform, where you can practice the sandwich technique on a password recovery form that generates UUIDs vulnerable to this technique. This technique is applicable to any insecure token or hash generated with timestamps or predictable data.
 
@@ -34,7 +34,7 @@ We perform a scan of all ports with nmap.
 nmap -p- -sS -Pn -n 192.168.1.188
 ```
 
-![nmap1](/assets/sandwich/nmap1.png)
+![nmap1](../../assets/images/sandwich/nmap1.png)
 
 We found two open ports: port 80 and 22. We performed a more thorough scan using nmap scripts to try to obtain more information about the services on both ports.
 
@@ -42,7 +42,7 @@ We found two open ports: port 80 and 22. We performed a more thorough scan using
 nmap -p22,80 -sCV -Pn -n 192.168.1.188
 ```
 
-![nmap2](/assets/sandwich/nmap2.png)
+![nmap2](../../assets/images/sandwich/nmap2.png)
 
 In this second scan, we can see how the domain `sandwich.nyx` appears in the `http-title` of the website on port `80`. We add it to the `/etc/hosts` file of our machine and try to discover possible subdomains.
 
@@ -56,7 +56,7 @@ echo "192.168.1.188 sandwich.nyx" | sudo tee -a /etc/hosts
 gobuster vhost -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-110000.txt -u sandwich.nyx -t 30 --append-domain  
 ```
 
-![subdomain fuzz](/assets/sandwich/subdomaindicobery.png)
+![subdomain fuzz](../../assets/images/sandwich/subdomaindicobery.png)
 
 We quickly found the subdomain `webmail.sandwich.nyx`, and we also added it to the `/etc/hosts` file.
 
@@ -70,7 +70,7 @@ We perform fuzzing of directories and files with php and txt extensions on both 
 
 #### sandwich.nyx
 
-![alt text](/assets/sandwich/image-1.png)
+![alt text](../../assets/images/sandwich/image-1.png)
 
 ```bash
 $ gobuster dir -w /usr/share/seclists/Discovery/Web-Content/directory-list-2.3-medium.txt -u http://sandwich.nyx -x .php,.txt           
@@ -107,7 +107,7 @@ Finished
 
 #### webmail.sandwich.nyx
 
-![alt text](/assets/sandwich/image-2.png)
+![alt text](../../assets/images/sandwich/image-2.png)
 
 ```bash
 $ gobuster dir -w /usr/share/seclists/Discovery/Web-Content/directory-list-2.3-medium.txt -u http://webmail.sandwich.nyx -x .php,.txt
@@ -202,7 +202,7 @@ We found that the user `admin@sandwich.nyx` also exists.
 
 Webmail image for `user1@sandwich.nyx`
 
-![alt text](/assets/sandwich/image-3.png)
+![alt text](../../assets/images/sandwich/image-3.png)
 
 Token URL for user1 and user2: 
 
@@ -289,7 +289,7 @@ We log in with the user `admin@sandwich.nyx` and the password `lenam` at http://
 
 We find the same sandwich generation and saving page, but there is also a link to download the sandwiches of all users.
 
-![alt text](/assets/sandwich/image-4.png)
+![alt text](../../assets/images/sandwich/image-4.png)
 
 We download a CSV file with all the sandwich configurations saved by all registered users. 📥 We use this list of users to perform fuzzing on the webmail.
 
@@ -328,7 +328,7 @@ After 7 minutes 😅, we found the password for the webmail of `matthygd_x@sandw
 
 We logged into the webmail and could see a message sent by the administrator with the password for their SSH user. 🔑
 
-![alt text](/assets/sandwich/image-5.png)
+![alt text](../../assets/images/sandwich/image-5.png)
 
 We access with the credentials through the SSH service.
 
@@ -368,7 +368,7 @@ With the `chvt` command, we can display the TTY of `ll104567` on the machine's "
 
 Currently, on the machine's physical screen, you can see:
 
-![alt text](/assets/sandwich/image.png)
+![alt text](../../assets/images/sandwich/image.png)
 
 If we execute...
 
@@ -378,7 +378,7 @@ matthygd_xy@sandwich:~$ sudo /bin/chvt 20
 
 ... on the machine's "physical" screen, the TTY of `ll104567` will appear.
 
-![alt text](/assets/sandwich/image-6.png)
+![alt text](../../assets/images/sandwich/image-6.png)
 
 At this point, we can install an SSH key for the user to access from our own terminal or continue working with the "physical screen", a reverse shell, etc.
 

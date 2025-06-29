@@ -5,7 +5,7 @@ title: "MCP Server Creator: Turn Any Command into an AI Tool in 5 Minutes"
 slug: mcp-creator-en
 featured: true
 draft: false
-ogImage: "assets/mcp-creator/OpenGraph.png"
+ogImage: "../../assets/images/mcp-creator/OpenGraph.png"
 tags:
   - AI
   - MCP
@@ -20,7 +20,7 @@ lang: en
 
 Hello, curious hackers and developers! 👋 
 
-![MCP Server Creator](/assets/mcp-creator/OpenGraph.png)
+![MCP Server Creator](../../assets/images/mcp-creator/OpenGraph.png)
 
 > MCP (Model Context Protocol) is a protocol that enables LLMs
 > to connect with external tools, data sources, and systems.

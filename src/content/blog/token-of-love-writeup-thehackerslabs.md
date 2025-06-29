@@ -5,7 +5,7 @@ title: WriteUp Token Of Love - TheHackersLabs
 slug: token-of-love-writeup-thehackerslabs-en
 featured: false
 draft: false
-ogImage: "assets/token-of-love/OpenGraph.png"
+ogImage: "../../assets/images/token-of-love/OpenGraph.png"
 tags:
   - writeup
   - thehackerslabs
@@ -18,11 +18,11 @@ description:
 lang: en
 ---
 
-![Rabbit in Matrix](/assets/token-of-love/OpenGraph.png)
+![Rabbit in Matrix](../../assets/images/token-of-love/OpenGraph.png)
 
 Writeup lovingly narrating the hacker journey in "Token Of Love," where a hidden clue in IPFS is deciphered to obtain the private key and manipulate the JWT. Vulnerabilities in Node.js are exploited to execute remote code, and with a clever trick using sudo with tee and a vulnerability in rsync wildcards, privilege escalation is achieved with care until root privileges are obtained.
 
-![alt text](/assets/token-of-love/image.png)
+![alt text](../../assets/images/token-of-love/image.png)
 
 ## Table of Contents
 
@@ -141,7 +141,7 @@ Starting gobuster in directory enumeration mode
 
 ## Manual Enumeration  
 
-![alt text](/assets/token-of-love/image-1.png)  
+![alt text](../../assets/images/token-of-love/image-1.png)  
 
 We access the website on port 80, register, and log in. We inspect the source code after logging in and check the cookies—it appears to be a JWT session cookie.  
 
@@ -203,11 +203,11 @@ In the JavaScript code of the page, we can find several clues.
 
 Session cookie `token` has HttpOnly enabled.  
 
-![alt text](/assets/token-of-love/image-2.png)  
+![alt text](../../assets/images/token-of-love/image-2.png)  
 
 The JWT from the cookie can be decoded to view its content and the algorithm it uses.  
 
-![alt text](/assets/token-of-love/image-3.png)  
+![alt text](../../assets/images/token-of-love/image-3.png)  
 
 To decode the JWT token found in the cookie, we use the website [https://10015.io/tools/jwt-encoder-decode](https://10015.io/tools/jwt-encoder-decode).  
 
@@ -238,7 +238,7 @@ If we try to manipulate the JWT, we won’t be able to because the implementatio
 
 In summary, we need the private key of this application to manipulate the JWT. In the source code, there is a crucial clue: **IPFS** (`InterPlanetary File System`). Additionally, in the administrator's messages, there are more hints, including what appears to be a hash.  
 
-![alt text](/assets/token-of-love/image-4.png)  
+![alt text](../../assets/images/token-of-love/image-4.png)  
 
 ```text
 administrador (15/2/2025, 23:50:11): Dicen que las claves viajan por rutas interplanetarias, vagando por el espacio infinito y estando en todas partes a la vez… ¿será magia o pura tecnología? 😉🔮 bafybeicbqiitqxhqx47qenneilgb2ckdpweoxxkdmcnx4pda654l733lxu
@@ -275,7 +275,7 @@ $ mv bafybeicbqiitqxhqx47qenneilgb2ckdpweoxxkdmcnx4pda654l733lxu file.webp
 
 We check the file, and it appears to be a `WEBP` image. We modify the file for easier handling and open it to view the image.  
 
-![alt text](/assets/token-of-love/image-5.png)  
+![alt text](../../assets/images/token-of-love/image-5.png)  
 
 It's the same rabbit that appears on the login and registration pages. We compare the differences, and everything seems identical, but it's not.  
 
@@ -334,11 +334,11 @@ We obtain a private key that is used to sign the JWT token, allowing us to manip
 
 We return to [https://10015.io/tools/jwt-encoder-decoder](https://10015.io/tools/jwt-encoder-decoder) and use the private key to sign the JWT.  
 
-![alt text](/assets/token-of-love/image-6.png)  
+![alt text](../../assets/images/token-of-love/image-6.png)  
 
 We copy the JWT signed with the private key, log in with our user account in the application, and modify the `token` cookie by replacing it with the modified JWT, changing the role to `"admin"`. After refreshing the browser, we are now an administrator and can send messages.  
 
-![alt text](/assets/token-of-love/image-7.png)  
+![alt text](../../assets/images/token-of-love/image-7.png)  
 
 At this point, having the private key allows us to impersonate any registered user or even the server itself, but this is enough for now.  
 
@@ -378,7 +378,7 @@ Now, there is more JavaScript—specifically the one that sends messages to the 
 
 On the other hand, by observing the response headers we initially obtained with `whatweb` or through the browser's developer tools, we can see that the backend is an application using Express, a Node.js framework.  
 
-![alt text](/assets/token-of-love/image-8.png)  
+![alt text](../../assets/images/token-of-love/image-8.png)  
 
 Additionally, there is a very subjective message on the website:  
 
@@ -396,7 +396,7 @@ We modify the sent data with the following payload:
 
 It sends a JSON with the `data` parameter, where another JSON appears to be embedded. In reality, this is a JavaScript object that gets deserialized on the server, allowing us to achieve RCE.  
 
-![alt text](/assets/token-of-love/image-9.png)  
+![alt text](../../assets/images/token-of-love/image-9.png)  
 
 More information about this technique:  
 
@@ -420,7 +420,7 @@ Then, we send the following payload via Burp Suite:
 
 We successfully obtain a shell as the user `cupido`.
 
-![alt text](/assets/token-of-love/image-10.png)
+![alt text](../../assets/images/token-of-love/image-10.png)
 
 ## Privilege Escalation  
 
@@ -439,7 +439,7 @@ User cupido may run the following commands on tokenoflove:
 
 According to `gtfobins`, this allows us to write files as the user `eros`.  
 
-![alt text](/assets/token-of-love/image-11.png)  
+![alt text](../../assets/images/token-of-love/image-11.png)  
 
 If we try to create an SSH key for the user `eros`, it won’t be useful since the SSH service is only accessible to the `root` user.  
 
@@ -459,7 +459,7 @@ AllowUsers root
 
 On the other hand, if we check the processes running as `root` using `pspy64`, we transfer it to the server and execute it. After waiting a minute, we find the following process:  
 
-![alt text](/assets/token-of-love/image-12.png)  
+![alt text](../../assets/images/token-of-love/image-12.png)  
 
 We notice that a process using `rsync` copies the entire home directory of the user `eros`. The way it is implemented makes it vulnerable to `rsync wildcards` ([https://www.exploit-db.com/papers/33930](https://www.exploit-db.com/papers/33930)).  
 
@@ -489,6 +489,6 @@ id
 uid=0(root) gid=0(root) grupos=0(root)
 ```
 
-![alt text](/assets/token-of-love/image-13.png)  
+![alt text](../../assets/images/token-of-love/image-13.png)  
 
 After waiting for a maximum of one minute, we successfully obtain a root shell.

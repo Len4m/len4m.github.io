@@ -5,7 +5,7 @@ title: "Creador de Servidores MCP: Convierte cualquier comando en una herramient
 slug: mcp-creator-es
 featured: true
 draft: false
-ogImage: "assets/mcp-creator/OpenGraph.png"
+ogImage: "../../../assets/images/mcp-creator/OpenGraph.png"
 tags:
   - AI
   - MCP
@@ -20,7 +20,7 @@ lang: es
 
 ¡Hola, hackers y desarrolladores curiosos! 👋 
 
-![Creador de Servidores MCP](/assets/mcp-creator/OpenGraph.png)
+![Creador de Servidores MCP](../../../assets/images/mcp-creator/OpenGraph.png)
 
 > MCP (Model Context Protocol) es un protocolo que permite a los LLMs
 > conectarse con herramientas externas, fuentes de datos y sistemas.

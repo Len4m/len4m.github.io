@@ -5,7 +5,7 @@ title: Lab Inj3ctlab - Bug Bounty Labs
 slug: inj3ctlab-lab-bugbountylabs-es
 featured: false
 draft: false
-ogImage: "assets/inj3ctlab/OpenGraph.png"
+ogImage: "../../../assets/images/inj3ctlab/OpenGraph.png"
 tags:
   - lab
   - Bug Bounty Labs
@@ -18,7 +18,7 @@ description:
 lang: es
 ---
 
-![Alt text](/assets/inj3ctlab/OpenGraph.png)
+![Alt text](../../../assets/images/inj3ctlab/OpenGraph.png)
 
 Artículo que describe la vulnerabilidad SSTI y muestra, paso a paso, cómo resolver el laboratorio Inj3ctlab de Bug Bounty Labs para practicar SSTI en múltiples motores de plantillas.
 
@@ -112,7 +112,7 @@ El laboratorio proporciona un enfoque práctico y controlado, ideal para experim
 
 Levantamos el laboratorio siguiendo las instrucciones de [Bug Bounty Labs](https://bugbountylabs.com).
 
-![alt text](/assets/inj3ctlab/image.png)
+![alt text](../../../assets/images/inj3ctlab/image.png)
 
 Obtenemos la dirección IP del laboratorio `127.17.0.2`.
 
@@ -171,7 +171,7 @@ Observamos que los tres puertos `80`, `3000` y `5000` tienen servicios web, los 
 
 Encontramos tres servicios, con el logotipo de la tecnología que esta corriendo por el backend y un campo de formulario donde podemos introducir nuestro nombre.
 
-![alt text](/assets/inj3ctlab/image-1.png)
+![alt text](../../../assets/images/inj3ctlab/image-1.png)
 
 ### Detectar SSTI
 

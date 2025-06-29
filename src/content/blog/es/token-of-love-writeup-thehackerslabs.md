@@ -5,7 +5,7 @@ title: WriteUp Token Of Love - TheHackersLabs
 slug: token-of-love-writeup-thehackerslabs-es
 featured: false
 draft: false
-ogImage: "assets/token-of-love/OpenGraph.png"
+ogImage: "../../../assets/images/token-of-love/OpenGraph.png"
 tags:
   - writeup
   - thehackerslabs
@@ -18,11 +18,11 @@ description:
 lang: es
 ---
 
-![Rabbit in Matrix](/assets/token-of-love/OpenGraph.png)
+![Rabbit in Matrix](../../../assets/images/token-of-love/OpenGraph.png)
 
 Writeup que narra con amor la travesía hacker en "Token Of Love", se descifra una pista oculta en IPFS para obtener la clave privada y manipular el JWT, se explotan vulnerabilidades en Node.js para ejecutar código remoto y, con un tierno truco usando sudo con tee y una vulnerabilidad en rsync wildcards, se escala con cariño hasta lograr privilegios root.
 
-![alt text](/assets/token-of-love/image.png)
+![alt text](../../../assets/images/token-of-love/image.png)
 
 ## Tabla de contenido
 
@@ -141,7 +141,7 @@ Starting gobuster in directory enumeration mode
 
 ## Enumeración manual
 
-![alt text](/assets/token-of-love/image-1.png)
+![alt text](../../../assets/images/token-of-love/image-1.png)
 
 Entramos al sitio web del puerto 80, nos registramos e iniciamos sesión, miramos el código fuente después de iniciar sesión y las cookies, parece ser una cookie de sesión JWT.
 
@@ -203,11 +203,11 @@ En el código javascript de la página, podemos encontrar varias pistas.
 
 Cookie de session `token`, tiene activado el HttpOnly.
 
-![alt text](/assets/token-of-love/image-2.png)
+![alt text](../../../assets/images/token-of-love/image-2.png)
 
 El JWT de la cookie lo podemos decodificar para ver su contenido y el algoritmo que utiliza.
 
-![alt text](/assets/token-of-love/image-3.png)
+![alt text](../../../assets/images/token-of-love/image-3.png)
 
 Para decodificar el token JWT que se encuentra en la cookie utilizamos el sitio web https://10015.io/tools/jwt-encoder-decode.
 
@@ -238,7 +238,7 @@ Si intentamos manipular el JWT no podremos porque la programación esta bien ech
 
 En resumen, necesitamos la clave privada de esta aplicación para poder manipular el JWT y en el código fuente hay una pista muy importante **IPFS** (`InterPlanetary File System`), y en los mensajes del administrador hay más pistas y lo que parece ser un hash.
 
-![alt text](/assets/token-of-love/image-4.png)
+![alt text](../../../assets/images/token-of-love/image-4.png)
 
 ```text
 administrador (15/2/2025, 23:50:11): Dicen que las claves viajan por rutas interplanetarias, vagando por el espacio infinito y estando en todas partes a la vez… ¿será magia o pura tecnología? 😉🔮 bafybeicbqiitqxhqx47qenneilgb2ckdpweoxxkdmcnx4pda654l733lxu
@@ -275,7 +275,7 @@ $ mv bafybeicbqiitqxhqx47qenneilgb2ckdpweoxxkdmcnx4pda654l733lxu file.webp
 
 Comprobamos el fichero y parece ser una imagen `WEBP`, modificamos el fichero para más facilidad y lo abrimos para ver la imagen.
 
-![alt text](/assets/token-of-love/image-5.png)
+![alt text](../../../assets/images/token-of-love/image-5.png)
 
 Es el mismo conejo que aparece en la página de login y de registro, comprobamos las diferencias y es todo igual pero no.
 
@@ -334,11 +334,11 @@ Obtenemos una clave privada que se utiliza para firmar el token JWT, ahora podem
 
 Volvemos a https://10015.io/tools/jwt-encoder-decoder y utilizamos la clave privada para firmar el JWT.
 
-![alt text](/assets/token-of-love/image-6.png)
+![alt text](../../../assets/images/token-of-love/image-6.png)
 
 Copiamos el JWT firmado con la clave privada, entramos con nuestro usuario en la aplicación y modificamos la cookie token por el token JWT modificado con el role a "admin", actualizamos el navegador y ya somos usuario administrador y podemos enviar mensajes.
 
-![alt text](/assets/token-of-love/image-7.png)
+![alt text](../../../assets/images/token-of-love/image-7.png)
 
 En este punto al tener la clave privada nos podríamos hacer pasar por cualquier usuario registrado o incluso por el propio servidor, pero con esto es suficiente.
 
@@ -378,7 +378,7 @@ Ahora hay más javascript, el que envía el mensaje a la API.
 
 Por otro lado observando las cabeceras de la respuesta que obtuvimos al principio con `whatweb` o mediante las herramientas de desarrollador del propio navegador, y podemos ver que el backend es una aplicación con Express, framework de Node.js.
 
-![alt text](/assets/token-of-love/image-8.png)
+![alt text](../../../assets/images/token-of-love/image-8.png)
 
 Ademas hay un mensaje muy subjetivo en la web:
 
@@ -396,7 +396,7 @@ Modificamos la data enviada por el siguiente payload:
 
 Envía un JSON con el parámetro `data` donde dentro parece enviar otro json, que en realidad es un objeto javascript que deserializa en el servidor, conseguimos RCE.
 
-![alt text](/assets/token-of-love/image-9.png)
+![alt text](../../../assets/images/token-of-love/image-9.png)
 
 Más información sobre esta técnica:
 
@@ -420,7 +420,7 @@ y enviamos el siguiente payload mediante burp suite.
 
 Obtenemos una shell como el usuario `cupido`.
 
-![alt text](/assets/token-of-love/image-10.png)
+![alt text](../../../assets/images/token-of-love/image-10.png)
 
 ## Escalada privilegios
 
@@ -439,7 +439,7 @@ User cupido may run the following commands on tokenoflove:
 
 Que según gtfobins tenemos privilegios para escribir ficheros como el usuario `eros`. 
 
-![alt text](/assets/token-of-love/image-11.png)
+![alt text](../../../assets/images/token-of-love/image-11.png)
 
 Si intentamos crear una clave SSH para el usuario `eros` no servirá de nada, ya que el servicio SSH solo esta accesible para el usuario root.
 
@@ -459,7 +459,7 @@ AllowUsers root
 
 Por otro lado si observamos los procesos que se ejecutan como root con `pspy64` nos lo enviamos al servidor y lo ejecutamos, esperamos un minuto y encontramos el siguiente proceso.
 
-![alt text](/assets/token-of-love/image-12.png)
+![alt text](../../../assets/images/token-of-love/image-12.png)
 
 Vemos que hay un proceso que mediante rsync copia todo el home del usuario `eros`, tal como esta hecho es vulnerable a rsync wildcards (https://www.exploit-db.com/papers/33930)
 
@@ -487,6 +487,6 @@ id
 uid=0(root) gid=0(root) grupos=0(root)
 ```
 
-![alt text](/assets/token-of-love/image-13.png)
+![alt text](../../../assets/images/token-of-love/image-13.png)
 
 Esperamos un minuto máximo y obtenemos shell como root.

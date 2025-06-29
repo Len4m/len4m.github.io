@@ -5,7 +5,7 @@ title: "Creador de Servidors MCP: Converteix qualsevol comando en una eina d'IA 
 slug: mcp-creator-ca
 featured: true
 draft: false
-ogImage: "assets/mcp-creator/OpenGraph.png"
+ogImage: "../../../assets/images/mcp-creator/OpenGraph.png"
 tags:
   - AI
   - MCP
@@ -20,7 +20,7 @@ lang: ca
 
 Hola, hackers i desenvolupadors curiosos! 👋 
 
-![Creador de Servidors MCP](/assets/mcp-creator/OpenGraph.png)
+![Creador de Servidors MCP](../../../assets/images/mcp-creator/OpenGraph.png)
 
 > MCP (Model Context Protocol) és un protocol que permet als LLMs
 > connectar-se amb eines externes, fonts de dades i sistemes.

