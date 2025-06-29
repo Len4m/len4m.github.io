@@ -46,13 +46,13 @@ export default function Card({ href, frontmatter, secHeading = true }: Props) {
             {title}
           </h3>
         )}
-        <Dateposts
-          pubDatetime={pubDatetime}
-          modDatetime={modDatetime}
-          size="lg"
-          className="my-2"
-        />
-        <p>{description}</p>
+      <Dateposts
+        pubDatetime={pubDatetime}
+        modDatetime={modDatetime}
+        size="lg"
+        className="my-2"
+      />
+      <p>{description}</p>
       </div>
     </li>
   );

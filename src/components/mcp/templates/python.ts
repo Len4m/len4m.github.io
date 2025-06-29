@@ -3,9 +3,6 @@ import type { ServerConfig, ParsedParameter, SecurityConfig } from '../types';
 export function generatePythonTemplate(config: ServerConfig, params: ParsedParameter[], securityConfig: SecurityConfig): string {
   const securityCode = generateSecurityCode(config, securityConfig);
   
-  // Limpiar el nombre para que sea válido como nombre de clase en Python
-  const className = config.name.replace(/[^a-zA-Z0-9]/g, '') + 'Server';
-  
   const paramDefinitions = params && params.length > 0 ? params.map(param => {
     const cleanName = param.name.replace(/[^a-zA-Z0-9]/g, '_');
     const type = param.type === 'flag' ? 'boolean' : 'string';

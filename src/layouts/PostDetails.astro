@@ -254,14 +254,10 @@ switch (LOCALE.lang) {
   }
   backToTop();
 
-  function onloadNext() {
-    /** Image articles zoom */
-    mediumZoom(document.querySelectorAll("#article img"), {
-      background: "#000000",
-    });
-  }
-
   // Manejar el zoom de imágenes
+  mediumZoom(document.querySelectorAll("#article img"), {
+    background: "#000000",
+  });
 
   /** Maneja la tabla de contenidos y el scroll */
   function handleTocLinks() {
@@ -269,7 +265,7 @@ switch (LOCALE.lang) {
     const tocDetails = document.querySelector(".prose details");
 
     // Función para manejar el scroll suave
-    function handleSmoothScroll(e, targetElement) {
+    function handleSmoothScroll(targetElement) {
       const headerOffset = 45;
       const elementPosition = targetElement.getBoundingClientRect().top;
       const elementMargin = parseInt(
@@ -339,7 +335,7 @@ switch (LOCALE.lang) {
         const targetElement = document.getElementById(targetId);
 
         if (targetElement) {
-          handleSmoothScroll(e, targetElement);
+          handleSmoothScroll(targetElement);
         }
       });
     });
@@ -353,7 +349,7 @@ switch (LOCALE.lang) {
         const targetElement = document.getElementById(targetId);
 
         if (targetElement) {
-          handleSmoothScroll(e, targetElement);
+          handleSmoothScroll(targetElement);
         }
       });
     });

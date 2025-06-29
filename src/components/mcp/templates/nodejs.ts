@@ -3,9 +3,6 @@ import type { ServerConfig, ParsedParameter, SecurityConfig } from '../types';
 export function generateNodeJSTemplate(config: ServerConfig, params: ParsedParameter[], securityConfig: SecurityConfig): string {
   const securityCode = generateSecurityCode(config, securityConfig);
   
-  // Limpiar el nombre para que sea válido como nombre de clase en JavaScript
-  const className = config.name.replace(/[^a-zA-Z0-9]/g, '') + 'Server';
-  
   const paramDefinitions = params.map(param => {
     const cleanName = param.name.replace(/[^a-zA-Z0-9]/g, '_');
     const type = param.type === 'flag' ? 'boolean' : 'string';

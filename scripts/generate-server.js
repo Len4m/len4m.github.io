@@ -29,7 +29,6 @@ const generateNodeJSTemplate = (config, params, securityConfig) => {
     }`;
   }).join(',\n');
 
-  const paramNames = params.map(p => p.name.replace(/[^a-zA-Z0-9]/g, '_'));
   const requiredParams = params.filter(p => p.required).map(p => `"${p.name.replace(/[^a-zA-Z0-9]/g, '_')}"`);
 
   return `#!/usr/bin/env node
@@ -128,10 +127,7 @@ module.exports = ${className};
 };
 
 const generatePythonTemplate = (config, params, securityConfig) => {
-  const className = config.name.replace(/[^a-zA-Z0-9]/g, '') + 'Server';
-  
   const paramDefinitions = params.map(param => {
-    const cleanName = param.name.replace(/[^a-zA-Z0-9]/g, '_');
     const type = param.type === 'flag' ? 'boolean' : 'string';
     const required = param.required ? 'True' : 'False';
     const description = param.description

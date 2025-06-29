@@ -6,7 +6,6 @@ import type { ParsedParameter } from './types';
  */
 export function parseBinaryHelp(helpText: string): ParsedParameter[] {
   const parameters: ParsedParameter[] = [];
-  const lines = helpText.split('\n');
   
   // Limpiar texto de caracteres de control
   const cleanText = helpText.replace(/\b/g, ''); // Remover backspace characters
@@ -14,9 +13,6 @@ export function parseBinaryHelp(helpText: string): ParsedParameter[] {
   // Regex principal inspirado en Fig parser
   // Maneja mejor los casos edge y formatos variados
   const mainPattern = /^\s+(?=-)(?:(-[a-zA-Z0-9])?,?\s?)?(--[a-zA-Z0-9_-]+)?(?:[=\s](?=[^\s]).*?\s)?\s+(.*?)(?=^\s+-|^[^\s]|$)/gms;
-  
-  // Regex para opciones con argumentos específicos
-  const argPattern = /^\s+(?=-)(?:(-[a-zA-Z0-9])?,?\s?)?(--[a-zA-Z0-9_-]+)?(?:[=\s]([A-Z_]+)\s)?\s+(.*?)(?=^\s+-|^[^\s]|$)/gms;
   
   // Regex para argumentos posicionales
   const positionalPattern = /^\s*([A-Z_]+)\s+(.*?)(?=^\s*[A-Z_]|$)/gms;
@@ -58,7 +54,7 @@ export function parseBinaryHelp(helpText: string): ParsedParameter[] {
   
   // Procesar formato especial
   while ((match = specialFormatPattern.exec(cleanText)) !== null) {
-    const [, shortFlag, longFlag, description] = match;
+    const [, , longFlag, description] = match;
     
     if (longFlag && longFlag.includes('=')) {
       // Es una opción que toma valor

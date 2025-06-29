@@ -150,7 +150,6 @@ export default function McpCreator() {
       textareas.forEach((textarea) => {
         const element = textarea as HTMLTextAreaElement;
         element.style.whiteSpace = 'pre';
-        element.style.wordWrap = 'normal';
         element.style.overflowWrap = 'normal';
         element.style.overflow = 'hidden';
         element.style.resize = 'none';
@@ -163,7 +162,6 @@ export default function McpCreator() {
       preElements.forEach((pre) => {
         const element = pre as HTMLPreElement;
         element.style.whiteSpace = 'pre';
-        element.style.wordWrap = 'normal';
         element.style.overflowWrap = 'normal';
         element.style.wordBreak = 'normal';
         element.style.overflow = 'visible';
@@ -176,7 +174,6 @@ export default function McpCreator() {
       codeElements.forEach((code) => {
         const element = code as HTMLElement;
         element.style.whiteSpace = 'pre';
-        element.style.wordWrap = 'normal';
         element.style.overflowWrap = 'normal';
         element.style.wordBreak = 'normal';
       });
