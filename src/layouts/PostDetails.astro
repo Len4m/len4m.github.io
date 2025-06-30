@@ -97,7 +97,7 @@ switch (LOCALE.lang) {
       {tags.map((tag: string) => <Tag lang={locale} tag={slugifyStr(tag)} />)}
     </ul>
 
-    <button
+    <a href="#"
       id="back-to-top"
       class="focus-outline sticky bottom-4 float-right whitespace-nowrap rounded-lg bg-skin-fill px-3 py-1 opacity-75 transition-all duration-300 hover:opacity-100 hidden"
     >
@@ -107,7 +107,7 @@ switch (LOCALE.lang) {
         ></path>
       </svg>
       <span>{toptxt}</span>
-    </button>
+    </a>
     <div
       class="flex flex-col-reverse items-center justify-between gap-6 sm:flex-row-reverse sm:items-end sm:gap-4"
     >
@@ -131,6 +131,29 @@ switch (LOCALE.lang) {
 </style>
 <script is:inline src="/medium-zoom/medium-zoom.min.js"></script>
 <script is:inline>
+
+
+  function loadZoomImage() {
+    let intentos=0;
+    function applyZoomImage() {
+      console.log("applyZoomImage");
+      mediumZoom(document.querySelectorAll("#article img"), {
+        background: "#000000",
+      });
+    }
+    if (typeof mediumZoom !== "undefined" && intentos < 10) {
+        applyZoomImage(); 
+    } else {
+      intentos++;
+      if (intentos < 10) {
+        setTimeout(() => {
+          applyZoomImage();
+        }, 500);
+      }
+    }
+  }
+  loadZoomImage();
+
   /** Create a progress indicator
    *  at the top */
   function createProgressBar() {
@@ -171,12 +194,15 @@ switch (LOCALE.lang) {
   // Ejecutar cuando el DOM esté listo
   document.addEventListener("DOMContentLoaded", () => {
     createProgressBar();
+    // Manejar el zoom de imágenes
+    
     document.addEventListener("scroll", updateScrollProgress);
   });
 
   // Ejecutar después de las transiciones de vista
   document.addEventListener("astro:after-swap", () => {
     createProgressBar();
+      // Manejar el zoom de imágenes
     document.addEventListener("scroll", updateScrollProgress);
   });
 
@@ -253,11 +279,6 @@ switch (LOCALE.lang) {
     });
   }
   backToTop();
-
-  // Manejar el zoom de imágenes
-  mediumZoom(document.querySelectorAll("#article img"), {
-    background: "#000000",
-  });
 
   /** Maneja la tabla de contenidos y el scroll */
   function handleTocLinks() {
