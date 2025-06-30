@@ -131,12 +131,10 @@ switch (LOCALE.lang) {
 </style>
 <script is:inline src="/medium-zoom/medium-zoom.min.js"></script>
 <script is:inline>
-
-
+  
   function loadZoomImage() {
     let intentos=0;
     function applyZoomImage() {
-      console.log("applyZoomImage");
       mediumZoom(document.querySelectorAll("#article img"), {
         background: "#000000",
       });
