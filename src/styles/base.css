@@ -86,6 +86,7 @@
     @apply w-full inline-block cursor-pointer select-none px-2
     text-skin-base sticky bg-skin-fill bg-opacity-80 py-2 backdrop-blur border border-skin-line;
     top: 4px;
+    z-index: 10;
   }
   summary {
     @apply focus-outline;
@@ -155,6 +156,14 @@
     cursor: zoom-out !important;
   }
 
+  /* Ocultar elementos con z-index cuando el zoom está activo */
+  body.medium-zoom--opened #back-to-top,
+  body.medium-zoom--opened .prose details,
+  body.medium-zoom--opened .progress-container,
+  body.medium-zoom--opened [style*="z-index"] {
+    visibility: hidden !important;
+  }
+
 }
 
 @layer components {
@@ -166,17 +175,7 @@
   }
 }
 
-.copy-code {
-  margin-bottom: -35px;
-  margin-right: 10px;
-  z-index:1;
-  
-}
 
-body.medium-zoom--opened .copy-code {
-  visibility: hidden;
-  z-index:-1;
-}
 
 /* Estilos para mensajes de error */
 .text-red-500 {

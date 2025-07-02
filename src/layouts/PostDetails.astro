@@ -97,9 +97,10 @@ switch (LOCALE.lang) {
       {tags.map((tag: string) => <Tag lang={locale} tag={slugifyStr(tag)} />)}
     </ul>
 
-    <a href="#header-site"
+    <a
+      href="#header-site"
       id="back-to-top"
-      class="focus-outline sticky bottom-4 float-right whitespace-nowrap rounded-lg bg-skin-fill px-3 py-1 opacity-80 transition-all duration-300 hover:opacity-100 hidden border border-skin-line"
+      class="focus-outline sticky bottom-4 z-20 float-right hidden whitespace-nowrap rounded-lg border border-skin-line bg-skin-fill px-3 py-1 opacity-80 transition-all duration-300 hover:opacity-100"
     >
       <svg xmlns="http://www.w3.org/2000/svg" class="rotate-90">
         <path
@@ -132,33 +133,13 @@ switch (LOCALE.lang) {
 <script is:inline src="/medium-zoom/medium-zoom.min.js"></script>
 <script is:inline>
 
-  function loadZoomImage() {
-    let intentos=0;
-    function applyZoomImage() {
-      mediumZoom(document.querySelectorAll("#article img"), {
-        background: "#000000",
-      });
-    }
-    if (typeof mediumZoom !== "undefined" && intentos < 10) {
-        applyZoomImage(); 
-    } else {
-      intentos++;
-      if (intentos < 10) {
-        setTimeout(() => {
-          applyZoomImage();
-        }, 500);
-      }
-    }
-  }
-  loadZoomImage();
-
   /** Create a progress indicator
    *  at the top */
   function createProgressBar() {
     // Create the main container div
     const progressContainer = document.createElement("div");
     progressContainer.className =
-      "progress-container fixed top-0 z-10 h-1 w-full bg-skin-fill";
+      "progress-container fixed top-0 z-30 h-1 w-full bg-skin-fill";
 
     // Create the progress bar div
     const progressBar = document.createElement("div");
@@ -193,14 +174,14 @@ switch (LOCALE.lang) {
   document.addEventListener("DOMContentLoaded", () => {
     createProgressBar();
     // Manejar el zoom de imágenes
-    
+
     document.addEventListener("scroll", updateScrollProgress);
   });
 
   // Ejecutar después de las transiciones de vista
   document.addEventListener("astro:after-swap", () => {
     createProgressBar();
-      // Manejar el zoom de imágenes
+    // Manejar el zoom de imágenes
     document.addEventListener("scroll", updateScrollProgress);
   });
 
@@ -227,27 +208,43 @@ switch (LOCALE.lang) {
   /** Attaches copy buttons to code blocks in the document,
    * allowing users to copy code easily. */
   function attachCopyButtons() {
+    // Leer el idioma del elemento HTML
+    const currentLang = document.documentElement.lang;
+
     let copyButtonLabel = "Copy";
+    let copiedLabel = "Copied";
+
+    // Configurar textos según el idioma
+    switch (currentLang) {
+      case "es":
+        copyButtonLabel = "Copiar";
+        copiedLabel = "¡Copiado!";
+        break;
+      case "ca":
+        copyButtonLabel = "Copiar";
+        copiedLabel = "¡Copiat!";
+        break;
+    }
+
     let codeBlocks = Array.from(document.querySelectorAll("pre"));
-    
+
     for (let codeBlock of codeBlocks) {
       let copyButton = document.createElement("button");
       copyButton.className =
-        " ml-auto rounded bg-skin-card px-2 py-1 text-xs leading-4 text-skin-base font-medium -mt-9 mr-3";
+        "absolute -top-4 right-2 rounded bg-skin-card px-2 py-1 text-xs leading-4 text-skin-base font-medium";
       copyButton.innerHTML = copyButtonLabel;
       copyButton.setAttribute("tabindex", "0");
       codeBlock.removeAttribute("tabindex");
-      
 
-      // Creamos un contenedor flex
-      let flexContainer = document.createElement("div");
-      flexContainer.style.display = "flex";
-      flexContainer.style.flexDirection = "column";
+      // Creamos un contenedor con posición relativa para el posicionamiento absoluto del botón
+      let container = document.createElement("div");
+      container.style.position = "relative";
+      container.style.zIndex = "1";
 
-      // Movemos el pre al contenedor flex
-      codeBlock?.parentNode?.insertBefore(flexContainer, codeBlock);
-      flexContainer.appendChild(codeBlock);
-      flexContainer.appendChild(copyButton);
+      // Movemos el pre al contenedor
+      codeBlock?.parentNode?.insertBefore(container, codeBlock);
+      container.appendChild(codeBlock);
+      container.appendChild(copyButton);
 
       copyButton.addEventListener("click", async () => {
         await copyCode(codeBlock, copyButton);
@@ -261,7 +258,7 @@ switch (LOCALE.lang) {
       await navigator.clipboard.writeText(text ?? "");
 
       // visual feedback that task is completed
-      button.innerText = "Copied";
+      button.innerText = copiedLabel;
 
       setTimeout(() => {
         button.innerText = copyButtonLabel;
@@ -269,6 +266,11 @@ switch (LOCALE.lang) {
     }
   }
   attachCopyButtons();
+
+  // Ejecutar después de las transiciones de vista
+  document.addEventListener("astro:after-swap", () => {
+    attachCopyButtons();
+  });
 
   /** Scrolls the document to the top when
    * the "Back to Top" button is clicked. */
@@ -287,7 +289,7 @@ switch (LOCALE.lang) {
 
     // Función para manejar el scroll suave
     function handleSmoothScroll(targetElement) {
-      const headerOffset = 45;
+      const headerOffset = 55;
       const elementPosition = targetElement.getBoundingClientRect().top;
       const elementMargin = parseInt(
         window.getComputedStyle(targetElement).marginTop
@@ -318,10 +320,6 @@ switch (LOCALE.lang) {
         const isClickInside = tocDetails.contains(e.target);
         if (!isClickInside) {
           tocDetails.removeAttribute("open");
-          document.querySelectorAll(".copy-code").forEach(element => {
-            element.style.zIndex = "1";
-            element.style.visibility = "";
-          });
           document.querySelectorAll("blockquote").forEach(element => {
             element.style.zIndex = "1";
             element.style.position = "";
@@ -333,10 +331,6 @@ switch (LOCALE.lang) {
     // Manejar el despliegue de la tabla de contenidos
     tocDetails?.addEventListener("toggle", e => {
       const isOpen = e.target.hasAttribute("open");
-      document.querySelectorAll(".copy-code").forEach(element => {
-        element.style.visibility = isOpen ? "hidden" : "";
-        element.style.zIndex = isOpen ? "-1" : "1";
-      });
       document.querySelectorAll("blockquote").forEach(element => {
         element.style.zIndex = isOpen ? "-1" : "1";
         element.style.position = isOpen ? "relative" : "";
@@ -377,10 +371,15 @@ switch (LOCALE.lang) {
   }
   handleTocLinks();
 
+  // Ejecutar después de las transiciones de vista
+  document.addEventListener("astro:after-swap", () => {
+    handleTocLinks();
+  });
+
   /** Muestra/oculta el botón de volver arriba */
   function handleBackToTop() {
     const backToTopButton = document.querySelector("#back-to-top");
-    
+
     window.addEventListener("scroll", () => {
       if (window.scrollY > 300) {
         backToTopButton?.classList.remove("hidden");
@@ -389,30 +388,35 @@ switch (LOCALE.lang) {
       }
     });
   }
-  
+
   handleBackToTop();
-  
+
   // Ejecutar después de las transiciones de vista
   document.addEventListener("astro:after-swap", () => {
     handleBackToTop();
   });
 
-
   /** Modifica todos los enlaces externos para que se abran en nueva pestaña */
   function handleExternalLinks() {
     const currentDomain = window.location.hostname;
-    const links = document.querySelectorAll('a[href]');
-    
+    const links = document.querySelectorAll("a[href]");
+
     links.forEach(link => {
-      const href = link.getAttribute('href');
-      
+      const href = link.getAttribute("href");
+
       // Verificar si es un enlace externo (no del mismo dominio)
-      if (href && !href.startsWith('#') && !href.startsWith('/') && !href.startsWith('./') && !href.startsWith('../')) {
+      if (
+        href &&
+        !href.startsWith("#") &&
+        !href.startsWith("/") &&
+        !href.startsWith("./") &&
+        !href.startsWith("../")
+      ) {
         try {
           const url = new URL(href);
           if (url.hostname !== currentDomain) {
-            link.setAttribute('target', '_blank');
-            link.setAttribute('rel', 'noopener noreferrer');
+            link.setAttribute("target", "_blank");
+            link.setAttribute("rel", "noopener noreferrer");
           }
         } catch (e) {
           // Si no es una URL válida, ignorar
@@ -420,11 +424,35 @@ switch (LOCALE.lang) {
       }
     });
   }
-  
+
   handleExternalLinks();
-  
+
   // Ejecutar después de las transiciones de vista
   document.addEventListener("astro:after-swap", () => {
     handleExternalLinks();
   });
+
+
+
+  function loadZoomImage() {
+    let intentos = 0;
+    function applyZoomImage() {
+      mediumZoom(document.querySelectorAll("#article img"), {
+        background: "#000000",
+      });
+    }
+    if (typeof mediumZoom !== "undefined" && intentos < 10 ) {
+      applyZoomImage();
+    } else {
+      intentos++;
+      if (intentos < 10) {
+        setTimeout(() => {
+          applyZoomImage();
+        }, 500);
+      }
+    }
+  }
+  loadZoomImage();
+
+
 </script>
