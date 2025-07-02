@@ -229,14 +229,16 @@ switch (LOCALE.lang) {
   function attachCopyButtons() {
     let copyButtonLabel = "Copy";
     let codeBlocks = Array.from(document.querySelectorAll("pre"));
-
+    
     for (let codeBlock of codeBlocks) {
       let copyButton = document.createElement("button");
       copyButton.className =
-        "copy-code ml-auto rounded bg-skin-card px-2 py-1 text-xs leading-4 text-skin-base font-medium ";
+        " ml-auto rounded bg-skin-card px-2 py-1 text-xs leading-4 text-skin-base font-medium -mt-9 mr-3";
       copyButton.innerHTML = copyButtonLabel;
+      copyButton.setAttribute("tabindex", "0");
       codeBlock.removeAttribute("tabindex");
       
+
       // Creamos un contenedor flex
       let flexContainer = document.createElement("div");
       flexContainer.style.display = "flex";
@@ -244,8 +246,8 @@ switch (LOCALE.lang) {
 
       // Movemos el pre al contenedor flex
       codeBlock?.parentNode?.insertBefore(flexContainer, codeBlock);
-      flexContainer.appendChild(copyButton);
       flexContainer.appendChild(codeBlock);
+      flexContainer.appendChild(copyButton);
 
       copyButton.addEventListener("click", async () => {
         await copyCode(codeBlock, copyButton);
