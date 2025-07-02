@@ -233,10 +233,10 @@ switch (LOCALE.lang) {
     for (let codeBlock of codeBlocks) {
       let copyButton = document.createElement("button");
       copyButton.className =
-        "copy-code ml-auto rounded bg-skin-card px-2 py-1 text-xs leading-4 text-skin-base font-medium";
+        "copy-code ml-auto rounded bg-skin-card px-2 py-1 text-xs leading-4 text-skin-base font-medium ";
       copyButton.innerHTML = copyButtonLabel;
-      codeBlock.setAttribute("tabindex", "0");
-
+      codeBlock.removeAttribute("tabindex");
+      
       // Creamos un contenedor flex
       let flexContainer = document.createElement("div");
       flexContainer.style.display = "flex";
@@ -393,5 +393,36 @@ switch (LOCALE.lang) {
   // Ejecutar después de las transiciones de vista
   document.addEventListener("astro:after-swap", () => {
     handleBackToTop();
+  });
+
+
+  /** Modifica todos los enlaces externos para que se abran en nueva pestaña */
+  function handleExternalLinks() {
+    const currentDomain = window.location.hostname;
+    const links = document.querySelectorAll('a[href]');
+    
+    links.forEach(link => {
+      const href = link.getAttribute('href');
+      
+      // Verificar si es un enlace externo (no del mismo dominio)
+      if (href && !href.startsWith('#') && !href.startsWith('/') && !href.startsWith('./') && !href.startsWith('../')) {
+        try {
+          const url = new URL(href);
+          if (url.hostname !== currentDomain) {
+            link.setAttribute('target', '_blank');
+            link.setAttribute('rel', 'noopener noreferrer');
+          }
+        } catch (e) {
+          // Si no es una URL válida, ignorar
+        }
+      }
+    });
+  }
+  
+  handleExternalLinks();
+  
+  // Ejecutar después de las transiciones de vista
+  document.addEventListener("astro:after-swap", () => {
+    handleExternalLinks();
   });
 </script>

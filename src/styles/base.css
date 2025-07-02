@@ -83,7 +83,9 @@
     @apply mb-2;
   }
   .prose details {
-    @apply w-full inline-block cursor-pointer select-none text-skin-base sticky top-0 bg-skin-fill bg-opacity-80 py-2 backdrop-blur;
+    @apply w-full inline-block cursor-pointer select-none px-2
+    text-skin-base sticky bg-skin-fill bg-opacity-80 py-2 backdrop-blur border border-skin-line;
+    top: 4px;
   }
   summary {
     @apply focus-outline;
