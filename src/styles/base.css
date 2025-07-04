@@ -84,7 +84,7 @@
   }
   .prose details {
     @apply w-full inline-block cursor-pointer select-none px-2
-    text-skin-base sticky bg-skin-fill bg-opacity-80 py-2 backdrop-blur border border-skin-line;
+    text-skin-base sticky bg-skin-fill bg-opacity-80 py-2 backdrop-blur border border-skin-line rounded-b;
     top: 4px;
     z-index: 10;
   }
