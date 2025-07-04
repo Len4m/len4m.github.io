@@ -88,6 +88,26 @@
     top: 4px;
     z-index: 10;
   }
+  .prose details[open] {
+    @apply shadow-lg;
+  }
+  .prose details ul {
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+    padding-right: 8px;
+  }
+  .prose details ul::-webkit-scrollbar {
+    width: 6px;
+  }
+  .prose details ul::-webkit-scrollbar-track {
+    @apply bg-skin-fill rounded;
+  }
+  .prose details ul::-webkit-scrollbar-thumb {
+    @apply bg-skin-card rounded;
+  }
+  .prose details ul::-webkit-scrollbar-thumb:hover {
+    @apply bg-skin-card-muted;
+  }
   summary {
     @apply focus-outline;
   }

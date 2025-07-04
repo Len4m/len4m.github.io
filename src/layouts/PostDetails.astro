@@ -286,6 +286,7 @@ switch (LOCALE.lang) {
   function handleTocLinks() {
     const tocLinks = document.querySelectorAll(".prose details a");
     const tocDetails = document.querySelector(".prose details");
+    let isScrolling = false;
 
     // Función para manejar el scroll suave
     function handleSmoothScroll(targetElement) {
@@ -328,6 +329,17 @@ switch (LOCALE.lang) {
       }
     });
 
+    // Cerrar la tabla de contenidos con la tecla Escape
+    document.addEventListener("keydown", e => {
+      if (e.key === "Escape" && tocDetails && tocDetails.hasAttribute("open")) {
+        tocDetails.removeAttribute("open");
+        document.querySelectorAll("blockquote").forEach(element => {
+          element.style.zIndex = "1";
+          element.style.position = "";
+        });
+      }
+    });
+
     // Manejar el despliegue de la tabla de contenidos
     tocDetails?.addEventListener("toggle", e => {
       const isOpen = e.target.hasAttribute("open");
@@ -340,6 +352,8 @@ switch (LOCALE.lang) {
     // Manejar clics en los enlaces de la tabla de contenidos
     tocLinks.forEach(link => {
       link.addEventListener("click", e => {
+        isScrolling = true;
+        
         if (tocDetails) {
           tocDetails.removeAttribute("open");
         }
@@ -351,6 +365,11 @@ switch (LOCALE.lang) {
 
         if (targetElement) {
           handleSmoothScroll(targetElement);
+          
+          // Resetear el flag después del scroll
+          setTimeout(() => {
+            isScrolling = false;
+          }, 1000);
         }
       });
     });
@@ -358,6 +377,8 @@ switch (LOCALE.lang) {
     // Manejar todos los enlaces que apuntan a anclas
     document.querySelectorAll('a[href^="#"]').forEach(link => {
       link.addEventListener("click", e => {
+        isScrolling = true;
+        
         const targetId = decodeURIComponent(
           link.getAttribute("href").substring(1)
         );
@@ -365,6 +386,11 @@ switch (LOCALE.lang) {
 
         if (targetElement) {
           handleSmoothScroll(targetElement);
+          
+          // Resetear el flag después del scroll
+          setTimeout(() => {
+            isScrolling = false;
+          }, 1000);
         }
       });
     });
