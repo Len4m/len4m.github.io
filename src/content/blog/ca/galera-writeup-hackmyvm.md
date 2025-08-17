@@ -3,7 +3,7 @@ author: Lenam
 pubDatetime: 2025-05-25T00:00:00Z
 title: WriteUp Galera - HackMyVM
 slug: galera-writeup-hackmyvm-ca
-featured: true
+featured: false
 draft: false
 ogImage: "../../../assets/images/galera/OpenGraph.png"
 tags:
