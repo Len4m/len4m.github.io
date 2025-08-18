@@ -25,7 +25,7 @@ lang: ca
 
 Anàlisi detallada i pas a pas de la màquina SlyWindow (Vulnyx), cobrint tècniques d'esteganografia, explotació de vulnerabilitats XSS, atac TOCTOU, escalada de privilegis i manipulació de biblioteques en sistemes Linux.
 
-## Taula de contingut 
+## Taula de continguts
 
 ## Enumeració
 
@@ -926,4 +926,4 @@ Com a resultat, aconseguim accedir i llegir la flag de root.txt.
 cat /root/root.txt
 ```
 
-Aquest ha estat l'anàlisi tècnica de la màquina Slywindow, un repte avançat que requereix precisió en l'explotació de condicions de carrera i un enteniment profund del funcionament intern de sistemes Linux.
+Aquest ha estat l'anàlisi tècnica de la màquina Slywindow.

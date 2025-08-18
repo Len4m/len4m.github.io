@@ -926,4 +926,4 @@ As a result, we manage to access and read the root.txt flag.
 cat /root/root.txt
 ```
 
-This has been the technical analysis of the Slywindow machine, an advanced challenge that requires precision in exploiting race conditions and a deep understanding of the internal workings of Linux systems.
+This has been the technical analysis of the Slywindow machine.
