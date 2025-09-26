@@ -3,10 +3,6 @@ layout: ../../layouts/AboutLayout.astro
 title: "Acerca"
 ---
 
-<div>
-  <img src="/assets/avatar.png" class="rounded-full sm:w-1/4 mx-auto" alt="Lenam">
-</div>
-
 Hola, soy Manel, conocido en el mundo de la ciberseguridad como Lenam o LenamGenX.
 
 Soy desarrollador y administrador de sistemas con más de 30 años de experiencia. Mi primera experiencia en programación fue de niño con el lenguaje GW-BASIC en un Spectrum y luego en un Amstrad PC1512 (¡qué recuerdos!), y desde entonces no he dejado de aprender y continuaré haciéndolo.
