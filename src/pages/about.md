@@ -3,10 +3,6 @@ layout: ../layouts/AboutLayout.astro
 title: "About"
 ---
 
-<div>
-  <img src="/assets/avatar.png" class="rounded-full sm:w-1/4 mx-auto" alt="Lenam">
-</div>
-
 Hello, I'm Manel, known in the cybersecurity world as Lenam or LenamGenX. 
 
 I am a developer and sys admin with over 30 years of experience. My first programming experience was as a child with the GW-BASIC language on a Spectrum and later on an Amstrad PC1512 (such memories), and since then I haven't stopped learning and will continue to do so.

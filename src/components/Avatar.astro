@@ -1,0 +1,71 @@
+---
+// Avatar component with hover animation
+---
+
+<div class="relative sm:w-1/4 mx-auto flex justify-center items-center group">
+  <div class="relative w-full aspect-square rounded-full border-2 border-white dark:border-gray-900 overflow-hidden">
+    <!-- PNG layer - always visible -->
+    <div 
+      id="avatar-png"
+      class="absolute inset-0 bg-center bg-no-repeat bg-cover"
+      style="background-image: url('/assets/avatar.png'); background-size: 102%;"
+      role="img"
+      aria-label="Lenam"
+    ></div>
+    <!-- GIF layer - hidden by default, shown on hover -->
+    <div 
+      id="avatar-gif"
+      class="absolute inset-0 bg-center bg-no-repeat bg-cover opacity-0 transition-opacity duration-200"
+      style="background-image: url('/assets/avatar.gif'); background-size: 102%;"
+      data-gif="/assets/avatar.gif"
+      data-png="/assets/avatar.png"
+    ></div>
+  </div>
+</div>
+
+<script>
+  // Client-side script for GIF animation
+  function initAvatar() {
+    const avatarGif = document.getElementById('avatar-gif') as HTMLElement;
+    if (!avatarGif) return;
+
+    const gifUrl = avatarGif.dataset.gif;
+    if (!gifUrl) return;
+
+    // Preload the GIF to avoid flickering
+    const gifImg = new Image();
+    gifImg.src = gifUrl;
+
+    const handleMouseOver = () => {
+      // Reset GIF animation by changing the src with a unique parameter
+      const currentSrc = avatarGif.style.backgroundImage;
+      avatarGif.style.backgroundImage = `url('${gifUrl}?t=${Date.now()}')`;
+      // Show GIF layer with smooth transition
+      avatarGif.style.opacity = '1';
+    };
+
+    const handleMouseOut = () => {
+      // Hide GIF layer with smooth transition
+      avatarGif.style.opacity = '0';
+    };
+
+    // Remove existing listeners to prevent duplicates
+    avatarGif.removeEventListener('mouseover', handleMouseOver);
+    avatarGif.removeEventListener('mouseout', handleMouseOut);
+
+    // Add new listeners
+    avatarGif.addEventListener('mouseover', handleMouseOver);
+    avatarGif.addEventListener('mouseout', handleMouseOut);
+  }
+
+  // Initialize on page load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAvatar);
+  } else {
+    initAvatar();
+  }
+
+  // Re-initialize on navigation (for SPA-like behavior)
+  document.addEventListener('astro:page-load', initAvatar);
+</script>
+
