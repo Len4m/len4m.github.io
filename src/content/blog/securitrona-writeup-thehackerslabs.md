@@ -3,7 +3,7 @@ author: Lenam
 pubDatetime: 2025-06-29T15:22:00Z
 title: WriteUp Securitrona - TheHackersLabs  
 slug: securitrona-writeup-thehackerslabs-en  
-featured: true  
+featured: false  
 draft: false  
 ogImage: "../../assets/images/securitrona/OpenGraph.png"  
 tags:
