@@ -23,7 +23,7 @@ Aquest CTF ha estat dissenyat per practicar la filtració d'instruccions de sist
 
 En aquest laboratori haurem d'identificar una eina oculta que el LLM pot utilitzar, la qual ens permetrà accedir a un contenidor Docker a la màquina. Per desbloquejar aquesta eina, primer caldrà esbrinar la contrasenya que es troba en el prompt del sistema. Un cop activada, podrem ingressar a un contenidor de Docker que, tot i estar aïllat, disposa d'accés a la xarxa interna. Des d'allà, podrem escanejar els ports per descobrir un servei accessible únicament des de la mateixa màquina atacant. En aquest servei trobarem una vulnerabilitat SSTI que, en ser explotada, ens conduirà a una RCE, permetent-nos accedir al sistema amfitrió (fora de l'entorn aïllat del contenidor). Finalment, mitjançant l'ús de Docker, podrem escalar privilegis fins a obtenir accés com a usuari root.
 
-## Taula de contingut
+## Taula de continguts
 
 ## Enumeració
 
