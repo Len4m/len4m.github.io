@@ -3,7 +3,7 @@ author: Lenam
 pubDatetime: 2025-09-29T15:22:00Z
 title: WriteUp Cursodex - TheHackersLabs  
 slug: cursodex-writeup-thehackerslabs-es  
-featured: true  
+featured: false  
 draft: false  
 ogImage: "../../../assets/images/cursodex/OpenGraph.png"  
 tags:
