@@ -2,7 +2,7 @@
 author: Lenam
 pubDatetime: 2025-08-17T15:22:00Z
 title: WriteUp SlyWindow - Vulnyx
-slug: slywindow-writeup-vulnyx-ca
+urlSlug: slywindow-writeup-vulnyx-ca
 featured: true
 draft: false
 ogImage: "../../../assets/images/slywindow/OpenGraph.png"
@@ -19,6 +19,7 @@ tags:
 description:
   Anàlisi detallada i pas a pas de la màquina SlyWindow (Vulnyx), cobrint tècniques d'esteganografia, explotació de vulnerabilitats XSS, atac TOCTOU, escalada de privilegis i manipulació de biblioteques en sistemes Linux.
 lang: ca
+translationId: slywindow-writeup-vulnyx
 ---
 
 ![Conill](../../../assets/images/slywindow/OpenGraph.png)

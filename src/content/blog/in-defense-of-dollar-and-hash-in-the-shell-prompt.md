@@ -2,7 +2,7 @@
 author: Lenam
 pubDatetime: 2025-12-12T00:00:00Z
 title: "In Defense of $ and # in the Shell Prompt"
-slug: por-que-seguir-usando-dollar-y-hash-en-el-prompt-de-la-shell-en
+urlSlug: why-keep-dollar-hash-shell-prompt
 featured: true
 draft: false
 ogImage: "../../assets/images/opinion/prompt-simbol.png"
@@ -14,6 +14,7 @@ tags:
 description:
   "Opinion piece on why keeping $ and # in the shell prompt still matters to quickly see whether you're a normal user or root, even in colorful terminals."
 lang: en
+translationId: por-que-seguir-usando-dollar-y-hash-en-el-prompt-de-la-shell
 ---
 
 ## Table of Contents

@@ -2,7 +2,7 @@
 author: Lenam  
 pubDatetime: 2025-09-29T15:22:00Z
 title: WriteUp Cursodex - TheHackersLabs  
-slug: cursodex-writeup-thehackerslabs-ca  
+urlSlug: cursodex-writeup-thehackerslabs-ca  
 featured: false  
 draft: false  
 ogImage: "../../../assets/images/cursodex/OpenGraph.png"  
@@ -16,6 +16,7 @@ tags:
 description:  
   Resolució del CTF Cursodex de TheHackersLabs que explora l'explotació d'eines de LLMs mitjançant SSRF.
 lang: ca
+translationId: cursodex-writeup-thehackerslabs
 ---
 
 ![Portada](../../../assets/images/cursodex/OpenGraph.png)

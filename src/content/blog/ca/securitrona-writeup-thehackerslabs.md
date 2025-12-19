@@ -2,7 +2,7 @@
 author: Lenam  
 pubDatetime: 2025-06-29T15:22:00Z
 title: WriteUp Securitrona - TheHackersLabs  
-slug: securitrona-writeup-thehackerslabs-ca  
+urlSlug: securitrona-writeup-thehackerslabs-ca  
 featured: false  
 draft: false  
 ogImage: "../../../assets/images/securitrona/OpenGraph.png"  
@@ -15,6 +15,7 @@ tags:
 description:  
   Resolució del CTF Securitrona de TheHackersLabs que explora l'explotació d'eines de LLMs mitjançant path traversal.
 lang: ca
+translationId: securitrona-writeup-thehackerslabs
 ---
 
 ![Portada](../../../assets/images/securitrona/OpenGraph.png)

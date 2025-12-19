@@ -2,7 +2,7 @@
 author: Lenam
 pubDatetime: 2025-12-12T00:00:00Z
 title: "Por qué seguir usando $ y # en el prompt de la shell"
-slug: por-que-seguir-usando-dollar-y-hash-en-el-prompt-de-la-shell-es
+urlSlug: por-que-usar-dollar-hash-prompt-shell
 featured: true
 draft: false
 ogImage: "../../../assets/images/opinion/prompt-simbol.png"
@@ -14,6 +14,7 @@ tags:
 description:
   "Artículo de opinión sobre por qué seguir usando los símbolos $ y # en el prompt de la shell para distinguir de un vistazo entre usuario normal y root."
 lang: es
+translationId: por-que-seguir-usando-dollar-y-hash-en-el-prompt-de-la-shell
 ---
 
 ## Tabla de contenido

@@ -2,7 +2,7 @@
 author: Lenam  
 pubDatetime: 2024-08-23T15:22:00Z  
 title: WriteUp Securitron - TheHackersLabs  
-slug: securitron-writeup-thehackerslabs-ca
+urlSlug: securitron-writeup-thehackerslabs-ca
 featured: false  
 draft: false  
 ogImage: "../../../assets/images/securitron/OpenGraph.png"  
@@ -16,6 +16,7 @@ tags:
 description:  
   El meu primer CTF creat per a la plataforma thehackerslabs.com i amb un model d'IA, espero que sigui del vostre grat.  
 lang: ca  
+translationId: securitron-writeup-thehackerslabs
 ---
 
 El meu primer CTF creat per a la plataforma thehackerslabs.com i amb un model d'IA, espero que sigui del vostre grat.

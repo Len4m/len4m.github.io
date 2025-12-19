@@ -2,7 +2,7 @@
 author: Lenam  
 pubDatetime: 2025-11-23T15:22:00Z  
 title: WriteUp Despromptado - TheHackersLabs  
-slug: despromptado-writeup-thehackerslabs-en  
+urlSlug: despromptado-writeup-thehackerslabs-en  
 featured: true
 draft: false  
 ogImage: "../../assets/images/despromptado/OpenGraph.png"  
@@ -16,6 +16,7 @@ tags:
 description:  
   This CTF was created to practice system prompt leakage in The Hacker Labs. It is a lab that requires dedication and patience to complete successfully.
 lang: en
+translationId: despromptado-writeup-thehackerslabs
 ---
 ![](../../assets/images/despromptado/20251123_201010_image.png)
 

@@ -2,7 +2,7 @@
 author: Lenam
 pubDatetime: 2025-05-12T00:00:00Z
 title: WriteUp Sandwich - Vulnyx
-slug: sandwich-writeup-vulnyx-en
+urlSlug: sandwich-writeup-vulnyx-en
 featured: false
 draft: false
 ogImage: "../../assets/images/sandwich/OpenGraph.png"
@@ -14,6 +14,7 @@ tags:
 description:
   This writeup describes the exploitation and escalation of the Sandwich machine on the Vulnyx platform, where you can practice the sandwich technique on a password recovery form that generates UUIDs vulnerable to this technique.
 lang: en
+translationId: sandwich-writeup-vulnyx
 ---
 
 ![alt text](../../assets/images/sandwich/OpenGraph.png)

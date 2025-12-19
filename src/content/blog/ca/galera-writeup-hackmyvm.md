@@ -2,7 +2,7 @@
 author: Lenam
 pubDatetime: 2025-05-25T00:00:00Z
 title: WriteUp Galera - HackMyVM
-slug: galera-writeup-hackmyvm-ca
+urlSlug: galera-writeup-hackmyvm-ca
 featured: false
 draft: false
 ogImage: "../../../assets/images/galera/OpenGraph.png"
@@ -14,6 +14,7 @@ tags:
 description:
     Descripció de l'explotació d'un clúster de Galera mal configurat en un laboratori de HackMyVM.
 lang: ca
+translationId: galera-writeup-hackmyvm
 ---
 
 ![Machine](../../../assets/images/galera/vm.png)

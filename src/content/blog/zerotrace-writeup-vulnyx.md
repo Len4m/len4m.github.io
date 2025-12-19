@@ -2,7 +2,7 @@
 author: Lenam
 pubDatetime: 2025-05-11T00:00:00Z
 title: WriteUp Zerotrace - Vulnyx
-slug: zerotrace-writeup-vulnyx-en
+urlSlug: zerotrace-writeup-vulnyx-en
 featured: false
 draft: false
 ogImage: "../../assets/images/zerotrace/OpenGraph.png"
@@ -15,6 +15,7 @@ tags:
 description:
   Writeup describing the resolution of the Zerotrace machine created by suraxddq for the Vulnyx platform. It is the first writeup on my blog that does not belong to a machine created by me.
 lang: en
+translationId: zerotrace-writeup-vulnyx
 ---
 
 ![VBox](../../assets/images/zerotrace/vbox.png)

@@ -2,7 +2,7 @@
 author: Lenam
 pubDatetime: 2025-02-01T15:22:00Z
 title: Lab Inj3ctlab - Bug Bounty Labs
-slug: inj3ctlab-lab-bugbountylabs-en
+urlSlug: inj3ctlab-lab-bugbountylabs-en
 featured: false
 draft: false
 ogImage: "../../assets/images/inj3ctlab/OpenGraph.png"
@@ -16,6 +16,7 @@ tags:
 description:
   Article describing the SSTI vulnerability and providing a step-by-step guide on how to solve the Inj3ctlab laboratory from Bug Bounty Labs to practice SSTI in multiple template engines.
 lang: en
+translationId: inj3ctlab-lab-bugbountylabs
 ---
 
 ![Alt text](../../assets/images/inj3ctlab/OpenGraph.png)

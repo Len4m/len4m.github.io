@@ -2,7 +2,7 @@
 author: Lenam  
 pubDatetime: 2025-11-23T15:22:00Z  
 title: WriteUp Despromptado - TheHackersLabs  
-slug: despromptado-writeup-thehackerslabs-es  
+urlSlug: despromptado-writeup-thehackerslabs-es  
 featured: true
 draft: false  
 ogImage: "../../../assets/images/despromptado/OpenGraph.png"  
@@ -16,6 +16,7 @@ tags:
 description:  
   Este CTF ha sido diseñado para practicar la filtración de instrucciones de sistema (prompt leakage) en The Hacker Labs. Se trata de un laboratorio que requiere dedicación y paciencia para poder resolverlo satisfactoriamente.
 lang: es
+translationId: despromptado-writeup-thehackerslabs
 ---
 ![](../../../assets/images/despromptado/20251123_201010_image.png)
 

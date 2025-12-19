@@ -2,7 +2,7 @@
 author: Lenam
 pubDatetime: 2025-06-26T00:00:00Z
 title: "Creador de Servidors MCP: Converteix qualsevol comando en una eina d'IA en 5 minuts"
-slug: mcp-creator-ca
+urlSlug: creador-servidors-mcp-comando-eina-ia
 featured: true
 draft: false
 ogImage: "../../../assets/images/mcp-creator/OpenGraph.png"
@@ -16,6 +16,7 @@ tags:
 description:
   Eina web interactiva per crear servidors MCP (Model Context Protocol) personalitzats. Permet generar codi de servidors MCP en Node.js i Python a partir de la configuració de binaris o scripts existents, incloent gestió de paràmetres, configuració de seguretat i validació d'entrada.
 lang: ca
+translationId: mcp-creator
 ---
 
 Hola, hackers i desenvolupadors curiosos! 👋 

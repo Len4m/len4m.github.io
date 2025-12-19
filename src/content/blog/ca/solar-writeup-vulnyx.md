@@ -2,7 +2,7 @@
 author: Lenam  
 pubDatetime: 2024-10-23T15:22:00Z  
 title: WriteUp Solar - Vulnyx  
-slug: solar-writeup-vulnyx-ca
+urlSlug: solar-writeup-vulnyx-ca
 featured: false  
 draft: false  
 ogImage: "../../../assets/images/solar/OpenGraph.png"  
@@ -23,6 +23,7 @@ tags:
 description:  
   A continuació, es descriu el procés esperat per a la vulneració del CTF Solar de Vulnyx. Una màquina laboriosa i que necessita paciència.
 lang: ca  
+translationId: solar-writeup-vulnyx
 ---
 
 A continuació, es descriu el procés esperat per a la vulneració del CTF Solar de Vulnyx. Una màquina laboriosa i que necessita paciència. Segurament, utilitzant eines com BeeF pot ser més fàcil, en aquest writeup es descriu una forma manual de resoldre-ho.

@@ -2,7 +2,7 @@
 author: Lenam  
 pubDatetime: 2024-09-25T15:22:00Z
 title: WriteUp Guitjapeo - TheHackersLabs  
-slug: guitjapeo-writeup-thehackerslabs-es
+urlSlug: guitjapeo-writeup-thehackerslabs-es
 featured: false  
 draft: false  
 ogImage: "../../../assets/images/guitjapeo/OpenGraph.png"  
@@ -17,6 +17,7 @@ tags:
 description:  
   CTF donde tendremos que programar, aprender sobre git y crearnos una cuenta de GitHub. 
 lang: es  
+translationId: guitjapeo-writeup-thehackerslabs
 ---
 
 CTF donde tendremos que programar, aprender sobre git y crearnos una cuenta de GitHub. 

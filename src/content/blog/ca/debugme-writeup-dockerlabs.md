@@ -2,7 +2,7 @@
 author: Lenam
 pubDatetime: 2024-07-22T15:22:00Z
 title: WriteUp DebugMe - Dockerlabs
-slug: debugme-writeup-dockerlabs-ca
+urlSlug: debugme-writeup-dockerlabs-ca
 featured: false
 draft: false
 ogImage: "../../../assets/images/debugme/OpenGraph.png"
@@ -14,6 +14,7 @@ tags:
 description:
   Aquest desafiament de ciberseguretat guia els participants a través d'una intrusió en un servidor. El procés implica l'enumeració de serveis, l'explotació d'una vulnerabilitat de LFI, l'accés a SSH mitjançant força bruta i l'escalada de privilegis a través d'un procés de node.js.
 lang: ca
+translationId: debugme-writeup-dockerlabs
 ---
 
 Aquest desafiament de ciberseguretat, disponible a <a target="_blank" href="https://dockerlabs.es">DockerLabs</a> (El Pingüino de Mario), guia els participants a través d'una intrusió en un servidor. El procés implica l'enumeració de serveis, l'explotació d'una vulnerabilitat de LFI, l'accés a SSH mitjançant força bruta i l'escalada de privilegis a través d'un procés de node.js per aconseguir accés root.

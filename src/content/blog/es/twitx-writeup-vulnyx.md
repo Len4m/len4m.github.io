@@ -2,7 +2,7 @@
 author: Lenam
 pubDatetime: 2024-07-18T15:22:00Z
 title: WriteUp Twitx - Vulnyx
-slug: twitx-writeup-vulnyx-es
+urlSlug: twitx-writeup-vulnyx-es
 featured: false
 draft: false
 ogImage: "../../../assets/images/twitx/OpenGraph.png"
@@ -16,6 +16,7 @@ tags:
 description:
   CTF dedicado a streamers y creadores de contenido que me enseñaron algunas técnicas de hacking.
 lang: es
+translationId: twitx-writeup-vulnyx
 ---
 
 La máquina tiene dos banderas, una para el usuario y otra para root.

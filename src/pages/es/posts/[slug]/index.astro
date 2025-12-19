@@ -5,6 +5,7 @@ import PostDetails from "@layouts/PostDetails.astro";
 import getSortedPosts from "@utils/getSortedPosts";
 import getPageNumbers from "@utils/getPageNumbers";
 import getPagination from "@utils/getPagination";
+import { getPostSlug } from "@utils/postUtils";
 import { LOCALE } from "@config";
 import { getLocale } from "astro-i18n-aut";
 
@@ -23,7 +24,7 @@ export async function getStaticPaths() {
   );
 
   const postResult = posts.map(post => ({
-    params: { slug: post.slug },
+    params: { slug: getPostSlug(post) },
     props: { post },
   }));
 
@@ -37,6 +38,13 @@ export async function getStaticPaths() {
 const { slug } = Astro.params;
 const { post } = Astro.props;
 
+// If no post found by slug, try to find by matching slug in frontmatter
+let actualPost: CollectionEntry<"blog"> | undefined = post;
+if (!actualPost && slug) {
+  const allPosts = await getCollection("blog", ({ data }) => !data.draft && data.lang === 'es');
+  actualPost = allPosts.find(p => getPostSlug(p) === slug) || undefined;
+}
+
 const posts = await getCollection("blog", ({ data }) => data.lang === locale);
 
 const sortedPosts = getSortedPosts(posts);
@@ -47,4 +55,4 @@ const pagination = getPagination({
 });
 ---
 
-{post ? <PostDetails post={post} /> : <Posts {...pagination} />}
+{actualPost ? <PostDetails post={actualPost} /> : <Posts {...pagination} />}

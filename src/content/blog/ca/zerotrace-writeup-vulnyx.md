@@ -2,7 +2,7 @@
 author: Lenam
 pubDatetime: 2025-05-11T00:00:00Z
 title: WriteUp Zerotrace - Vulnyx
-slug: zerotrace-writeup-vulnyx-ca
+urlSlug: zerotrace-writeup-vulnyx-ca
 featured: false
 draft: false
 ogImage: "../../../assets/images/zerotrace/OpenGraph.png"
@@ -15,6 +15,7 @@ tags:
 description:
   Writeup on descriu la resolució de la màquina Zerotrace creada per suraxddq per a la plataforma Vulnyx. És el primer writeup del meu blog que no pertany a una màquina creada per mi.
 lang: ca
+translationId: zerotrace-writeup-vulnyx
 ---
 
 ![VBox](../../../assets/images/zerotrace/vbox.png)

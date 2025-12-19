@@ -2,7 +2,7 @@
 author: Lenam  
 pubDatetime: 2024-07-18T15:22:00Z  
 title: WriteUp Yincana - Vulnyx  
-slug: yincana-writeup-vulnyx-es  
+urlSlug: yincana-writeup-vulnyx-es  
 featured: false  
 draft: false  
 ogImage: "../../../assets/images/yincana/OpenGraph.png"  
@@ -17,6 +17,7 @@ tags:
 description:  
   Disfruta de la máquina Yincana y no olvides regalar flores. ;)  
 lang: es  
+translationId: yincana-writeup-vulnyx
 ---
 
 Como siempre, pido disculpas por los errores ortográficos y por no conocer los nombres de las técnicas; soy un desarrollador que se adentra en el mundo del hacking. Creo que esta vez es una máquina difícil, aunque alguien puede encontrar formas más fáciles de comprometerla.

@@ -2,7 +2,7 @@
 author: Lenam
 pubDatetime: 2025-12-12T00:00:00Z
 title: "Per què val la pena mantenir $ i # al prompt de la shell"
-slug: por-que-seguir-usando-dollar-y-hash-en-el-prompt-de-la-shell-ca
+urlSlug: per-que-usar-dollar-coixinet-prompt-shell
 featured: true
 draft: false
 ogImage: "../../../assets/images/opinion/prompt-simbol.png"
@@ -14,6 +14,7 @@ tags:
 description:
   "Article d'opinió sobre per què té sentit continuar usant els símbols $ i # al prompt de la shell per veure d'una ullada si ets usuari normal o root."
 lang: ca
+translationId: por-que-seguir-usando-dollar-y-hash-en-el-prompt-de-la-shell
 ---
 
 ## Taula de continguts

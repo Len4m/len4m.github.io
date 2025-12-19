@@ -2,7 +2,7 @@
 author: Lenam
 pubDatetime: 2025-02-01T15:22:00Z
 title: WriteUp Subversión - Dockerlabs
-slug: subversion-writeup-dockerlabs-ca
+urlSlug: subversion-writeup-dockerlabs-ca
 featured: false
 draft: false
 ogImage: "../../../assets/images/subversion/OpenGraph.png"
@@ -15,6 +15,7 @@ tags:
 description:
   "Aquest laboratori, disponible a la plataforma Dockerlabs, cobreix múltiples desafiaments de seguretat: des de la força bruta en Subversion i l'endevinació d'un número aleatori insegur, fins a l'explotació d'un buffer overflow i l'escalada de privilegis amb la tècnica de comodins de tar."
 lang: ca
+translationId: subversion-writeup-dockerlabs
 ---
 
 

@@ -2,7 +2,7 @@
 author: Lenam
 pubDatetime: 2025-02-20T15:22:00Z
 title: WriteUp Token Of Love - TheHackersLabs
-slug: token-of-love-writeup-thehackerslabs-ca
+urlSlug: token-of-love-writeup-thehackerslabs-ca
 featured: false
 draft: false
 ogImage: "../../../assets/images/token-of-love/OpenGraph.png"
@@ -16,6 +16,7 @@ tags:
 description:
   Writeup que narra la vulneració en "Token Of Love", es descifra una pista oculta a IPFS per obtenir la clau privada i manipular el JWT, s'exploten vulnerabilitats a Node.js per aconseguir RCE i, fent servir sudo amb tee i una vulnerabilitat en rsync wildcards, s'escala fins a root.
 lang: ca
+translationId: token-of-love-writeup-thehackerslabs
 ---
 
 ![Rabbit in Matrix](../../../assets/images/token-of-love/OpenGraph.png)

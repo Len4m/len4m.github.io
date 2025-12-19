@@ -2,7 +2,7 @@
 author: Lenam
 pubDatetime: 2025-02-01T15:22:00Z
 title: WriteUp Subversión - Dockerlabs
-slug: subversion-writeup-dockerlabs-en
+urlSlug: subversion-writeup-dockerlabs-en
 featured: false
 draft: false
 ogImage: "../../assets/images/subversion/OpenGraph.png"
@@ -15,6 +15,7 @@ tags:
 description:
   "This lab, available on the Dockerlabs platform, covers multiple security challenges: from brute-forcing Subversion and guessing an insecure random number to exploiting a buffer overflow and escalating privileges using the tar wildcard technique."
 lang: en
+translationId: subversion-writeup-dockerlabs
 ---
 
 

@@ -2,7 +2,7 @@
 author: Lenam
 pubDatetime: 2024-05-26T15:22:00Z
 title: WriteUp YourWaf - Vulnyx
-slug: yourwaf-writeup-vulnyx-es
+urlSlug: yourwaf-writeup-vulnyx-es
 featured: false
 draft: false
 ogImage: "../../../assets/images/yourwaf/OpenGraph.png"
@@ -15,6 +15,7 @@ tags:
 description:
   Intenté crear un CTF para practicar la evasión del WAF de Apache ModSecurity.
 lang: es
+translationId: yourwaf-writeup-vulnyx
 ---
 
 La máquina tiene dos banderas, una para el usuario y otra para root.

@@ -2,7 +2,7 @@
 author: Lenam
 pubDatetime: 2025-05-12T00:00:00Z
 title: WriteUp Sandwich - Vulnyx
-slug: sandwich-writeup-vulnyx-es
+urlSlug: sandwich-writeup-vulnyx-es
 featured: false
 draft: false
 ogImage: "../../../assets/images/sandwich/OpenGraph.png"
@@ -14,6 +14,7 @@ tags:
 description:
   En este writeup se describe la vulneración y escalada de la máquina Sandwich de la plataforma Vulnyx, donde se podrá practicar la técnica de sandwich en un formulario de recordar contraseña que genera UUIDs vulnerables a esta técnica.
 lang: es
+translationId: sandwich-writeup-vulnyx
 ---
 
 ![alt text](../../../assets/images/sandwich/OpenGraph.png)

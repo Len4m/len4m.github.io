@@ -2,7 +2,7 @@
 author: Lenam  
 pubDatetime: 2024-10-23T15:22:00Z  
 title: WriteUp Solar - Vulnyx  
-slug: solar-writeup-vulnyx-en
+urlSlug: solar-writeup-vulnyx-en
 featured: false  
 draft: false  
 ogImage: "../../assets/images/solar/OpenGraph.png"  
@@ -23,6 +23,7 @@ tags:
 description:  
   Below is the process for exploiting the Vulnyx Solar CTF. This is a challenging machine that requires patience.
 lang: en  
+translationId: solar-writeup-vulnyx
 ---
 
 Below is the process for exploiting the Vulnyx Solar CTF. This is a challenging machine that requires patience. While using tools like BeeF might simplify things, this writeup describes a manual method to solve it.

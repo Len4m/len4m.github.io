@@ -8,6 +8,7 @@ import Hr from "@components/Hr.astro";
 import Card from "@components/Card";
 import Socials from "@components/Socials.astro";
 import getSortedPosts from "@utils/getSortedPosts";
+import { getPostSlug } from "@utils/postUtils";
 import { LOCALE, SITE, SOCIALS } from "@config";
 import { getLocale } from "astro-i18n-aut";
 
@@ -185,10 +186,10 @@ switch (LOCALE.lang) {
           <section id="featured">
             <h2>{featuredtxt}</h2>
             <ul>
-              {featuredPosts.map(({ data, slug }) => (
+              {featuredPosts.map((post) => (
                 <Card
-                  href={`${data.lang !== 'en' ? `/${data.lang}` : ''}/posts/${slug}/`}
-                  frontmatter={data}
+                  href={`${post.data.lang !== 'en' ? `/${post.data.lang}` : ''}/posts/${getPostSlug(post)}/`}
+                  frontmatter={post.data}
                   secHeading={true}
                 />
               ))}
@@ -205,11 +206,11 @@ switch (LOCALE.lang) {
           <h2>{recentposttxt}</h2>
           <ul>
             {recentPosts.map(
-              ({ data, slug }, index) =>
+              (post, index) =>
                 index < SITE.postPerIndex && (
                   <Card
-                    href={`${data.lang !== 'en' ? `/${data.lang}` : ''}/posts/${slug}/`}
-                    frontmatter={data}
+                    href={`${post.data.lang !== 'en' ? `/${post.data.lang}` : ''}/posts/${getPostSlug(post)}/`}
+                    frontmatter={post.data}
                     secHeading={false}
                   />
                 )

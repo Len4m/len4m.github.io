@@ -2,7 +2,7 @@
 author: Lenam
 pubDatetime: 2025-06-26T00:00:00Z
 title: "MCP Server Creator: Turn Any Command into an AI Tool in 5 Minutes"
-slug: mcp-creator-en
+urlSlug: mcp-server-creator-command-ai-tool
 featured: true
 draft: false
 ogImage: "../../assets/images/mcp-creator/OpenGraph.png"
@@ -16,6 +16,7 @@ tags:
 description:
   Interactive web tool for creating custom MCP (Model Context Protocol) servers. Allows generating MCP server code in Node.js and Python from existing binary or script configurations, including parameter management, security configuration, and input validation.
 lang: en
+translationId: mcp-creator
 ---
 
 Hello, curious hackers and developers! 👋 

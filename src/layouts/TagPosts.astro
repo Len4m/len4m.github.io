@@ -6,6 +6,7 @@ import Header from "@components/Header.astro";
 import Footer from "@components/Footer.astro";
 import Card from "@components/Card";
 import Pagination from "@components/Pagination.astro";
+import { getPostSlug } from "@utils/postUtils";
 import { LOCALE, SITE } from "@config";
 import { getLocale } from "astro-i18n-aut";
 
@@ -49,8 +50,8 @@ switch (LOCALE.lang) {
     <h1 slot="title" transition:name={tag}>{`${tittxt}:${tag}`}</h1>
     <ul>
       { 
-        paginatedPosts.map(({ data, slug }) => (
-          <Card href={`${LOCALE.lang !== 'en' ? `/${LOCALE.lang}` : ''}/posts/${slug}/`} frontmatter={data} />
+        paginatedPosts.map((post) => (
+          <Card href={`${LOCALE.lang !== 'en' ? `/${LOCALE.lang}` : ''}/posts/${getPostSlug(post)}/`} frontmatter={post.data} />
         ))
       } 
     </ul>

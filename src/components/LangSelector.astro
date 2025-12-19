@@ -1,23 +1,131 @@
 ---
 import { getAllLocaleUrls } from "astro-i18n-aut";
-
-const allLocaleUrls = getAllLocaleUrls(Astro.url);
-const langs = Object.keys(allLocaleUrls);
-
-langs.forEach(key => {
-  let url = allLocaleUrls[key];
-  if (/\/posts\/*\//.test(url) && !/\/posts\/$/.test(url) && !/\/posts\/[0-9]\//.test(url)) {
-    allLocaleUrls[key] = url.substring(0, url.length - 4) + "-" + key + "/";
-  }
-});
-
-const vals = Object.values(allLocaleUrls);
+import type { CollectionEntry } from "astro:content";
+import { getPostUrlInLanguage, getRelatedPost } from "@utils/postUtils";
 
 export interface Props {
   lang: string;
+  post?: CollectionEntry<"blog">;
 }
 
-const { lang } = Astro.props;
+const { lang, post } = Astro.props;
+
+// If we're on a post page, try to find related posts by translationId
+let allLocaleUrls: Record<string, string> = {};
+let availableLanguages: Record<string, boolean> = {};
+const langs = ["en", "es", "ca"];
+
+if (post) {
+  // For post pages, try to find related posts by translationId
+  const urlPromises = langs.map(async (targetLang) => {
+    // If same language, use current URL (always available)
+    if (targetLang === post.data.lang) {
+      const currentSlug = post.data.urlSlug || post.slug;
+      const langPrefix = targetLang !== 'en' ? `/${targetLang}` : '';
+      return { 
+        lang: targetLang, 
+        url: `${langPrefix}/posts/${currentSlug}/`,
+        available: true
+      };
+    }
+    
+    // Try to find related post by translationId
+    if (post.data.translationId) {
+      const relatedPost = await getRelatedPost(post, targetLang);
+      if (relatedPost) {
+        const url = await getPostUrlInLanguage(post, targetLang);
+        return { 
+          lang: targetLang, 
+          url: url || (targetLang !== 'en' ? `/${targetLang}/posts/` : '/posts/'),
+          available: true
+        };
+      }
+    }
+    
+    // No translation available - redirect to posts list page
+    return { 
+      lang: targetLang, 
+      url: targetLang !== 'en' ? `/${targetLang}/posts/` : '/posts/',
+      available: false
+    };
+  });
+  
+  const urlResults = await Promise.all(urlPromises);
+  
+  for (const { lang: targetLang, url, available } of urlResults) {
+    allLocaleUrls[targetLang] = url;
+    availableLanguages[targetLang] = available;
+  }
+} else {
+  // For non-post pages, check if we're on a paginated page
+  const currentPath = Astro.url.pathname;
+  
+  // Normalize path: remove trailing slash and ensure consistent format
+  const normalizedPath = currentPath.replace(/\/$/, '');
+  
+  // Check if we're on a paginated posts page
+  // Matches: /posts/2, /posts/2/, /es/posts/2, /es/posts/2/, /ca/posts/2, /ca/posts/2/
+  const postsPagePattern = /^\/(?:es|ca)?\/posts\/(\d+)$/;
+  const postsPageMatch = normalizedPath.match(postsPagePattern);
+  
+  // Check if we're on a paginated tags page
+  // Matches: /tags/[tag]/2, /tags/[tag]/2/, /es/tags/[tag]/2, /es/tags/[tag]/2/, etc.
+  const tagsPagePattern = /^\/(?:es|ca)?\/tags\/([^\/]+)\/(\d+)$/;
+  const tagsPageMatch = normalizedPath.match(tagsPagePattern);
+  
+  if (postsPageMatch) {
+    // Always redirect to first page of posts in target language
+    langs.forEach(targetLang => {
+      const langPrefix = targetLang !== 'en' ? `/${targetLang}` : '';
+      allLocaleUrls[targetLang] = `${langPrefix}/posts/`;
+      availableLanguages[targetLang] = true;
+    });
+  } else if (tagsPageMatch) {
+    // Always redirect to first page of the tag in target language
+    const tag = tagsPageMatch[1];
+    langs.forEach(targetLang => {
+      const langPrefix = targetLang !== 'en' ? `/${targetLang}` : '';
+      allLocaleUrls[targetLang] = `${langPrefix}/tags/${tag}/`;
+      availableLanguages[targetLang] = true;
+    });
+  } else {
+    // For other non-post pages, use default URL generation
+    // But check if getAllLocaleUrls might preserve pagination and override if needed
+    const defaultUrls = getAllLocaleUrls(Astro.url);
+    
+    // Check if any of the generated URLs contain pagination numbers
+    // If so, redirect to first page instead
+    langs.forEach(targetLang => {
+      const url = defaultUrls[targetLang] || '';
+      const urlPath = new URL(url, Astro.url.origin).pathname.replace(/\/$/, '');
+      
+      // Check if this URL is a paginated posts or tags page
+      const isPaginatedPosts = /^\/(?:es|ca)?\/posts\/(\d+)$/.test(urlPath);
+      const isPaginatedTags = /^\/(?:es|ca)?\/tags\/([^\/]+)\/(\d+)$/.test(urlPath);
+      
+      if (isPaginatedPosts) {
+        const langPrefix = targetLang !== 'en' ? `/${targetLang}` : '';
+        allLocaleUrls[targetLang] = `${langPrefix}/posts/`;
+      } else if (isPaginatedTags) {
+        const tagMatch = urlPath.match(/^\/(?:es|ca)?\/tags\/([^\/]+)\/(\d+)$/);
+        if (tagMatch) {
+          const tag = tagMatch[1];
+          const langPrefix = targetLang !== 'en' ? `/${targetLang}` : '';
+          allLocaleUrls[targetLang] = `${langPrefix}/tags/${tag}/`;
+        } else {
+          allLocaleUrls[targetLang] = url;
+        }
+      } else {
+        allLocaleUrls[targetLang] = url;
+      }
+      availableLanguages[targetLang] = true;
+    });
+  }
+}
+
+// Ensure order matches langs array
+const vals = langs.map(lang => allLocaleUrls[lang]);
+const availability = langs.map(lang => availableLanguages[lang]);
 ---
 
 <span>
@@ -52,7 +160,11 @@ const { lang } = Astro.props;
           <li>
             <a
               href={vals[i]}
-              class="block px-2 py-2 hover:bg-skin-accent hover:text-skin-inverted"
+              class:list={[
+                "block px-2 py-2 hover:bg-skin-accent hover:text-skin-inverted",
+                !availability[i] && "opacity-30 cursor-not-allowed"
+              ]}
+              title={!availability[i] ? "Post no disponible en este idioma" : undefined}
             >
               <img
                 src={"/assets/icons/" + val + ".svg"}

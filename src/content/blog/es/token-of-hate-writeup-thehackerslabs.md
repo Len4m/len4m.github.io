@@ -2,7 +2,7 @@
 author: Lenam
 pubDatetime: 2025-03-22T00:00:00Z
 title: WriteUp Token Of Hate - TheHackersLabs
-slug: token-of-hate-writeup-thehackerslabs-es
+urlSlug: token-of-hate-writeup-thehackerslabs-es
 featured: false
 draft: false
 ogImage: "../../../assets/images/token-of-hate/OpenGraph.png"
@@ -19,6 +19,7 @@ tags:
 description:
   Resolución de un CTF de TheHackersLabs, con enumeración, explotación de XSS almacenado mediante Unicode, secuestro de cookies, ataques LFI y SSRF, manipulación de JWT para RCE y escalada de privilegios por medio de capabilities en Linux.
 lang: es
+translationId: token-of-hate-writeup-thehackerslabs
 ---
 ![Rabbit Token Of Hate](../../../assets/images/token-of-hate/OpenGraph.png)
 

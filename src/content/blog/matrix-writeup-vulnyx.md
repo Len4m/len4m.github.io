@@ -2,7 +2,7 @@
 author: Lenam
 pubDatetime: 2025-02-04T15:22:00Z
 title: WriteUp Matrix - Vulnyx
-slug: matrix-writeup-vulnyx-en
+urlSlug: matrix-writeup-vulnyx-en
 featured: false
 draft: false
 ogImage: "../../assets/images/matrix/OpenGraph.png"
@@ -16,6 +16,7 @@ tags:
 description:
   This writeup documents the exploitation of a vulnerable machine inspired by Matrix, using traffic analysis, PHP injection, and privilege escalation with rsync to gain root access.
 lang: en
+translationId: matrix-writeup-vulnyx
 ---
 
 ![Rabbit in Matrix](../../assets/images/matrix/OpenGraph.png)
