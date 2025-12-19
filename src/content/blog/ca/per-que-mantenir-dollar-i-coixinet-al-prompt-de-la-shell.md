@@ -40,7 +40,7 @@ I jo vinc a dir:
 Digues-li prompt, path, cursor, "on escric comandes", tant se val.
 Aquest tros de text abans del que teclees no és decoració: és **informació crítica**.
 
-```bash
+```text
 $ comanda   # usuari normal
 # comanda   # root
 ```
@@ -57,7 +57,7 @@ Perquè al món del hacking i l'administració de sistemes sempre estem provant 
 
 Veig molts prompts d'aquest estil:
 
-```bash
+```text
 ❯
 λ
 »
@@ -88,7 +88,7 @@ L'argument "jo faig servir colors" es trenca molt ràpid:
   El color normalment desapareix.
   Exemple:
 
-  ```bash
+  ```text
   # iptables -F
   ```
 
@@ -106,7 +106,7 @@ El caràcter, sí.
 
 És molt més fàcil veure el perill així:
 
-```bash
+```text
 # iptables -F
 # userdel -r usuari-que-no-era
 # mv /etc /etc.bak
@@ -115,7 +115,7 @@ El caràcter, sí.
 
 Que així:
 
-```bash
+```text
 ❯ iptables -F
 ❯ userdel -r usuari-que-no-era
 ❯ mv /etc /etc.bak
@@ -138,7 +138,7 @@ En CTFs i writeups, el `$` i `#` són or pur:
 
 Exemple típic en un writeup:
 
-```bash
+```text
 $ sudo -l
 # cat /root/root.txt
 ```
@@ -152,14 +152,14 @@ Si treus aquests símbols, obligues el lector a **endevinar el context**. I ja e
 
 Sí, ja ho sé: un prompt tipus:
 
-```bash
+```text
 ┌─[ctfer@kali]─[~/ctf/machine]
 └──╼ $
 ```
 
 queda més "pro" que un trist:
 
-```bash
+```text
 $
 ```
 

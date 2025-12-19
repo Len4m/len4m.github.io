@@ -40,9 +40,9 @@ And I'm here to say:
 Call it prompt, path, cursor, "where I type commands", whatever.
 That little piece of text before what you type isn't decoration: it's **critical information**.
 
-```bash
-$ command   # normal user
-# command   # root
+```text
+$ command   <- normal user
+# command   <- root
 ```
 
 With a single character you know:
@@ -57,7 +57,7 @@ Because in the hacking and sysadmin world we're always trying weird things in th
 
 I see a lot of prompts like this:
 
-```bash
+```text
 ❯
 λ
 »
@@ -88,7 +88,7 @@ The "I use colors" argument breaks down very quickly:
   The color usually disappears.
   Example:
 
-  ```bash
+  ```text
   # iptables -F
   ```
 
@@ -106,7 +106,7 @@ The character does.
 
 It's much easier to see the danger like this:
 
-```bash
+```text
 # iptables -F
 # userdel -r wrong-user
 # mv /etc /etc.bak
@@ -115,7 +115,7 @@ It's much easier to see the danger like this:
 
 Than like this:
 
-```bash
+```text
 ❯ iptables -F
 ❯ userdel -r wrong-user
 ❯ mv /etc /etc.bak
@@ -138,7 +138,7 @@ In CTFs and writeups, `$` and `#` are pure gold:
 
 Typical example in a writeup:
 
-```bash
+```text
 $ sudo -l
 # cat /root/root.txt
 ```
@@ -152,14 +152,14 @@ If you remove those symbols, you force the reader to **guess the context**. And 
 
 Yes, I know: a prompt like:
 
-```bash
+```text
 ┌─[ctfer@kali]─[~/ctf/machine]
 └──╼ $
 ```
 
 looks more "pro" than a sad:
 
-```bash
+```text
 $
 ```
 
