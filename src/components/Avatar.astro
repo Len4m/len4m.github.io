@@ -36,17 +36,50 @@
     const gifImg = new Image();
     gifImg.src = gifUrl;
 
-    const handleMouseOver = () => {
+    let animationTimeout: ReturnType<typeof setTimeout> | null = null;
+    const GIF_DURATION = 7500; // Approximate duration of the GIF animation in milliseconds
+
+    const showGif = (autoHide: boolean = false) => {
+      // Clear any existing timeout
+      if (animationTimeout) {
+        clearTimeout(animationTimeout);
+        animationTimeout = null;
+      }
+
       // Reset GIF animation by changing the src with a unique parameter
-      const currentSrc = avatarGif.style.backgroundImage;
       avatarGif.style.backgroundImage = `url('${gifUrl}?t=${Date.now()}')`;
       // Show GIF layer with smooth transition
       avatarGif.style.opacity = '1';
+
+      // If autoHide is true, hide the GIF after it completes one cycle
+      if (autoHide) {
+        animationTimeout = setTimeout(() => {
+          hideGif();
+        }, GIF_DURATION);
+      }
+    };
+
+    const hideGif = () => {
+      // Clear any existing timeout
+      if (animationTimeout) {
+        clearTimeout(animationTimeout);
+        animationTimeout = null;
+      }
+      // Hide GIF layer with smooth transition
+      avatarGif.style.opacity = '0';
+    };
+
+    const handleMouseOver = () => {
+      // Clear auto-hide timeout when hovering
+      if (animationTimeout) {
+        clearTimeout(animationTimeout);
+        animationTimeout = null;
+      }
+      showGif(false); // Don't auto-hide on hover
     };
 
     const handleMouseOut = () => {
-      // Hide GIF layer with smooth transition
-      avatarGif.style.opacity = '0';
+      hideGif();
     };
 
     // Remove existing listeners to prevent duplicates
@@ -56,6 +89,25 @@
     // Add new listeners
     avatarGif.addEventListener('mouseover', handleMouseOver);
     avatarGif.addEventListener('mouseout', handleMouseOut);
+
+    // Show GIF animation when page is fully loaded
+    const startAnimationOnLoad = () => {
+      // Wait for page to be fully loaded (including images)
+      if (document.readyState === 'complete') {
+        // Small delay to ensure smooth transition
+        setTimeout(() => {
+          showGif(true); // Auto-hide after animation completes
+        }, 100);
+      } else {
+        window.addEventListener('load', () => {
+          setTimeout(() => {
+            showGif(true); // Auto-hide after animation completes
+          }, 100);
+        });
+      }
+    };
+
+    startAnimationOnLoad();
   }
 
   // Initialize on page load
