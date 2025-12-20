@@ -41,8 +41,8 @@ Llámalo prompt, path, cursor, “donde escribo comandos”, da igual.
 Ese trocito de texto antes de lo que tecleas no es decoración: es **información crítica**.
 
 ```text
-$ comando   # usuario normal
-# comando   # root
+$ comando   <- usuario normal
+# comando   <- root
 ```
 
 Con un solo carácter sabes:

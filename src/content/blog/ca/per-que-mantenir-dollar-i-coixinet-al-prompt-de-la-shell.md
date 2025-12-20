@@ -41,8 +41,8 @@ Digues-li prompt, path, cursor, "on escric comandes", tant se val.
 Aquest tros de text abans del que teclees no és decoració: és **informació crítica**.
 
 ```text
-$ comanda   # usuari normal
-# comanda   # root
+$ comanda   <- usuari normal
+# comanda   <- root
 ```
 
 Amb un sol caràcter saps:
