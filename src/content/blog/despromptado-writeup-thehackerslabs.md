@@ -3,7 +3,7 @@ author: Lenam
 pubDatetime: 2025-11-23T15:22:00Z  
 title: WriteUp Despromptado - TheHackersLabs  
 urlSlug: despromptado-writeup-thehackerslabs-en  
-featured: true
+featured: false
 draft: false  
 ogImage: "../../assets/images/despromptado/OpenGraph.png"  
 tags:

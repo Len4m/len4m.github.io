@@ -3,7 +3,7 @@ author: Lenam
 pubDatetime: 2025-08-17T15:22:00Z
 title: WriteUp SlyWindow - Vulnyx
 urlSlug: slywindow-writeup-vulnyx-es
-featured: true
+featured: false
 draft: false
 ogImage: "../../../assets/images/slywindow/OpenGraph.png"
 tags:
