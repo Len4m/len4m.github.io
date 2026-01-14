@@ -3,7 +3,7 @@ author: Lenam
 pubDatetime: 2025-12-12T00:00:00Z
 title: "Por qué seguir usando $ y # en el prompt de la shell"
 urlSlug: por-que-usar-dollar-hash-prompt-shell
-featured: true
+featured: false
 draft: false
 ogImage: "../../../assets/images/opinion/prompt-simbol.png"
 tags:

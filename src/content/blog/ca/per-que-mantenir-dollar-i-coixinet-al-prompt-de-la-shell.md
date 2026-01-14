@@ -3,7 +3,7 @@ author: Lenam
 pubDatetime: 2025-12-12T00:00:00Z
 title: "Per què val la pena mantenir $ i # al prompt de la shell"
 urlSlug: per-que-usar-dollar-coixinet-prompt-shell
-featured: true
+featured: false
 draft: false
 ogImage: "../../../assets/images/opinion/prompt-simbol.png"
 tags:

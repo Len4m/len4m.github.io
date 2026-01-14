@@ -3,7 +3,7 @@ author: Lenam
 pubDatetime: 2025-12-12T00:00:00Z
 title: "In Defense of $ and # in the Shell Prompt"
 urlSlug: why-keep-dollar-hash-shell-prompt
-featured: true
+featured: false
 draft: false
 ogImage: "../../assets/images/opinion/prompt-simbol.png"
 tags:
