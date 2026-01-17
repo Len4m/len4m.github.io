@@ -1,6 +1,6 @@
 ---
 author: Lenam
-pubDatetime: 2026-01-17T00:00:00Z
+pubDatetime: 2026-01-18T00:00:00Z
 title: "Cómo limitar el acceso de la inteligencia artificial a tu contenido sin desaparecer de la web (Parte 3 - Más reducción de tokens)"
 urlSlug: limitar-acceso-ia-contenido-sin-desaparecer-parte-3
 featured: false
