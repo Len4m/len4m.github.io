@@ -1,7 +1,7 @@
 ---
 author: Lenam
 pubDatetime: 2026-01-14T00:00:00Z
-title: "Cómo limitar el acceso de la inteligencia artificial a tu contenido sin desaparecer de la web (Parte 1)"
+title: "Cómo limitar el acceso de la inteligencia artificial a tu contenido sin desaparecer de la web (Parte 1 - Introducción)"
 urlSlug: limitar-acceso-ia-contenido-sin-desaparecer-parte-1
 featured: true
 draft: false
@@ -23,6 +23,11 @@ translationId: limitar-acceso-ia-contenido-sin-desaparecer-parte-1
 ![COPYRIGHT INFRINGEMENT](../../../assets/images/limitar-acceso-ia-contenido-sin-desaparecer/OpenGraph.png)
 
 *Una estrategia intermedia para seguir siendo visible sin regalar el conocimiento ni aumentar el coste energético.*
+
+**Serie:**
+- **Parte 1: Introducción**
+- [Parte 2: Estrategias técnicas](/es/posts/limitar-acceso-ia-contenido-sin-desaparecer-parte-2/)
+- [Parte 3: Más reducción de tokens](/es/posts/limitar-acceso-ia-contenido-sin-desaparecer-parte-3/)
 
 ## Tabla de contenido
 
@@ -63,7 +68,7 @@ La idea no es desaparecer del nuevo ecosistema de búsqueda impulsado por la int
 
 ### Una solución técnica (adelanto)
 
-Aunque el detalle técnico se desarrollará en la **segunda parte de este artículo**, conviene adelantar la idea general.
+Aunque el detalle técnico se desarrollará en la [Parte 2](/es/posts/limitar-acceso-ia-contenido-sin-desaparecer-parte-2/), conviene adelantar la idea general. Esta serie tendrá **tres partes**: la tercera se centrará en **cómo adaptar el contenido alternativo para reducir aún más el consumo de tokens** y se publicará como [Parte 3](/es/posts/limitar-acceso-ia-contenido-sin-desaparecer-parte-3/).
 
 La estrategia pasa por **combinar varias capas de control**, sin entrar aún en implementaciones concretas:
 
@@ -73,6 +78,6 @@ La estrategia pasa por **combinar varias capas de control**, sin entrar aún en 
 
 Estas medidas no impiden el acceso a las personas, pero reducen el uso masivo del contenido por sistemas automatizados y la cantidad de información disponible para entrenamiento.
 
-Conviene insistir en una idea clave: **ninguna de estas soluciones es 100 % fiable**. Son aproximaciones razonables en un escenario cambiante. En la **segunda parte** entraré en detalle en cómo aplicarlas a nivel técnico, con ejemplos y recursos concretos.
+Conviene insistir en una idea clave: **ninguna de estas soluciones es 100 % fiable**. Son aproximaciones razonables en un escenario cambiante. En la [Parte 2](/es/posts/limitar-acceso-ia-contenido-sin-desaparecer-parte-2/) entraré en detalle en cómo aplicarlas a nivel técnico, con ejemplos y recursos concretos, y la [Parte 3](/es/posts/limitar-acceso-ia-contenido-sin-desaparecer-parte-3/) profundizará en cómo ajustar el contenido alternativo para reducir tokens sin perder visibilidad.
 
 > **Nota personal**: todo lo expuesto en esta primera parte recoge opiniones, reflexiones y conclusiones propias a partir de mi experiencia y observación del contexto actual. No pretenden ser verdades absolutas ni soluciones definitivas, y es muy posible que algunas de estas ideas evolucionen o incluso resulten equivocadas con el tiempo. Este artículo no busca sentar cátedra, sino abrir una reflexión honesta sobre un problema que aún está lejos de estar resuelto.
