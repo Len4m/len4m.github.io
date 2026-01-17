@@ -1,7 +1,7 @@
 ---
 author: Lenam
 pubDatetime: 2026-01-14T00:00:00Z
-title: "Com limitar l'accés de la intel·ligència artificial al teu contingut sense desaparèixer de la web (Part 1)"
+title: "Com limitar l'accés de la intel·ligència artificial al teu contingut sense desaparèixer de la web (Part 1 - Introducció)"
 urlSlug: limitar-acces-ia-contingut-sense-desapareixer-part-1
 featured: true
 draft: false
@@ -23,6 +23,11 @@ translationId: limitar-acceso-ia-contenido-sin-desaparecer-parte-1
 ![INFRACCIÓ DE DRETS D'AUTOR](../../../assets/images/limitar-acceso-ia-contenido-sin-desaparecer/OpenGraph.png)
 
 *Una estratègia intermèdia per continuar sent visible sense regalar el coneixement ni augmentar el cost energètic.*
+
+**Sèrie:**
+- **Part 1: Introducció**
+- [Part 2: Estratègies tècniques](/ca/posts/limitar-acces-ia-contingut-sense-desapareixer-part-2/)
+- [Part 3: Més reducció de tokens](/ca/posts/limitar-acces-ia-contingut-sense-desapareixer-part-3/)
 
 ## Taula de continguts
 
@@ -63,7 +68,7 @@ La idea no és desaparèixer del nou ecosistema de cerca impulsat per la intel·
 
 ### Una solució tècnica (avanç)
 
-Tot i que el detall tècnic es desenvoluparà a la **segona part d'aquest article**, convé avançar la idea general.
+Tot i que el detall tècnic es desenvoluparà a la [Part 2](/ca/posts/limitar-acces-ia-contingut-sense-desapareixer-part-2/), convé avançar la idea general. Aquesta sèrie tindrà **tres parts**: la tercera se centrarà en **com adaptar el contingut alternatiu per reduir encara més el consum de tokens** i es publicarà com a [Part 3](/ca/posts/limitar-acces-ia-contingut-sense-desapareixer-part-3/).
 
 L'estratègia passa per **combinar diverses capes de control**, sense entrar encara en implementacions concretes:
 
@@ -73,6 +78,6 @@ L'estratègia passa per **combinar diverses capes de control**, sense entrar enc
 
 Aquestes mesures no impedeixen l'accés a les persones, però redueixen l'ús massiu del contingut per part de sistemes automatitzats i la quantitat d'informació disponible per a l'entrenament.
 
-Convé insistir en una idea clau: **cap d'aquestes solucions és 100 % fiable**. Són aproximacions raonables en un escenari canviant. A la **segona part** entraré en detall en com aplicar-les a nivell tècnic, amb exemples i recursos concrets.
+Convé insistir en una idea clau: **cap d'aquestes solucions és 100 % fiable**. Són aproximacions raonables en un escenari canviant. A la [Part 2](/ca/posts/limitar-acces-ia-contingut-sense-desapareixer-part-2/) entraré en detall en com aplicar-les a nivell tècnic, amb exemples i recursos concrets, i la [Part 3](/ca/posts/limitar-acces-ia-contingut-sense-desapareixer-part-3/) aprofundirà en com ajustar el contingut alternatiu per reduir tokens sense perdre visibilitat.
 
 > **Nota personal**: tot el que s'exposa en aquesta primera part recull opinions, reflexions i conclusions pròpies a partir de la meva experiència i observació del context actual. No pretenen ser veritats absolutes ni solucions definitives, i és molt possible que algunes d'aquestes idees evolucionin o fins i tot resultin equivocades amb el temps. Aquest article no busca fer càtedra, sinó obrir una reflexió honesta sobre un problema que encara és lluny d'estar resolt.
