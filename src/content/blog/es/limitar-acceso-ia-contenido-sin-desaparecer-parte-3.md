@@ -73,7 +73,7 @@ Los campos TOON recomendados están diseñados para ser fácilmente comprensible
 Ejemplo realista para un artículo:
 
 ```yaml
-toon: 1
+ver: 1
 type: article
 lang: es
 url: https://tusitio.com/post/estrategia-hibrida
