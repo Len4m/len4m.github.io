@@ -194,7 +194,7 @@ Si quieres medirlo, usa cualquier tokenizador de tu modelo objetivo y compara el
 ### Herramientas para medir tokens
 
 * **TOON Playground**: pega tu JSON y compara tokens entre JSON y TOON en tiempo real. [TOON Playground](https://toonformat.dev/playground.html)
-* **OpenAI Tokenizer**: herramienta oficial para contar tokens en textos y prompts (requiere cuenta). [OpenAI Tokenizer](https://platform.openai.com/tokenizer)
+* **OpenAI Tokenizer**: herramienta oficial para contar tokens en textos y prompts. [OpenAI Tokenizer](https://platform.openai.com/tokenizer)
 * **Chase Adams Tokenization Playground**: compara tokens entre formatos con presets. [Format Tokenization Exploration](https://www.curiouslychase.com/playground/format-tokenization-exploration?mode=preset&size=small-simple&structure=uniform-flat)
 
 ## Límites y advertencias
