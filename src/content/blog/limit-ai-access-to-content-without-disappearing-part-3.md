@@ -212,7 +212,7 @@ If you want to measure it, use any tokenizer for your target model and compare t
 * [ ] My `robots.txt` separates training vs search.
 * [ ] My web server separates training vs search.
 
-> If in the end you do not care about energy consumption but you have a production service (especially if it uses lists of objects with JSON), **using TOON will save you money**. And for those of us who do care about environmental impact, you will make us happier.
+> If in the end you do not care about energy consumption but you have a production service (especially if it uses lists of objects with JSON), **using TOON will save you money**. And for those of us who do care about environmental impact, you will make us happier
 
 ## References and resources
 
