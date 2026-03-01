@@ -3,7 +3,7 @@ author: Lenam
 pubDatetime: 2025-12-20T15:22:00Z
 title: WriteUp Coliseum - Vulnyx
 urlSlug: coliseum-writeup-vulnyx
-featured: true
+featured: false
 draft: false
 ogImage: "../../../assets/images/coliseum/OpenGraph.png"
 tags:
