@@ -1,0 +1,92 @@
+---
+author: Lenam
+pubDatetime: 2026-02-25T00:00:00Z
+title: "Transformers.js: modelos de lenguaje y ML en el navegador"
+slug: transformersjs-modelos-ml-navegador
+ogImage: "../../../assets/images/transformersjs-modelos-ml-navegador/OpenGraph.png"
+featured: true
+draft: false
+tags:
+  - JavaScript
+  - ML
+  - Transformers.js
+  - navegador
+  - WebGPU
+  - WASM
+description: Introducción a Transformers.js de Hugging Face y ejemplo de LLM en el navegador con soporte CPU (WASM) o GPU (WebGPU) según lo que soporte el navegador.
+lang: es
+---
+
+import Chat from '@components/webllm/Chat.astro';
+
+![Introducción a Transformers.js de Hugging Face y ejemplo de LLM en el navegador con soporte CPU (WASM) o GPU (WebGPU) según lo que soporte el navegador](../../../assets/images/transformersjs-modelos-ml-navegador/OpenGraph.png)
+
+**[Transformers.js](https://huggingface.co/docs/transformers.js)** es una biblioteca de JavaScript de Hugging Face que permite ejecutar modelos de *machine learning* directamente en el navegador, sin necesidad de un servidor. Es el equivalente en JavaScript de la conocida biblioteca Python *transformers* de Hugging Face, con una API similar para desarrolladores web.
+
+## Por qué ejecutar modelos en el navegador
+
+Ejecutar inferencia en el cliente tiene ventajas claras:
+
+- **Privacidad:** los datos no salen del dispositivo del usuario; todo el cómputo es local.
+- **Coste cero:** no hace falta servidor ni suscripciones; todo corre en tu propio ordenador.
+- **Experiencia fluida:** se pueden construir aplicaciones que funcionan offline o con latencia mínima una vez cargado el modelo.
+
+**En resumen: coste cero dólares** —todo se ejecuta en tu máquina— **y es completamente privado**: los datos no se envían a ningún sitio.
+
+Transformers.js utiliza **ONNX Runtime** para ejecutar los modelos. Por debajo puede usar:
+
+- **CPU** mediante **WASM** (WebAssembly), compatible con prácticamente cualquier navegador moderno.
+- **GPU** mediante **[WebGPU](https://caniuse.com/webgpu)** cuando el navegador y el hardware lo soportan, acelerando mucho la inferencia.
+
+La biblioteca elige automáticamente el mejor backend disponible (por ejemplo, WebGPU si está disponible, y en caso contrario WASM en CPU).
+
+## Qué se puede hacer con Transformers.js
+
+Soporta muchas tareas y modalidades:
+
+- **Procesamiento de lenguaje natural (NLP):** clasificación de texto, reconocimiento de entidades, respuesta a preguntas, resumen, traducción y **generación de texto** (LLMs).
+- **Visión por ordenador:** clasificación de imágenes, detección de objetos, segmentación.
+- **Audio:** reconocimiento de voz (ASR) y texto a voz (TTS).
+- **Multimodal:** clasificación zero-shot sobre imagen o audio, detección de objetos, etc.
+
+La API de alto nivel se basa en el concepto de **pipeline**: eliges la tarea y opcionalmente el modelo, y la biblioteca se encarga de descargar y ejecutar el modelo.
+
+```javascript
+import { pipeline } from '@huggingface/transformers';
+
+const pipe = await pipeline('sentiment-analysis');
+const result = await pipe('¡Me encanta este artículo!');
+```
+
+Los modelos se descargan desde el [Hub de Hugging Face](https://huggingface.co/models) y se pueden usar versiones cuantizadas (por ejemplo q4, q8) para reducir tamaño y requisitos de memoria en entornos limitados.
+
+## Ejemplo: LLM en el navegador (CPU o GPU)
+
+El siguiente chat ejecuta un LLM ([SmolLM2](https://huggingface.co/HuggingFaceTB)) **completamente en tu navegador** usando [Transformers.js](https://huggingface.co/docs/transformers.js). El modelo se descarga una sola vez y queda en caché. La inferencia corre en un **Web Worker** para no bloquear la interfaz, las respuestas llegan en **streaming** token a token, y el markdown se renderiza en tiempo real.
+
+Si tu navegador soporta **[WebGPU](https://caniuse.com/webgpu)**, la inferencia se acelerará usando la GPU y se desbloqueará el modelo [Llama 3.2 1B](https://huggingface.co/onnx-community/Llama-3.2-1B-Instruct-ONNX); de lo contrario se usará **WASM** (CPU).
+
+<Chat />
+
+## Conclusiones
+
+Aunque [WebGPU aún no está disponible en todos los navegadores](https://caniuse.com/webgpu), WASM ofrece una alternativa universal que permite ejecutar modelos más pequeños en CPU con resultados aceptables. Como puedes comprobar tú mismo en el chat de arriba, con WebGPU la aceleración por GPU ya es suficiente para mantener conversaciones fluidas con modelos de hasta 1B de parámetros.
+
+El principal inconveniente es el peso de los modelos: incluso cuantizados, van de ~180 MB a más de 1 GB. Sin embargo, una vez descargados se almacenan en la caché del navegador, por lo que las siguientes visitas cargan el modelo casi al instante sin volver a descargarlo.
+
+Esta tecnología abre una vía prometedora para integrar inteligencia artificial en sitios web sin coste de infraestructura, sin enviar datos a terceros y sin depender de APIs de pago. Todo ocurre en el dispositivo del usuario: **cero dólares y privacidad total**.
+
+La versión actual (v3) todavía tiene limitaciones con ciertos formatos de cuantización en WebGPU. Sin embargo, [**Transformers.js v4**](https://huggingface.co/blog/transformersjs-v4) ya está disponible en preview y trae un runtime WebGPU completamente reescrito en C++ junto al equipo de ONNX Runtime. Promete soporte para modelos de más de 8B de parámetros, hasta 4x más velocidad en modelos de embeddings, carga directa de pesos a GPU sin pasar por WASM, y funcionamiento offline completo. Cuando se estabilice, el panorama de la IA en el navegador dará un salto significativo.
+
+## Referencias
+
+- [Transformers.js — Documentación oficial](https://huggingface.co/docs/transformers.js) — API, guías y ejemplos de uso.
+- [Transformers.js en GitHub](https://github.com/huggingface/transformers.js) — Código fuente y issues.
+- [Ejemplos oficiales de Transformers.js](https://github.com/huggingface/transformers.js-examples) — Demos con WebGPU, Llama, Phi, Whisper y más.
+- [ONNX Runtime Web](https://onnxruntime.ai/docs/tutorials/web/) — Motor de inferencia que usa Transformers.js por debajo.
+- [Trabajar con modelos grandes en el navegador](https://onnxruntime.ai/docs/tutorials/web/large-models.html) — Limitaciones de memoria WASM y estrategias con external data.
+- [WebGPU — Soporte en navegadores](https://caniuse.com/webgpu) — Tabla de compatibilidad actualizada.
+- [WebGPU — MDN Web Docs](https://developer.mozilla.org/en-US/docs/Web/API/WebGPU_API) — Especificación y referencia de la API.
+- [Modelos compatibles con Transformers.js](https://huggingface.co/models?library=transformers.js) — Catálogo de modelos ONNX listos para usar en el navegador.
+- [Guía de cuantización (dtypes)](https://huggingface.co/docs/transformers.js/guides/dtypes) — Formatos q4, q8, fp16 y cuándo usar cada uno.
+- [Guía de WebGPU en Transformers.js](https://huggingface.co/docs/transformers.js/guides/webgpu) — Configuración y modelos compatibles con aceleración GPU.
