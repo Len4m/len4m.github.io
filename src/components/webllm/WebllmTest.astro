@@ -1,0 +1,25 @@
+---
+export interface Props {
+  message?: string;
+}
+
+const { message = "WebLLM test component loaded." } = Astro.props;
+---
+
+<div class="webllm-test">
+  <p>{message}</p>
+</div>
+
+<style>
+  .webllm-test {
+    padding: 1rem 1.5rem;
+    margin: 1rem 0;
+    border: 2px dashed var(--color-border, #ccc);
+    border-radius: 8px;
+    background: rgba(0, 108, 172, 0.08);
+  }
+  .webllm-test p {
+    margin: 0;
+    font-weight: 500;
+  }
+</style>
