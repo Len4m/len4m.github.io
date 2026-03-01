@@ -3,6 +3,103 @@ import { Streamdown } from "streamdown";
 import "streamdown/styles.css";
 
 type ChatMessage = { role: "system" | "user" | "assistant"; content: string };
+type Lang = "es" | "ca" | "en";
+
+interface Translations {
+  selectModel: string;
+  inference: string;
+  download: string;
+  recommended: string;
+  downloadModel: string;
+  retry: string;
+  downloadingModel: string;
+  downloadingFile: (file: string) => string;
+  initiatingFile: (file: string) => string;
+  preparingDownload: string;
+  loadingModel: string;
+  loadError: string;
+  unknownError: string;
+  chatPlaceholder: string;
+  inputPlaceholder: string;
+  you: string;
+  model: string;
+  thinking: string;
+  restarting: string;
+  send: string;
+  stop: string;
+}
+
+const I18N: Record<Lang, Translations> = {
+  es: {
+    selectModel: "Selecciona un modelo y descárgalo en el navegador para chatear.",
+    inference: "Inferencia:",
+    download: "Descarga:",
+    recommended: "recomendada:",
+    downloadModel: "Descargar modelo",
+    retry: "Reintentar",
+    downloadingModel: "Descargando modelo…",
+    downloadingFile: (f) => `Descargando ${f}…`,
+    initiatingFile: (f) => `Iniciando ${f}…`,
+    preparingDownload: "Preparando descarga…",
+    loadingModel: "Cargando modelo…",
+    loadError: "Error al cargar el modelo",
+    unknownError: "Error desconocido",
+    chatPlaceholder: "Escribe un mensaje para empezar.",
+    inputPlaceholder: "Escribe un mensaje…",
+    you: "Tú",
+    model: "Modelo",
+    thinking: "Pensando…",
+    restarting: "Reiniciando modelo…",
+    send: "Enviar",
+    stop: "Stop",
+  },
+  ca: {
+    selectModel: "Selecciona un model i descarrega'l al navegador per xatejar.",
+    inference: "Inferència:",
+    download: "Descàrrega:",
+    recommended: "recomanada:",
+    downloadModel: "Descarregar model",
+    retry: "Reintentar",
+    downloadingModel: "Descarregant model…",
+    downloadingFile: (f) => `Descarregant ${f}…`,
+    initiatingFile: (f) => `Iniciant ${f}…`,
+    preparingDownload: "Preparant descàrrega…",
+    loadingModel: "Carregant model…",
+    loadError: "Error en carregar el model",
+    unknownError: "Error desconegut",
+    chatPlaceholder: "Escriu un missatge per començar.",
+    inputPlaceholder: "Escriu un missatge…",
+    you: "Tu",
+    model: "Model",
+    thinking: "Pensant…",
+    restarting: "Reiniciant model…",
+    send: "Enviar",
+    stop: "Stop",
+  },
+  en: {
+    selectModel: "Select a model and download it to the browser to start chatting.",
+    inference: "Inference:",
+    download: "Download:",
+    recommended: "recommended:",
+    downloadModel: "Download model",
+    retry: "Retry",
+    downloadingModel: "Downloading model…",
+    downloadingFile: (f) => `Downloading ${f}…`,
+    initiatingFile: (f) => `Initiating ${f}…`,
+    preparingDownload: "Preparing download…",
+    loadingModel: "Loading model…",
+    loadError: "Error loading model",
+    unknownError: "Unknown error",
+    chatPlaceholder: "Type a message to get started.",
+    inputPlaceholder: "Type a message…",
+    you: "You",
+    model: "Model",
+    thinking: "Thinking…",
+    restarting: "Restarting model…",
+    send: "Send",
+    stop: "Stop",
+  },
+};
 
 const SYSTEM_PROMPT: ChatMessage = {
   role: "system",
@@ -65,7 +162,9 @@ async function checkWebGPU(): Promise<boolean> {
   }
 }
 
-export default function Chat() {
+export default function Chat({ lang = "es" }: { lang?: Lang }) {
+  const t = I18N[lang] ?? I18N.es;
+
   const [status, setStatus] = useState<
     "idle" | "loading" | "ready" | "error" | "reloading"
   >("idle");
@@ -115,11 +214,13 @@ export default function Chat() {
           if (d.status === "progress" && typeof d.progress === "number") {
             setProgress(d.progress);
             setProgressLabel(
-              d.file ? `Descargando ${d.file}…` : "Descargando modelo…"
+              d.file ? t.downloadingFile(d.file) : t.downloadingModel
             );
           } else if (d.file) {
             setProgressLabel(
-              `${d.status === "initiate" ? "Iniciando" : "Descargando"} ${d.file}…`
+              d.status === "initiate"
+                ? t.initiatingFile(d.file)
+                : t.downloadingFile(d.file)
             );
           }
           break;
@@ -136,7 +237,7 @@ export default function Chat() {
             statusRef.current === "reloading"
           ) {
             setStatus("error");
-            setProgressLabel(d.message ?? "Error al cargar el modelo");
+            setProgressLabel(d.message ?? t.loadError);
           } else {
             setMessages((prev) => {
               const next = [...prev];
@@ -144,7 +245,7 @@ export default function Chat() {
               if (last?.role === "assistant")
                 next[next.length - 1] = {
                   ...last,
-                  content: `Error: ${d.message ?? "Error desconocido"}`,
+                  content: `Error: ${d.message ?? t.unknownError}`,
                 };
               return next;
             });
@@ -172,7 +273,7 @@ export default function Chat() {
           break;
       }
     };
-  }, []);
+  }, [t]);
 
   const loadModel = useCallback(
     (modelId: string) => {
@@ -196,9 +297,9 @@ export default function Chat() {
   const handleDownload = useCallback(() => {
     setStatus("loading");
     setProgress(0);
-    setProgressLabel("Preparando descarga…");
+    setProgressLabel(t.preparingDownload);
     loadModel(selectedModel);
-  }, [selectedModel, loadModel]);
+  }, [selectedModel, loadModel, t]);
 
   const handleSend = useCallback(() => {
     const text = input.trim();
@@ -256,10 +357,10 @@ export default function Chat() {
       setMessages([]);
       setStatus("loading");
       setProgress(0);
-      setProgressLabel("Cargando modelo…");
+      setProgressLabel(t.loadingModel);
       loadModel(newModelId);
     },
-    [isGenerating, loadModel]
+    [isGenerating, loadModel, t]
   );
 
   const currentModelInfo = availableModels.find((m) => m.id === selectedModel);
@@ -273,12 +374,10 @@ export default function Chat() {
           <p className="chat-download-text">{progressLabel}</p>
         ) : (
           <>
-            <p className="chat-download-text">
-              Selecciona un modelo y descárgalo en el navegador para chatear.
-            </p>
+            <p className="chat-download-text">{t.selectModel}</p>
             {hasWebGPU !== null && (
               <p className="chat-backend-info">
-                Inferencia:{" "}
+                {t.inference}{" "}
                 {hasWebGPU ? (
                   <strong>
                     <span className="chat-webgpu-badge">WebGPU</span> GPU
@@ -303,10 +402,10 @@ export default function Chat() {
               </select>
               {currentModelInfo && (
                 <p className="chat-model-info">
-                  Descarga: <strong>{currentModelInfo.downloadSize}</strong>
+                  {t.download} <strong>{currentModelInfo.downloadSize}</strong>
                   {" · "}
                   {currentModelInfo.requiresWebGPU ? "VRAM" : "RAM"}
-                  {" recomendada: "}
+                  {" "}{t.recommended}{" "}
                   <strong>{currentModelInfo.ramRequired}</strong>
                   {currentModelInfo.requiresWebGPU && (
                     <span className="chat-webgpu-badge">WebGPU</span>
@@ -321,7 +420,7 @@ export default function Chat() {
           className="chat-download-btn"
           onClick={handleDownload}
         >
-          {status === "error" ? "Reintentar" : "Descargar modelo"}
+          {status === "error" ? t.retry : t.downloadModel}
         </button>
       </div>
     );
@@ -331,7 +430,7 @@ export default function Chat() {
     return (
       <div className="chat-download-section">
         <p className="chat-download-text">
-          {progressLabel || "Descargando modelo…"}
+          {progressLabel || t.downloadingModel}
         </p>
         <div className="chat-progress-track">
           <div
@@ -371,12 +470,12 @@ export default function Chat() {
       </div>
       <div className="chat-messages" ref={chatBoxRef}>
         {displayMessages.length === 0 && (
-          <p className="chat-placeholder">Escribe un mensaje para empezar.</p>
+          <p className="chat-placeholder">{t.chatPlaceholder}</p>
         )}
         {displayMessages.map((msg, i) => (
           <div key={i} className={`chat-msg chat-msg-${msg.role}`}>
             <span className="chat-msg-role">
-              {msg.role === "user" ? "Tú" : "Modelo"}
+              {msg.role === "user" ? t.you : t.model}
             </span>
             {msg.role === "assistant" ? (
               <div className="chat-msg-content chat-markdown">
@@ -391,7 +490,7 @@ export default function Chat() {
                 ) : isGenerating && i === displayMessages.length - 1 ? (
                   <div className="chat-typing">
                     <span className="chat-spinner" aria-hidden="true" />
-                    <span>Pensando…</span>
+                    <span>{t.thinking}</span>
                   </div>
                 ) : null}
               </div>
@@ -405,7 +504,7 @@ export default function Chat() {
         {status === "reloading" && (
           <div className="chat-reloading">
             <span className="chat-spinner" aria-hidden="true" />
-            <span>Reiniciando modelo…</span>
+            <span>{t.restarting}</span>
           </div>
         )}
         {status !== "reloading" && (
@@ -413,7 +512,7 @@ export default function Chat() {
             <input
               type="text"
               className="chat-input"
-              placeholder="Escribe un mensaje…"
+              placeholder={t.inputPlaceholder}
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => {
@@ -430,7 +529,7 @@ export default function Chat() {
                 className="chat-send-btn chat-stop-btn"
                 onClick={handleStop}
               >
-                Stop
+                {t.stop}
               </button>
             ) : (
               <button
@@ -439,7 +538,7 @@ export default function Chat() {
                 onClick={handleSend}
                 disabled={!input.trim()}
               >
-                Enviar
+                {t.send}
               </button>
             )}
           </>

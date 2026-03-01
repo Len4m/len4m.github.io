@@ -1,9 +1,10 @@
 ---
 import ChatComponent from './Chat.tsx';
+const { lang = "es" } = Astro.props;
 ---
 
 <div class="webllm-chat">
-  <ChatComponent client:load />
+  <ChatComponent lang={lang} client:load />
 </div>
 
 <style>
