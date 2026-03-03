@@ -3,7 +3,7 @@ author: Lenam
 pubDatetime: 2025-06-26T00:00:00Z
 title: "Creador de Servidors MCP: Converteix qualsevol comando en una eina d'IA en 5 minuts"
 urlSlug: creador-servidors-mcp-comando-eina-ia
-featured: true
+featured: false
 draft: false
 ogImage: "../../../assets/images/mcp-creator/OpenGraph.png"
 tags:

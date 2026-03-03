@@ -3,7 +3,7 @@ author: Lenam
 pubDatetime: 2025-06-26T00:00:00Z
 title: "MCP Server Creator: Turn Any Command into an AI Tool in 5 Minutes"
 urlSlug: mcp-server-creator-command-ai-tool
-featured: true
+featured: false
 draft: false
 ogImage: "../../assets/images/mcp-creator/OpenGraph.png"
 tags:

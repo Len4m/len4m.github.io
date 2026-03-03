@@ -3,7 +3,7 @@ author: Lenam
 pubDatetime: 2026-01-14T00:00:00Z
 title: "Com limitar l'accés de la intel·ligència artificial al teu contingut sense desaparèixer de la web (Part 1 - Introducció)"
 urlSlug: limitar-acces-ia-contingut-sense-desapareixer-part-1
-featured: true
+featured: false
 draft: false
 ogImage: "../../../assets/images/limitar-acceso-ia-contenido-sin-desaparecer/OpenGraph.png"
 tags:

@@ -3,7 +3,7 @@ author: Lenam
 pubDatetime: 2026-01-14T00:00:00Z
 title: "How to limit AI access to your content without disappearing from the web (Part 1 - Introduction)"
 urlSlug: limit-ai-access-to-content-without-disappearing-part-1
-featured: true
+featured: false
 draft: false
 ogImage: "../../assets/images/limitar-acceso-ia-contenido-sin-desaparecer/OpenGraph.png"
 tags:
