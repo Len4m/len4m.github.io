@@ -1,0 +1,134 @@
+---
+author: Lenam
+pubDatetime: 2026-03-18T00:00:00Z
+title: "TensorFlow.js: modelos de IA y machine learning en el navegador"
+slug: tensorflowjs-entrenar-modelos-navegador
+ogImage: "../../../assets/images/tensorflowjs-entrenar-modelos-navegador/OpenGraph.png"
+featured: true
+draft: false
+tags:
+  - JavaScript
+  - ML
+  - TensorFlow.js
+  - navegador
+  - IndexedDB
+description: Crea, entrena, evalúa y guarda un modelo de machine learning directamente en el navegador con TensorFlow.js. Demo interactiva de tres en raya con dataset local, Web Workers e IndexedDB.
+lang: es
+translationId: tensorflowjs-entrenar-modelos-navegador
+---
+
+import TicTacToeML from "@components/tensorflowjs/TicTacToeML.astro";
+
+![TensorFlow.js para crear y entrenar modelos de machine learning directamente en el navegador con un ejemplo interactivo de tres en raya](../../../assets/images/tensorflowjs-entrenar-modelos-navegador/OpenGraph.png)
+
+**[TensorFlow.js](https://www.tensorflow.org/js)** permite crear, entrenar y ejecutar modelos de *machine learning* directamente en el navegador usando JavaScript. Eso significa que una página web puede dejar de ser solo interfaz y convertirse en un pequeño laboratorio de IA que corre enteramente en el cliente.
+
+Si te interesa la otra cara del problema, en el artículo anterior sobre [**Transformers.js: modelos de lenguaje y ML en el navegador**](/es/posts/transformersjs-modelos-ml-navegador/) explico cómo hacer **inferencia** directamente en el navegador con modelos ya preparados. Este post se centra en algo distinto pero complementario: **crear y entrenar** el modelo en el propio cliente con TensorFlow.js.
+
+## Cómo aprende un modelo
+
+Antes de hablar del juego, conviene entender la idea general. Un modelo no nace sabiendo cosas: primero se define una estructura con capas y conexiones, luego se le muestran ejemplos y, poco a poco, va ajustando sus números internos para cometer menos errores. Dicho sin dramatizar las matemáticas: al principio improvisa, después practica y, con suerte, termina haciendo algo que ya parece inteligencia en lugar de azar.
+
+Entrenar un modelo consiste en repetir muchas veces el mismo ritual:
+
+- Recibir una entrada.
+- Comparar la salida con la respuesta correcta.
+- Medir el error.
+- Ajustar ligeramente los pesos internos.
+
+Eso es aprender en una red neuronal. No memoriza como un loro: mueve miles de pequeños diales invisibles hasta encontrar patrones útiles. En este ejemplo esos patrones son jugadas de tres en raya; en otros casos podrían ser texto, imágenes o sonido.
+
+## Qué hace TensorFlow.js en el navegador
+
+Lo interesante aquí no es solo el tres en raya, sino que todo vive dentro del navegador gracias a **TensorFlow.js**. Con una sola página podemos:
+
+- Crear un modelo.
+- Entrenarlo localmente.
+- Hacer predicciones.
+- Guardarlo en **IndexedDB** para recuperarlo después.
+
+El resultado es un flujo completo de *machine learning* sin backend, sin APIs externas y sin un servidor haciendo magia en segundo plano.
+
+## Ejemplo: una red neuronal que aprende a jugar al tres en raya
+
+La demo de abajo construye una red neuronal pequeña que aprende a jugar como `O`. Primero se genera un dataset de posiciones razonables, después el modelo ajusta sus pesos mediante entrenamiento por lotes, y finalmente puedes enfrentarte a él directamente en pantalla.
+
+El tres en raya está aquí también como guiño a *WarGames* (*Juegos de guerra*), una de las primeras películas populares en las que el protagonista es un hacker y donde este juego aparece en una de sus escenas más recordadas.
+
+<div class="flex justify-center">
+<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/F7qOV8xonfY?si=haUOCmX7QFiWVzi3" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</div>
+
+Cómo usar la demo:
+
+1. Juega primero unas partidas sin entrenar el modelo.
+2. Genera un dataset.
+3. Pulsa `Entrenar / reanudar`.
+4. Observa cómo avanzan los batches y las epochs.
+5. Vuelve a jugar y compara el antes y el después.
+
+<TicTacToeML lang="es" />
+
+## Crear el modelo con TensorFlow.js
+
+La definición del modelo es bastante compacta. Aquí usamos una entrada de 10 valores, una capa oculta sencilla y una salida con 9 probabilidades, una por casilla del tablero:
+
+```javascript
+const model = tf.sequential();
+model.add(tf.layers.dense({ inputShape: [10], units: 24, activation: "relu" }));
+model.add(tf.layers.dense({ units: 9, activation: "softmax" }));
+model.compile({
+  optimizer: tf.train.adam(0.02),
+  loss: "categoricalCrossentropy",
+  metrics: ["accuracy"],
+});
+```
+
+La entrada codifica el tablero y el turno actual. La salida es una distribución de probabilidad sobre las 9 casillas. Después se elige la mejor jugada legal según esas probabilidades.
+
+## Entrenar dentro del propio navegador
+
+El entrenamiento también ocurre en el cliente. Se toma un *batch* del dataset, se convierten los ejemplos en tensores y se ajustan los pesos del modelo:
+
+```javascript
+const xs = tf.tensor2d(batchX, [batchX.length, 10]);
+const ys = tf.tensor2d(batchY, [batchY.length, 9]);
+const metrics = await this.model.trainOnBatch(xs, ys);
+xs.dispose();
+ys.dispose();
+```
+
+Suena humilde porque lo es, pero así es exactamente como una red neuronal empieza a aprender patrones. En esta demo, además, el trabajo pesado se manda a **Web Workers** para no bloquear la interfaz, y el dataset se trocea en bloques que se guardan en **IndexedDB** para poder reanudar el entrenamiento sin empezar desde cero.
+
+## Qué está pasando realmente en la demo
+
+Debajo del capó hay más cosas de las que parecen:
+
+- **Minimax** genera ejemplos de buenas jugadas.
+- **TensorFlow.js** entrena el modelo dentro del navegador.
+- **IndexedDB** persiste tanto el dataset como el modelo.
+- **Web Workers** evitan que la UI se congele durante la generación, el entrenamiento o la evaluación.
+- La evaluación rápida permite comparar el modelo contra un rival aleatorio o contra minimax.
+
+En otras palabras: esto habla de tres en raya, sí, pero sobre todo habla de algo más útil para cualquiera que haga web: hoy ya se pueden montar pequeñas experiencias de IA directamente en JavaScript, dentro de una página normal y con feedback visual inmediato.
+
+## Conclusiones
+
+TensorFlow.js convierte el navegador en un entorno válido para experimentar con *machine learning* real. No solo permite hacer inferencia: también permite **crear modelos**, **entrenarlos**, **evaluarlos** y **guardarlos localmente**. Para demos, prototipos, educación o herramientas privadas, eso abre un abanico enorme de posibilidades sin depender de infraestructura externa.
+
+Y además deja una idea bastante útil: para problemas pequeños, muchas veces tiene más sentido un modelo sencillo que aprende delante de nosotros que una IA espectacular, con un consumo enorme, dedicada a jugar al tres en raya o a resolver una búsqueda web sencilla.
+
+## Más demos e inspiración
+
+Si quieres ver hasta dónde llega la idea, TensorFlow.js mantiene una galería oficial con ejemplos y demostraciones en vivo, incluyendo control por webcam, visualización del entrenamiento, clasificación de imágenes, música generada por redes neuronales y más:
+
+- [Demostraciones oficiales de TensorFlow.js](https://www.tensorflow.org/js/demos?hl=es)
+
+## Referencias
+
+- [TensorFlow.js](https://www.tensorflow.org/js) - Documentación oficial del proyecto.
+- [Guía de TensorFlow.js](https://www.tensorflow.org/js/guide) - Introducción a modelos, tensores y entrenamiento.
+- [Demostraciones oficiales de TensorFlow.js](https://www.tensorflow.org/js/demos?hl=es) - Galería de ejemplos y demos en vivo.
+- [Web Workers en MDN](https://developer.mozilla.org/es/docs/Web/API/Web_Workers_API) - Ejecución de trabajo en segundo plano en el navegador.
+- [IndexedDB en MDN](https://developer.mozilla.org/es/docs/Web/API/IndexedDB_API) - Persistencia local estructurada en el navegador.
+- [WarGames](https://en.wikipedia.org/wiki/WarGames) - Referencia cultural al tres en raya como juego "resuelto".

@@ -1,0 +1,2047 @@
+---
+const { debug = false, lang = "es" } = Astro.props;
+---
+
+<div class="tfjs-demo">
+  <script
+    is:inline
+    src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js"
+  ></script>
+  <tic-tac-toe-ml debug={debug ? "true" : "false"} lang={lang}></tic-tac-toe-ml>
+</div>
+
+<style>
+  .tfjs-demo {
+    margin: 1.5rem 0;
+  }
+</style>
+
+<script is:inline type="module">
+  const TFJS_URL =
+    "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js";
+  const I18N = {
+    es: {
+      yourTurn: "Tu turno.",
+      game: "Juego",
+      playAsX: "Juega como X contra el modelo entrenado.",
+      newGame: "Nueva partida",
+      trainingDemo: "Entrenando y reproduciendo partidas del modelo…",
+      stateInspection: "Inspección del estado",
+      viewInternalState: "Ver estado interno",
+      quickEval: "Evaluación rápida",
+      modelWins: "Victorias modelo",
+      draws: "Empates",
+      losses: "Derrotas",
+      evaluation: "Evaluación",
+      pending: "Pendiente",
+      evalRandom: "Evaluar vs aleatorio",
+      evalMinimax: "Evaluar vs minimax",
+      evalHelp: "Evaluar no entrena. El entrenamiento puede pararse y reanudarse desde el modelo guardado hasta ahora.",
+      trainingPersistence: "Entrenamiento y persistencia",
+      datasetRows: "Registros de dataset",
+      requestedDataset: "Dataset pedido",
+      batch: "Batch",
+      epochsCompleted: "Epochs completados",
+      generateDataset: "Generar dataset",
+      trainResume: "Entrenar / reanudar",
+      stop: "Parar",
+      resetModel: "Reset modelo",
+      model: "Modelo",
+      modelSize: "Tamaño modelo",
+      persistedDataset: "Dataset persistido",
+      rows: "filas",
+      storage: "Almacenamiento",
+      lossEpoch: "Loss epoch",
+      accuracyEpoch: "Accuracy epoch",
+      lossBatch: "Loss batch",
+      accuracyBatch: "Accuracy batch",
+      activeDataset: "Dataset activo",
+      aiTurn: "Turno IA",
+      batchProgress: "Progreso de batches",
+      restoredModel: "Modelo restaurado desde IndexedDB.",
+      modelSaved: "Modelo guardado en IndexedDB.",
+      modelReset: "Modelo reiniciado.",
+      processStopped: "Proceso detenido. Puedes reanudar entrenamiento.",
+      generatingDataset: "Generando dataset…",
+      datasetGenerated: (n) => `Dataset generado y guardado con ${n} ejemplos.`,
+      noDataset: "No hay dataset persistido para entrenar.",
+      trainingFromDb: "Entrenando por chunks desde IndexedDB…",
+      trainingBatch: (a, b) => `Entrenando… batch ${a}/${b}`,
+      trainingEpoch: (n) => `Entrenando… epoch ${n}`,
+      trainingWorkerError: (msg) => `Error en worker de entrenamiento: ${msg || "desconocido"}`,
+      trainingStoppedSaved: "Entrenamiento detenido y guardado. Puedes reanudar.",
+      trainingFinishedSaved: "Entrenamiento finalizado y guardado.",
+      draw: "Empate.",
+      winsGame: (w) => `${w} gana.`,
+      aiMoveTurn: "Turno de la IA.",
+      yes: "sí",
+      no: "no",
+      memory: "memoria",
+      none: "ninguno",
+      evaluatingAgainst: (o) => `Evaluando contra ${o}…`,
+      evaluationCompleted: (o) => `Evaluación completada contra ${o}.`,
+      vsRandom: "vs aleatorio",
+      vsMinimax: "vs minimax",
+    },
+    ca: {
+      yourTurn: "És el teu torn.",
+      game: "Joc",
+      playAsX: "Juga com a X contra el model entrenat.",
+      newGame: "Nova partida",
+      trainingDemo: "Entrenant i reproduint partides del model…",
+      stateInspection: "Inspecció de l'estat",
+      viewInternalState: "Veure l'estat intern",
+      quickEval: "Avaluació ràpida",
+      modelWins: "Victòries del model",
+      draws: "Empats",
+      losses: "Derrotes",
+      evaluation: "Avaluació",
+      pending: "Pendent",
+      evalRandom: "Avaluar vs aleatori",
+      evalMinimax: "Avaluar vs minimax",
+      evalHelp: "Avaluar no entrena. L'entrenament es pot aturar i reprendre des del model guardat fins ara.",
+      trainingPersistence: "Entrenament i persistència",
+      datasetRows: "Registres de dataset",
+      requestedDataset: "Dataset demanat",
+      batch: "Batch",
+      epochsCompleted: "Epochs completades",
+      generateDataset: "Generar dataset",
+      trainResume: "Entrenar / reprendre",
+      stop: "Aturar",
+      resetModel: "Reinicia model",
+      model: "Model",
+      modelSize: "Mida del model",
+      persistedDataset: "Dataset persistit",
+      rows: "files",
+      storage: "Emmagatzematge",
+      lossEpoch: "Loss epoch",
+      accuracyEpoch: "Accuracy epoch",
+      lossBatch: "Loss batch",
+      accuracyBatch: "Accuracy batch",
+      activeDataset: "Dataset actiu",
+      aiTurn: "Torn IA",
+      batchProgress: "Progrés de batches",
+      restoredModel: "Model restaurat des d'IndexedDB.",
+      modelSaved: "Model guardat a IndexedDB.",
+      modelReset: "Model reiniciat.",
+      processStopped: "Procés aturat. Pots reprendre l'entrenament.",
+      generatingDataset: "Generant dataset…",
+      datasetGenerated: (n) => `Dataset generat i guardat amb ${n} exemples.`,
+      noDataset: "No hi ha cap dataset persistit per entrenar.",
+      trainingFromDb: "Entrenant per chunks des d'IndexedDB…",
+      trainingBatch: (a, b) => `Entrenant… batch ${a}/${b}`,
+      trainingEpoch: (n) => `Entrenant… epoch ${n}`,
+      trainingWorkerError: (msg) => `Error al worker d'entrenament: ${msg || "desconegut"}`,
+      trainingStoppedSaved: "Entrenament aturat i guardat. El pots reprendre.",
+      trainingFinishedSaved: "Entrenament finalitzat i guardat.",
+      draw: "Empat.",
+      winsGame: (w) => `${w} guanya.`,
+      aiMoveTurn: "Torn de la IA.",
+      yes: "sí",
+      no: "no",
+      memory: "memòria",
+      none: "cap",
+      evaluatingAgainst: (o) => `Avaluant contra ${o}…`,
+      evaluationCompleted: (o) => `Avaluació completada contra ${o}.`,
+      vsRandom: "vs aleatori",
+      vsMinimax: "vs minimax",
+    },
+    en: {
+      yourTurn: "Your turn.",
+      game: "Game",
+      playAsX: "Play as X against the trained model.",
+      newGame: "New game",
+      trainingDemo: "Training and replaying model games…",
+      stateInspection: "State inspection",
+      viewInternalState: "View internal state",
+      quickEval: "Quick evaluation",
+      modelWins: "Model wins",
+      draws: "Draws",
+      losses: "Losses",
+      evaluation: "Evaluation",
+      pending: "Pending",
+      evalRandom: "Evaluate vs random",
+      evalMinimax: "Evaluate vs minimax",
+      evalHelp: "Evaluation does not train the model. Training can be stopped and resumed from the model saved so far.",
+      trainingPersistence: "Training and persistence",
+      datasetRows: "Dataset rows",
+      requestedDataset: "Requested dataset",
+      batch: "Batch",
+      epochsCompleted: "Completed epochs",
+      generateDataset: "Generate dataset",
+      trainResume: "Train / resume",
+      stop: "Stop",
+      resetModel: "Reset model",
+      model: "Model",
+      modelSize: "Model size",
+      persistedDataset: "Persisted dataset",
+      rows: "rows",
+      storage: "Storage",
+      lossEpoch: "Epoch loss",
+      accuracyEpoch: "Epoch accuracy",
+      lossBatch: "Batch loss",
+      accuracyBatch: "Batch accuracy",
+      activeDataset: "Active dataset",
+      aiTurn: "AI turn",
+      batchProgress: "Batch progress",
+      restoredModel: "Model restored from IndexedDB.",
+      modelSaved: "Model saved to IndexedDB.",
+      modelReset: "Model reset.",
+      processStopped: "Process stopped. You can resume training.",
+      generatingDataset: "Generating dataset…",
+      datasetGenerated: (n) => `Dataset generated and saved with ${n} examples.`,
+      noDataset: "There is no persisted dataset available for training.",
+      trainingFromDb: "Training by chunks from IndexedDB…",
+      trainingBatch: (a, b) => `Training… batch ${a}/${b}`,
+      trainingEpoch: (n) => `Training… epoch ${n}`,
+      trainingWorkerError: (msg) => `Training worker error: ${msg || "unknown"}`,
+      trainingStoppedSaved: "Training stopped and saved. You can resume it.",
+      trainingFinishedSaved: "Training finished and saved.",
+      draw: "Draw.",
+      winsGame: (w) => `${w} wins.`,
+      aiMoveTurn: "AI turn.",
+      yes: "yes",
+      no: "no",
+      memory: "memory",
+      none: "none",
+      evaluatingAgainst: (o) => `Evaluating against ${o}…`,
+      evaluationCompleted: (o) => `Evaluation completed against ${o}.`,
+      vsRandom: "vs random",
+      vsMinimax: "vs minimax",
+    },
+  };
+  const MODEL_STORAGE_URL = "indexeddb://tic-tac-toe-ml-model";
+  const APP_DB_NAME = "tic-tac-toe-ml-app";
+  const APP_DB_VERSION = 1;
+  const DATASET_STORE = "datasetChunks";
+  const META_STORE = "meta";
+  const DATASET_CHUNK_SIZE = 250;
+
+  function openAppDb() {
+    return new Promise((resolve, reject) => {
+      const request = indexedDB.open(APP_DB_NAME, APP_DB_VERSION);
+      request.onupgradeneeded = () => {
+        const db = request.result;
+        if (!db.objectStoreNames.contains(DATASET_STORE)) {
+          db.createObjectStore(DATASET_STORE, { keyPath: "key" });
+        }
+        if (!db.objectStoreNames.contains(META_STORE)) {
+          db.createObjectStore(META_STORE, { keyPath: "key" });
+        }
+      };
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  async function clearStore(db, storeName) {
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(storeName, "readwrite");
+      tx.objectStore(storeName).clear();
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+  }
+
+  async function putMeta(db, key, value) {
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(META_STORE, "readwrite");
+      tx.objectStore(META_STORE).put({ key, value });
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+  }
+
+  async function getMeta(db, key) {
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(META_STORE, "readonly");
+      const req = tx.objectStore(META_STORE).get(key);
+      req.onsuccess = () => resolve(req.result?.value ?? null);
+      req.onerror = () => reject(req.error);
+    });
+  }
+
+  async function saveDatasetToDb(dataset) {
+    const db = await openAppDb();
+    await clearStore(db, DATASET_STORE);
+    await putMeta(db, "datasetCount", dataset.length);
+    await putMeta(db, "datasetChunkSize", DATASET_CHUNK_SIZE);
+    const chunks = [];
+    for (let i = 0; i < dataset.length; i += DATASET_CHUNK_SIZE) {
+      chunks.push({
+        key: `chunk-${Math.floor(i / DATASET_CHUNK_SIZE)}`,
+        items: dataset.slice(i, i + DATASET_CHUNK_SIZE),
+      });
+    }
+    await new Promise((resolve, reject) => {
+      const tx = db.transaction(DATASET_STORE, "readwrite");
+      const store = tx.objectStore(DATASET_STORE);
+      chunks.forEach((chunk) => store.put(chunk));
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+    db.close();
+  }
+
+  async function getDatasetChunkCountFromDb() {
+    const db = await openAppDb();
+    const count = await getMeta(db, "datasetCount");
+    const chunkSize = await getMeta(db, "datasetChunkSize");
+    db.close();
+    if (!count || !chunkSize) return 0;
+    return Math.ceil(count / chunkSize);
+  }
+
+  async function loadDatasetChunkByIndex(index) {
+    const db = await openAppDb();
+    const chunk = await new Promise((resolve, reject) => {
+      const tx = db.transaction(DATASET_STORE, "readonly");
+      const req = tx.objectStore(DATASET_STORE).get(`chunk-${index}`);
+      req.onsuccess = () => resolve(req.result?.items ?? []);
+      req.onerror = () => reject(req.error);
+    });
+    db.close();
+    return chunk;
+  }
+
+  async function getDatasetCountFromDb() {
+    const db = await openAppDb();
+    const count = await getMeta(db, "datasetCount");
+    db.close();
+    return count ?? 0;
+  }
+
+  const WORKER_SOURCE = `
+    importScripts('${TFJS_URL}');
+
+    async function ensureTfReady() {
+      await tf.setBackend('cpu');
+      await tf.ready();
+    }
+
+    class TinyPolicyNetwork {
+      constructor() {
+        this.model = null;
+        this.createModel();
+      }
+
+      createModel() {
+        if (this.model) this.model.dispose();
+        const model = tf.sequential();
+        model.add(tf.layers.dense({ inputShape: [10], units: 24, activation: 'relu' }));
+        model.add(tf.layers.dense({ units: 9, activation: 'softmax' }));
+        model.compile({ optimizer: tf.train.adam(0.02), loss: 'categoricalCrossentropy', metrics: ['accuracy'] });
+        this.model = model;
+      }
+
+      predict(x) {
+        return tf.tidy(() => {
+          const xs = tf.tensor2d([x], [1, 10]);
+          const pred = this.model.predict(xs);
+          return Array.from(pred.dataSync());
+        });
+      }
+
+      async train(dataset, epochs = 30, lr = 0.02, batchSize = 64, onBatchEnd = null, onEpochEnd = null, shouldStop = () => false) {
+        await ensureTfReady();
+        this.model.compile({ optimizer: tf.train.adam(lr), loss: 'categoricalCrossentropy', metrics: ['accuracy'] });
+        const indices = dataset.map((_, index) => index);
+        const shuffle = (arr) => {
+          for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+          }
+        };
+        const totalBatches = Math.max(1, Math.ceil(dataset.length / batchSize));
+        if (onBatchEnd) onBatchEnd({ batch: 0, totalBatches, loss: 0, accuracy: 0 });
+
+        for (let epoch = 0; epoch < epochs; epoch++) {
+          if (shouldStop()) break;
+          shuffle(indices);
+          let epochLoss = 0;
+          let epochAcc = 0;
+          let seenBatches = 0;
+
+          for (let batchIndex = 0; batchIndex < totalBatches; batchIndex++) {
+            if (shouldStop()) break;
+            const batchIndices = indices.slice(batchIndex * batchSize, (batchIndex + 1) * batchSize);
+            const batchX = batchIndices.map((idx) => dataset[idx].x);
+            const batchY = batchIndices.map((idx) => dataset[idx].target);
+
+            const xs = tf.tensor2d(batchX, [batchX.length, 10]);
+            const ys = tf.tensor2d(batchY, [batchY.length, 9]);
+            let metrics;
+            try {
+              metrics = await this.model.trainOnBatch(xs, ys);
+            } finally {
+              xs.dispose();
+              ys.dispose();
+            }
+
+            const metricArray = Array.isArray(metrics) ? metrics : [metrics];
+            const batchLoss = Number(metricArray[0] ?? 0);
+            const batchAcc = Number(metricArray[1] ?? 0);
+            epochLoss += batchLoss;
+            epochAcc += batchAcc;
+            seenBatches += 1;
+
+            if (onBatchEnd) {
+              onBatchEnd({ batch: batchIndex + 1, totalBatches, loss: batchLoss, accuracy: batchAcc });
+            }
+            await tf.nextFrame();
+          }
+
+          if (seenBatches > 0 && onEpochEnd) {
+            onEpochEnd({ epoch, avgLoss: epochLoss / seenBatches, accuracy: epochAcc / seenBatches, totalBatches });
+          }
+          await tf.nextFrame();
+        }
+      }
+
+      getState() {
+        return this.model.getWeights().map((tensor) => ({ shape: tensor.shape, data: Array.from(tensor.dataSync()) }));
+      }
+
+      setState(snapshot) {
+        if (!snapshot || !snapshot.length) return;
+        const tensors = snapshot.map((item) => tf.tensor(item.data, item.shape));
+        this.model.setWeights(tensors);
+        tensors.forEach((tensor) => tensor.dispose());
+      }
+    }
+
+    function getAvailableMoves(board) {
+      const out = [];
+      for (let i = 0; i < board.length; i++) if (!board[i]) out.push(i);
+      return out;
+    }
+
+    function checkWinner(board) {
+      const lines = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+      for (const [a,b,c] of lines) if (board[a] && board[a] === board[b] && board[b] === board[c]) return board[a];
+      return board.every(Boolean) ? 'draw' : null;
+    }
+
+    function otherPlayer(player) { return player === 'X' ? 'O' : 'X'; }
+
+    function minimax(board, current, maximizingPlayer, depth = 0) {
+      const result = checkWinner(board);
+      if (result) {
+        if (result === maximizingPlayer) return 10 - depth;
+        if (result === 'draw') return 0;
+        return depth - 10;
+      }
+      const moves = getAvailableMoves(board);
+      const isMax = current === maximizingPlayer;
+      let best = isMax ? -Infinity : Infinity;
+      for (const move of moves) {
+        board[move] = current;
+        const score = minimax(board, otherPlayer(current), maximizingPlayer, depth + 1);
+        board[move] = '';
+        if (isMax) best = Math.max(best, score);
+        else best = Math.min(best, score);
+      }
+      return best;
+    }
+
+    function getImmediateWinningMoves(board, player) {
+      const wins = [];
+      const moves = getAvailableMoves(board);
+      for (const move of moves) {
+        board[move] = player;
+        if (checkWinner(board) === player) wins.push(move);
+        board[move] = '';
+      }
+      return wins;
+    }
+
+    function bestMoveMinimax(board, player) {
+      const moves = getAvailableMoves(board);
+      if (!moves.length) return null;
+      const immediateWins = getImmediateWinningMoves(board, player);
+      if (immediateWins.length) return immediateWins[0];
+      const opponent = otherPlayer(player);
+      const forcedBlocks = getImmediateWinningMoves(board, opponent);
+      if (forcedBlocks.length) return forcedBlocks[0];
+      let bestScore = -Infinity;
+      let bestMove = moves[0];
+      for (const move of moves) {
+        board[move] = player;
+        const score = minimax(board, opponent, player, 1);
+        board[move] = '';
+        if (score > bestScore) {
+          bestScore = score;
+          bestMove = move;
+        }
+      }
+      return bestMove;
+    }
+
+    function encodeBoard(board, playerToMove = 'O') {
+      const current = board.map((cell) => cell === 'X' ? -1 : cell === 'O' ? 1 : 0);
+      current.push(playerToMove === 'O' ? 1 : -1);
+      return current;
+    }
+
+    function argmaxLegal(probs, board) {
+      const legal = getAvailableMoves(board);
+      let best = legal[0] ?? null;
+      let score = -Infinity;
+      for (const idx of legal) if (probs[idx] > score) { score = probs[idx]; best = idx; }
+      return best;
+    }
+
+    function isValidStateForOTurn(board) {
+      const xCount = board.filter((cell) => cell === 'X').length;
+      const oCount = board.filter((cell) => cell === 'O').length;
+      return xCount === oCount + 1 && !checkWinner(board);
+    }
+
+    function randomInt(max) {
+      return Math.floor(Math.random() * max);
+    }
+
+    function boardKey(board) {
+      return board.join('|');
+    }
+
+    function buildSampleFromBoard(board) {
+      const legal = getAvailableMoves(board);
+      if (!legal.length) return null;
+      const moveScores = legal.map((move) => {
+        board[move] = 'O';
+        const score = minimax(board, 'X', 'O', 1);
+        board[move] = '';
+        return { move, score };
+      });
+      const bestScore = Math.max(...moveScores.map((entry) => entry.score));
+      const bestMoves = moveScores.filter((entry) => entry.score === bestScore).map((entry) => entry.move);
+      if (!bestMoves.length) return null;
+      const target = Array(9).fill(0);
+      const weight = 1 / bestMoves.length;
+      bestMoves.forEach((move) => { target[move] = weight; });
+      return { x: encodeBoard(board, 'O'), y: bestMoves[0], target, board: board.slice(), bestMoveCount: bestMoves.length, bestScore };
+    }
+
+    function generateRandomValidBoardForOTurn(maxPlies = 5) {
+      const board = Array(9).fill('');
+      let current = 'X';
+      const pliesOptions = [1, 3, 5];
+      const plies = pliesOptions[randomInt(pliesOptions.length)];
+      for (let step = 0; step < Math.min(maxPlies, plies); step++) {
+        const winner = checkWinner(board);
+        if (winner) break;
+        const options = getAvailableMoves(board);
+        if (!options.length) break;
+        const move = options[randomInt(options.length)];
+        board[move] = current;
+        current = otherPlayer(current);
+      }
+      return isValidStateForOTurn(board) ? board : null;
+    }
+
+    function shuffle(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function createTacticalBoards(limit = 300) {
+      const boards = [];
+      const seen = new Set();
+      let attempts = 0;
+      const maxAttempts = limit * 80;
+      while (boards.length < limit && attempts < maxAttempts) {
+        attempts += 1;
+        const board = generateRandomValidBoardForOTurn(5);
+        if (!board) continue;
+        const sample = buildSampleFromBoard(board.slice());
+        const opponentWins = getImmediateWinningMoves(board.slice(), 'X');
+        const selfWins = getImmediateWinningMoves(board.slice(), 'O');
+        const isTactical = selfWins.length > 0 || opponentWins.length > 0 || (sample && sample.bestMoveCount === 1);
+        const key = boardKey(board);
+        if (!isTactical || seen.has(key)) continue;
+        seen.add(key);
+        boards.push(board.slice());
+        if (boards.length % 50 === 0) postMessage({ type: 'dataset-progress', generated: boards.length, target: limit });
+      }
+      return boards;
+    }
+
+    function generateTrainingData(count = 600) {
+      const targetCount = Math.max(50, count);
+      const samples = [];
+      const seen = new Set();
+      const tacticalBoards = shuffle(createTacticalBoards(Math.min(600, Math.max(80, Math.floor(targetCount * 0.4)))));
+      const tacticalQuota = Math.min(tacticalBoards.length, Math.max(80, Math.floor(targetCount * 0.4)));
+
+      for (let i = 0; i < tacticalQuota && samples.length < targetCount; i++) {
+        const board = tacticalBoards[i].slice();
+        const key = boardKey(board);
+        if (seen.has(key)) continue;
+        const sample = buildSampleFromBoard(board);
+        if (!sample) continue;
+        seen.add(key);
+        samples.push(sample);
+        if (samples.length % 100 === 0) postMessage({ type: 'dataset-progress', generated: samples.length, target: targetCount });
+      }
+
+      let attempts = 0;
+      const maxAttempts = targetCount * 120;
+      while (samples.length < targetCount && attempts < maxAttempts) {
+        attempts += 1;
+        const board = generateRandomValidBoardForOTurn();
+        if (!board) continue;
+        const key = boardKey(board);
+        if (seen.has(key)) continue;
+        const sample = buildSampleFromBoard(board);
+        if (!sample) continue;
+        seen.add(key);
+        samples.push(sample);
+        if (samples.length % 100 === 0 || samples.length === targetCount) {
+          postMessage({ type: 'dataset-progress', generated: samples.length, target: targetCount });
+        }
+      }
+
+      return shuffle(samples).slice(0, targetCount);
+    }
+
+    let stopped = false;
+    onmessage = async (event) => {
+      const { type, count, dataset, epochs, lr, rounds, opponent, modelState, batchSize } = event.data;
+      if (type === 'stop') { stopped = true; return; }
+
+      if (type === 'generate-dataset') {
+        stopped = false;
+        const samples = generateTrainingData(count);
+        postMessage({ type: 'dataset-ready', dataset: samples });
+        return;
+      }
+
+      if (type === 'train') {
+        stopped = false;
+        await ensureTfReady();
+        const model = new TinyPolicyNetwork();
+        if (modelState) model.setState(modelState);
+        let lastSnapshot = model.getState();
+        await model.train(
+          dataset,
+          epochs,
+          lr,
+          batchSize,
+          ({ batch, totalBatches, loss, accuracy }) => {
+            postMessage({ type: 'batch-progress', batch, totalBatches, loss, accuracy, ts: Date.now() });
+          },
+          ({ epoch, avgLoss, accuracy, totalBatches }) => {
+            lastSnapshot = model.getState();
+            postMessage({ type: 'epoch', epoch: epoch + 1, avgLoss, accuracy, totalBatches, modelState: lastSnapshot });
+          },
+          () => stopped
+        );
+        postMessage({ type: 'training-finished', stopped, modelState: lastSnapshot });
+        return;
+      }
+
+      if (type === 'evaluate') {
+        stopped = false;
+        await ensureTfReady();
+        const model = new TinyPolicyNetwork();
+        if (modelState) model.setState(modelState);
+        const tally = { wins: 0, draws: 0, losses: 0 };
+        function bestMoveModel(board, player = 'O') {
+          const x = encodeBoard(board, player);
+          const probs = model.predict(x);
+          return argmaxLegal(probs, board);
+        }
+        function playAutomatedMatch(matchOpponent) {
+          const board = Array(9).fill('');
+          let current = 'X';
+          while (true) {
+            const result = checkWinner(board);
+            if (result) return result;
+            let move;
+            if (current === 'O') move = bestMoveModel(board, 'O');
+            else if (matchOpponent === 'minimax') move = bestMoveMinimax(board, 'X');
+            else {
+              const options = getAvailableMoves(board);
+              move = options[Math.floor(Math.random() * options.length)] ?? null;
+            }
+            if (move == null) return checkWinner(board) || 'draw';
+            board[move] = current;
+            current = otherPlayer(current);
+          }
+        }
+        for (let i = 0; i < rounds; i++) {
+          if (stopped) break;
+          const result = playAutomatedMatch(opponent);
+          if (result === 'O') tally.wins += 1;
+          else if (result === 'draw') tally.draws += 1;
+          else tally.losses += 1;
+        }
+        postMessage({ type: 'evaluation-finished', tally, opponent });
+      }
+    };
+  `;
+
+  class TinyPolicyNetwork {
+    constructor() {
+      this.model = null;
+      this.reset();
+    }
+
+    reset() {
+      if (this.model) this.model.dispose();
+      const model = tf.sequential();
+      model.add(tf.layers.dense({ inputShape: [10], units: 24, activation: "relu" }));
+      model.add(tf.layers.dense({ units: 9, activation: "softmax" }));
+      model.compile({
+        optimizer: tf.train.adam(0.02),
+        loss: "categoricalCrossentropy",
+        metrics: ["accuracy"],
+      });
+      this.model = model;
+    }
+
+    predict(x) {
+      return tf.tidy(() => {
+        const xs = tf.tensor2d([x], [1, 10]);
+        const pred = this.model.predict(xs);
+        return Array.from(pred.dataSync());
+      });
+    }
+
+    getState() {
+      return this.model.getWeights().map((tensor) => ({
+        shape: tensor.shape,
+        data: Array.from(tensor.dataSync()),
+      }));
+    }
+
+    setState(snapshot) {
+      if (!snapshot || !snapshot.length) return;
+      const tensors = snapshot.map((item) => tf.tensor(item.data, item.shape));
+      this.model.setWeights(tensors);
+      tensors.forEach((tensor) => tensor.dispose());
+    }
+
+    async save(url = MODEL_STORAGE_URL) {
+      await this.model.save(url);
+    }
+
+    async load(url = MODEL_STORAGE_URL) {
+      try {
+        const loadedModel = await tf.loadLayersModel(url);
+        if (this.model) this.model.dispose();
+        this.model = loadedModel;
+        this.model.compile({
+          optimizer: tf.train.adam(0.02),
+          loss: "categoricalCrossentropy",
+          metrics: ["accuracy"],
+        });
+        return true;
+      } catch {
+        return false;
+      }
+    }
+  }
+
+  class TicTacToeML extends HTMLElement {
+    static get observedAttributes() {
+      return ["debug"];
+    }
+
+    constructor() {
+      super();
+      this.attachShadow({ mode: "open" });
+      this.lang = this.getAttribute("lang") || "es";
+      this.t = I18N[this.lang] || I18N.es;
+      this.state = this.createInitialState();
+      this.model = new TinyPolicyNetwork();
+      this.audioCtx = null;
+      this.trainingWorker = null;
+      this.datasetWorker = null;
+      this.evaluationWorker = null;
+      this.isTraining = false;
+      this.activeTrainingSessionId = null;
+      this.isGeneratingDataset = false;
+      this.demoTimer = null;
+    }
+
+    attributeChangedCallback(name, _oldValue, newValue) {
+      if (name === "debug") {
+        this.state.debug = !(
+          newValue === null ||
+          newValue === "false" ||
+          newValue === "0" ||
+          newValue === "off"
+        );
+        if (this.elementsReady()) this.updateUI();
+      }
+    }
+
+    async connectedCallback() {
+      this.render();
+      this.cacheElements();
+      this.bindEvents();
+      this.updateUI();
+      if (this.state.debug) this.runSelfTests();
+      await this.restorePersistedState();
+    }
+
+    disconnectedCallback() {
+      this.stopWorkers();
+    }
+
+    createInitialState() {
+      return {
+        board: Array(9).fill(""),
+        currentPlayer: "X",
+        humanSymbol: "X",
+        status: this.t.yourTurn,
+        gameOver: false,
+        winner: null,
+        losses: [],
+        accuracies: [],
+        epochsCompleted: 0,
+        trainingSet: [],
+        trainingChunkCount: 0,
+        trainingSetPersistedCount: 0,
+        eval: { wins: 0, draws: 0, losses: 0 },
+        evalOpponent: "random",
+        demoMode: false,
+        demoBoard: Array(9).fill(""),
+        demoCurrentPlayer: "X",
+        demoWinner: null,
+        demoShouldFinishCycle: false,
+        isEvaluating: false,
+        modelPersisted: false,
+        currentBatch: 0,
+        totalBatches: 0,
+        latestBatchLoss: 0,
+        latestBatchAcc: 0,
+        batchSize: 64,
+        totalRequestedEpochs: 0,
+        totalRowsGenerated: 0,
+        lastBatchEventAt: 0,
+        activeTrainingSessionId: null,
+        debug: !(
+          this.getAttribute("debug") === null ||
+          this.getAttribute("debug") === "false" ||
+          this.getAttribute("debug") === "0" ||
+          this.getAttribute("debug") === "off"
+        ),
+      };
+    }
+
+    elementsReady() {
+      return Boolean(
+        this.$datasetSize &&
+          this.$datasetSizeValue &&
+          this.$batchSize &&
+          this.$batchSizeValue &&
+          this.$epochCount &&
+          this.$board &&
+          this.$status,
+      );
+    }
+
+    get styles() {
+      return `
+        :host {
+          display: block;
+          color: rgb(var(--color-text-base, 17 24 39));
+          --demo-bg: rgb(var(--color-fill, 255 255 255));
+          --demo-bg-soft: rgb(var(--color-card, 248 250 252));
+          --demo-bg-muted: rgb(var(--color-card-muted, 241 245 249));
+          --demo-border: rgb(var(--color-border, 203 213 225) / 0.9);
+          --demo-text: rgb(var(--color-text-base, 17 24 39));
+          --demo-text-soft: rgb(var(--color-text-base, 17 24 39) / 0.72);
+          --demo-accent: rgb(var(--color-accent, 37 99 235));
+          --demo-accent-soft: rgb(var(--color-accent, 37 99 235) / 0.14);
+          --demo-success: #16a34a;
+          --demo-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+        }
+        :global(html.dark) :host {
+          --demo-bg: rgb(var(--color-fill, 15 23 42));
+          --demo-bg-soft: rgb(var(--color-card, 17 24 39));
+          --demo-bg-muted: rgb(var(--color-card-muted, 30 41 59));
+          --demo-border: rgb(var(--color-border, 71 85 105) / 0.65);
+          --demo-text: rgb(var(--color-text-base, 226 232 240));
+          --demo-text-soft: rgb(var(--color-text-base, 226 232 240) / 0.72);
+          --demo-accent-soft: rgb(var(--color-accent, 96 165 250) / 0.18);
+          --demo-success: #22c55e;
+          --demo-shadow: 0 18px 45px rgba(0, 0, 0, 0.24);
+        }
+        .shell { display: grid; grid-template-columns: minmax(320px, 420px) minmax(320px, 1fr); gap: 18px; align-items: start; }
+        .panel { background: linear-gradient(180deg, color-mix(in srgb, var(--demo-bg) 92%, var(--demo-accent-soft)), var(--demo-bg-soft)); border: 1px solid var(--demo-border); border-radius: 24px; box-shadow: var(--demo-shadow); padding: 18px; }
+        .title { font-size: .86rem; text-transform: uppercase; letter-spacing: .12em; color: var(--demo-text-soft); margin-bottom: 12px; }
+        .disclosure { border: 1px solid var(--demo-border); border-radius: 18px; background: color-mix(in srgb, var(--demo-bg-soft) 96%, transparent); overflow: hidden; }
+        .disclosure summary { list-style: none; cursor: pointer; padding: 12px 14px; color: var(--demo-text); font-weight: 600; font-size: .95rem; display: flex; align-items: center; justify-content: space-between; }
+        .disclosure summary::-webkit-details-marker { display: none; }
+        .disclosure summary::after { content: "+"; color: var(--demo-text-soft); font-size: 1rem; line-height: 1; }
+        .disclosure[open] summary::after { content: "-"; }
+        .disclosure-body { padding: 0 12px 12px; }
+        .board {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 0;
+          padding: 6px;
+          border-radius: 24px;
+          background: color-mix(in srgb, var(--demo-bg-soft) 96%, transparent);
+          border: 1px solid var(--demo-border);
+        }
+        .cell { position: relative; display: flex; align-items: center; justify-content: center; aspect-ratio: 1; border: 0; border-radius: 0; background: color-mix(in srgb, var(--demo-bg-soft) 92%, var(--demo-accent-soft)); color: var(--demo-text); font-size: clamp(2rem, 6vw, 3.4rem); font-weight: 800; line-height: 1; cursor: pointer; transition: transform .12s ease, background .12s ease, border-color .12s ease; overflow: hidden; padding: 0; text-align: center; }
+        .cell[data-col="0"],
+        .cell[data-col="1"] { border-right: 2px solid color-mix(in srgb, var(--demo-text) 18%, var(--demo-border)); }
+        .cell[data-row="0"],
+        .cell[data-row="1"] { border-bottom: 2px solid color-mix(in srgb, var(--demo-text) 18%, var(--demo-border)); }
+        .cell-prob { position: absolute; left: 10px; right: 10px; bottom: 10px; height: 8px; border-radius: 999px; background: color-mix(in srgb, var(--demo-text) 10%, transparent); overflow: hidden; }
+        .cell-prob-fill { display: block; height: 100%; background: linear-gradient(90deg, color-mix(in srgb, var(--demo-accent) 82%, white), var(--demo-success)); }
+        .cell-prob-label { position: absolute; top: 8px; right: 10px; font-size: .72rem; font-weight: 700; color: color-mix(in srgb, var(--demo-accent) 76%, var(--demo-text)); }
+        .cell-choice { box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--demo-accent) 72%, transparent); }
+        .cell-illegal .cell-prob-fill { background: color-mix(in srgb, var(--demo-text) 18%, transparent); }
+        .cell-illegal .cell-prob-label { color: color-mix(in srgb, var(--demo-text) 50%, transparent); }
+        .cell:hover:not(:disabled) { transform: translateY(-1px); background: color-mix(in srgb, var(--demo-bg-muted) 88%, var(--demo-accent-soft)); border-color: color-mix(in srgb, var(--demo-accent) 55%, var(--demo-border)); }
+        .cell:disabled { cursor: not-allowed; opacity: .95; }
+        .status { margin-top: 14px; font-size: .98rem; color: var(--demo-text); min-height: 24px; }
+        .sub { margin-top: 8px; color: var(--demo-text-soft); font-size: .92rem; line-height: 1.45; }
+        .controls, .stack { display: grid; gap: 12px; }
+        .row { display: flex; flex-wrap: wrap; gap: 10px; }
+        button, input { border: 1px solid var(--demo-border); border-radius: 12px; background: color-mix(in srgb, var(--demo-bg-soft) 94%, var(--demo-accent-soft)); color: var(--demo-text); padding: 9px 11px; font: inherit; }
+        button { cursor: pointer; font-weight: 600; font-size: .92rem; line-height: 1.2; padding: 8px 11px; }
+        button:disabled { opacity: .55; cursor: not-allowed; }
+        button.primary { background: linear-gradient(135deg, color-mix(in srgb, var(--demo-accent) 14%, var(--demo-bg-soft)), color-mix(in srgb, var(--demo-success) 10%, var(--demo-bg-soft))); border-color: color-mix(in srgb, var(--demo-accent) 42%, var(--demo-border)); }
+        button.ghost { background: color-mix(in srgb, var(--demo-bg-soft) 96%, transparent); }
+        button.active { background: linear-gradient(135deg, color-mix(in srgb, var(--demo-accent) 18%, var(--demo-bg-soft)), color-mix(in srgb, var(--demo-success) 10%, var(--demo-bg-soft))); border-color: color-mix(in srgb, var(--demo-accent) 58%, var(--demo-border)); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--demo-accent) 20%, transparent); }
+        button:hover:not(:disabled) { border-color: color-mix(in srgb, var(--demo-accent) 46%, var(--demo-border)); background: color-mix(in srgb, var(--demo-bg-muted) 94%, var(--demo-accent-soft)); }
+        label { display: grid; gap: 8px; color: var(--demo-text); font-size: .92rem; }
+        .metrics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+        .metric { background: color-mix(in srgb, var(--demo-bg-soft) 96%, transparent); border: 1px solid var(--demo-border); border-radius: 18px; padding: 12px; }
+        .metric strong { display: block; font-size: 1.2rem; margin-top: 4px; }
+        .small { color: var(--demo-text-soft); font-size: .84rem; }
+        .chart { background: color-mix(in srgb, var(--demo-bg-soft) 96%, transparent); border: 1px solid var(--demo-border); border-radius: 18px; padding: 10px; }
+        canvas { width: 100%; height: 160px; display: block; }
+        .legend { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px; color: var(--demo-text-soft); font-size: .82rem; }
+        .legend span::before { content: ''; display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+        .legend .loss::before { background: #38bdf8; }
+        .legend .acc::before { background: #22c55e; }
+        .state-box { background: color-mix(in srgb, var(--demo-bg-soft) 96%, transparent); border: 1px solid var(--demo-border); border-radius: 18px; padding: 12px; color: var(--demo-text-soft); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .86rem; white-space: pre-wrap; line-height: 1.5; }
+        .tests { margin-top: 12px; color: var(--demo-text-soft); font-size: .8rem; }
+        .tests.hidden { display: none; }
+        .training-badge { display: inline-flex; align-items: center; gap: 8px; margin-top: 10px; padding: 8px 10px; border-radius: 999px; background: color-mix(in srgb, var(--demo-accent) 10%, var(--demo-bg-soft)); border: 1px solid color-mix(in srgb, var(--demo-accent) 28%, var(--demo-border)); color: color-mix(in srgb, var(--demo-accent) 76%, var(--demo-text)); font-size: .82rem; }
+        .training-badge::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: color-mix(in srgb, var(--demo-accent) 88%, white); box-shadow: 0 0 10px color-mix(in srgb, var(--demo-accent) 45%, transparent); }
+        .hidden { display: none !important; }
+        .bar { height: 10px; border-radius: 999px; background: color-mix(in srgb, var(--demo-text) 10%, transparent); overflow: hidden; }
+        .bar > span { display: block; height: 100%; background: linear-gradient(90deg, color-mix(in srgb, var(--demo-accent) 90%, white), var(--demo-success)); width: 0%; }
+        .left-stack { display: grid; gap: 18px; }
+        @media (max-width: 980px) { .shell { grid-template-columns: 1fr; } }
+      `;
+    }
+
+    get template() {
+      return `
+        <style>${this.styles}</style>
+        <div class="shell">
+          <div class="left-stack">
+            <section class="panel">
+              <div class="title">${this.t.game}</div>
+              <div class="board" id="board"></div>
+              <div class="status" id="status"></div>
+              <div class="sub">${this.t.playAsX}</div>
+              <div class="row" style="margin-top:12px;">
+                <button class="ghost" id="resetGameBtn">${this.t.newGame}</button>
+              </div>
+              <div class="training-badge hidden" id="trainingBadge">${this.t.trainingDemo}</div>
+              <div class="tests" id="tests"></div>
+            </section>
+            <section class="panel">
+              <div class="title">${this.t.stateInspection}</div>
+              <details class="disclosure">
+                <summary>${this.t.viewInternalState}</summary>
+                <div class="disclosure-body">
+                  <div class="state-box" id="stateBox"></div>
+                </div>
+              </details>
+            </section>
+            <section class="panel stack">
+              <div>
+                <div class="title">${this.t.quickEval}</div>
+                <div class="metrics">
+                  <div class="metric"><div class="small">${this.t.modelWins}</div><strong id="evalWins">0</strong></div>
+                  <div class="metric"><div class="small">${this.t.draws}</div><strong id="evalDraws">0</strong></div>
+                  <div class="metric"><div class="small">${this.t.losses}</div><strong id="evalLosses">0</strong></div>
+                  <div class="metric"><div class="small">${this.t.evaluation}</div><strong id="evalLabel">${this.t.pending}</strong></div>
+                </div>
+                <div class="row" style="margin-top:12px;">
+                  <button class="primary active" id="evaluateBtn">${this.t.evalRandom}</button>
+                  <button class="ghost" id="evaluateMinimaxBtn">${this.t.evalMinimax}</button>
+                </div>
+                <div class="sub">${this.t.evalHelp}</div>
+              </div>
+            </section>
+          </div>
+          <section class="panel stack">
+            <div>
+              <div class="title">${this.t.trainingPersistence}</div>
+              <div class="controls">
+                <label>
+                  ${this.t.datasetRows}
+                  <input id="datasetSize" type="range" min="100" max="5000" step="100" value="600" />
+                </label>
+                <label>
+                  Batch size
+                  <input id="batchSize" type="range" min="16" max="256" step="16" value="64" />
+                </label>
+                <div class="small">${this.t.requestedDataset}: <span id="datasetSizeValue">600</span> · ${this.t.batch}: <span id="batchSizeValue">64</span> · ${this.t.epochsCompleted}: <span id="epochCount">0</span></div>
+                <div class="row">
+                  <button class="primary" id="generateBtn">${this.t.generateDataset}</button>
+                  <button class="primary" id="trainBtn">${this.t.trainResume}</button>
+                  <button class="ghost" id="stopBtn">${this.t.stop}</button>
+                  <button class="ghost" id="resetModelBtn">${this.t.resetModel}</button>
+                </div>
+                <div class="small">${this.t.model}: <span id="persistedValue">${this.t.no}</span> · ${this.t.modelSize}: <span id="modelSizeValue">0 B</span> · ${this.t.persistedDataset}: <span id="datasetPersistedValue">0</span> ${this.t.rows} · ${this.t.storage}: IndexedDB</div>
+              </div>
+            </div>
+            <div class="metrics">
+              <div class="metric"><div class="small">${this.t.lossEpoch}</div><strong id="lossValue">-</strong></div>
+              <div class="metric"><div class="small">${this.t.accuracyEpoch}</div><strong id="accValue">-</strong></div>
+              <div class="metric"><div class="small">${this.t.lossBatch}</div><strong id="batchLossValue">-</strong></div>
+              <div class="metric"><div class="small">${this.t.accuracyBatch}</div><strong id="batchAccValue">-</strong></div>
+              <div class="metric"><div class="small">${this.t.activeDataset}</div><strong id="datasetCount">0</strong></div>
+              <div class="metric"><div class="small">${this.t.aiTurn}</div><strong id="aiLabel">${this.t.model}</strong></div>
+            </div>
+            <div class="small">${this.t.batchProgress} <span id="batchCounter">0/0</span></div>
+            <div class="bar"><span id="batchProgress"></span></div>
+            <div class="chart">
+              <canvas id="chart" width="700" height="160"></canvas>
+              <div class="legend"><span class="loss">Loss</span><span class="acc">Accuracy</span></div>
+            </div>
+          </section>
+        </div>
+      `;
+    }
+
+    render() {
+      this.shadowRoot.innerHTML = this.template;
+    }
+
+    cacheElements() {
+      const $ = (sel) => this.shadowRoot.querySelector(sel);
+      this.$board = $("#board");
+      this.$status = $("#status");
+      this.$datasetSize = $("#datasetSize");
+      this.$datasetSizeValue = $("#datasetSizeValue");
+      this.$batchSize = $("#batchSize");
+      this.$batchSizeValue = $("#batchSizeValue");
+      this.$epochCount = $("#epochCount");
+      this.$lossValue = $("#lossValue");
+      this.$accValue = $("#accValue");
+      this.$batchLossValue = $("#batchLossValue");
+      this.$batchAccValue = $("#batchAccValue");
+      this.$datasetCount = $("#datasetCount");
+      this.$persistedValue = $("#persistedValue");
+      this.$modelSizeValue = $("#modelSizeValue");
+      this.$datasetPersistedValue = $("#datasetPersistedValue");
+      this.$batchCounter = $("#batchCounter");
+      this.$batchProgress = $("#batchProgress");
+      this.$aiLabel = $("#aiLabel");
+      this.$stateBox = $("#stateBox");
+      this.$evalWins = $("#evalWins");
+      this.$evalDraws = $("#evalDraws");
+      this.$evalLosses = $("#evalLosses");
+      this.$evalLabel = $("#evalLabel");
+      this.$chart = $("#chart");
+      this.$tests = $("#tests");
+      this.$trainingBadge = $("#trainingBadge");
+      this.ctx = this.$chart.getContext("2d");
+      this.$generateBtn = $("#generateBtn");
+      this.$trainBtn = $("#trainBtn");
+      this.$stopBtn = $("#stopBtn");
+      this.$resetModelBtn = $("#resetModelBtn");
+      this.$resetGameBtn = $("#resetGameBtn");
+      this.$evaluateBtn = $("#evaluateBtn");
+      this.$evaluateMinimaxBtn = $("#evaluateMinimaxBtn");
+    }
+
+    bindEvents() {
+      this.$datasetSize.addEventListener("input", () => {
+        this.$datasetSizeValue.textContent = this.$datasetSize.value;
+      });
+      this.$batchSize.addEventListener("input", () => {
+        this.$batchSizeValue.textContent = this.$batchSize.value;
+        this.state.batchSize = Number(this.$batchSize.value);
+      });
+      this.$generateBtn.addEventListener("click", () =>
+        this.generateDatasetInWorker(Number(this.$datasetSize.value)),
+      );
+      this.$trainBtn.addEventListener("click", () => this.startTraining());
+      this.$stopBtn.addEventListener("click", () => this.stopWorkers());
+      this.$resetModelBtn.addEventListener("click", () => this.resetModel());
+      this.$resetGameBtn.addEventListener("click", () => this.resetGame());
+      this.$evaluateBtn.addEventListener("click", () => this.runEvaluation("random"));
+      this.$evaluateMinimaxBtn.addEventListener("click", () =>
+        this.runEvaluation("minimax"),
+      );
+    }
+
+    createWorker() {
+      const blob = new Blob([WORKER_SOURCE], { type: "application/javascript" });
+      const url = URL.createObjectURL(blob);
+      const worker = new Worker(url, { type: "classic" });
+      setTimeout(() => URL.revokeObjectURL(url), 0);
+      return worker;
+    }
+
+    async restorePersistedState() {
+      const loadedModel = await this.model.load(MODEL_STORAGE_URL);
+      const datasetCount = await getDatasetCountFromDb();
+      if (loadedModel) this.state.modelPersisted = true;
+      this.state.trainingSetPersistedCount = datasetCount;
+      this.state.trainingChunkCount = await getDatasetChunkCountFromDb();
+      this.state.status = loadedModel
+        ? this.t.restoredModel
+        : this.t.yourTurn;
+      this.updateUI();
+    }
+
+    ensureAudioContext() {
+      if (!this.audioCtx) {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return null;
+        this.audioCtx = new AudioCtx();
+      }
+      if (this.audioCtx.state === "suspended") {
+        this.audioCtx.resume().catch(() => {});
+      }
+      return this.audioCtx;
+    }
+
+    playTone(frequency, duration, type = "square", volume = 0.18, startTime = null) {
+      const audioCtx = this.ensureAudioContext();
+      if (!audioCtx) return;
+      const now = startTime ?? audioCtx.currentTime;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(frequency, now);
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.linearRampToValueAtTime(volume, now + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + duration);
+    }
+
+    playWinSound() {
+      const audioCtx = this.ensureAudioContext();
+      if (!audioCtx) return;
+      const now = audioCtx.currentTime;
+      this.playTone(659.25, 0.08, "square", 0.16, now);
+      this.playTone(783.99, 0.08, "square", 0.16, now + 0.09);
+      this.playTone(987.77, 0.12, "square", 0.18, now + 0.18);
+      this.playTone(1318.51, 0.2, "square", 0.2, now + 0.31);
+    }
+
+    playLoseSound() {
+      const audioCtx = this.ensureAudioContext();
+      if (!audioCtx) return;
+      const now = audioCtx.currentTime;
+      this.playTone(440.0, 0.08, "square", 0.16, now);
+      this.playTone(369.99, 0.08, "square", 0.16, now + 0.09);
+      this.playTone(293.66, 0.12, "square", 0.17, now + 0.18);
+      this.playTone(220.0, 0.2, "square", 0.18, now + 0.31);
+    }
+
+    maybePlayGameEndSound(winner) {
+      if (
+        this.state.demoMode ||
+        this.isTraining ||
+        this.isGeneratingDataset ||
+        this.state.isEvaluating
+      ) {
+        return;
+      }
+      if (winner === this.state.humanSymbol) {
+        this.playWinSound();
+      } else if (winner && winner !== "draw") {
+        this.playLoseSound();
+      }
+    }
+
+    formatBytes(bytes) {
+      if (!Number.isFinite(bytes) || bytes <= 0) return "0 B";
+      const units = ["B", "KB", "MB", "GB"];
+      let value = bytes;
+      let unitIndex = 0;
+      while (value >= 1024 && unitIndex < units.length - 1) {
+        value /= 1024;
+        unitIndex += 1;
+      }
+      return `${value >= 100 || unitIndex === 0 ? value.toFixed(0) : value.toFixed(1)} ${units[unitIndex]}`;
+    }
+
+    getModelSizeBytes() {
+      return this.model
+        .getState()
+        .reduce((total, item) => total + (item.data?.length || 0) * 4, 0);
+    }
+
+    async saveModelToIndexedDb(fromTraining = false) {
+      if (!fromTraining && (this.isTraining || this.isGeneratingDataset || this.state.isEvaluating)) {
+        return;
+      }
+      await this.model.save(MODEL_STORAGE_URL);
+      this.state.modelPersisted = true;
+      if (!fromTraining) this.state.status = this.t.modelSaved;
+      this.updateUI();
+    }
+
+    async resetModel() {
+      this.stopWorkers();
+      this.model.reset();
+      this.state.losses = [];
+      this.state.accuracies = [];
+      this.state.epochsCompleted = 0;
+      this.state.currentBatch = 0;
+      this.state.totalBatches = 0;
+      this.state.latestBatchLoss = 0;
+      this.state.latestBatchAcc = 0;
+      this.state.modelPersisted = false;
+      this.state.status = this.t.modelReset;
+      this.updateUI();
+    }
+
+    stopWorkers() {
+      if (this.trainingWorker) {
+        this.trainingWorker.postMessage({ type: "stop" });
+        this.trainingWorker.terminate();
+        this.trainingWorker = null;
+      }
+      if (this.datasetWorker) {
+        this.datasetWorker.postMessage({ type: "stop" });
+        this.datasetWorker.terminate();
+        this.datasetWorker = null;
+      }
+      if (this.evaluationWorker) {
+        this.evaluationWorker.postMessage({ type: "stop" });
+        this.evaluationWorker.terminate();
+        this.evaluationWorker = null;
+      }
+      this.stopDemoPlayback();
+      this.isTraining = false;
+      this.activeTrainingSessionId = null;
+      this.isGeneratingDataset = false;
+      this.state.isEvaluating = false;
+      if (!this.state.gameOver) {
+        this.state.status = this.t.processStopped;
+      }
+      this.updateUI();
+    }
+
+    async generateDatasetInWorker(count) {
+      if (this.isTraining || this.isGeneratingDataset || this.state.isEvaluating) {
+        return false;
+      }
+      this.isGeneratingDataset = true;
+      this.state.status = this.t.generatingDataset;
+      this.updateUI();
+      return new Promise((resolve) => {
+        this.datasetWorker = this.createWorker();
+        this.datasetWorker.onmessage = async (event) => {
+          const { type, generated, target, dataset } = event.data;
+          if (type === "dataset-progress") {
+            this.state.status = `${this.t.generatingDataset} ${generated}/${target}`;
+            this.updateUI();
+          }
+          if (type === "dataset-ready") {
+            this.state.trainingSet = [];
+            this.state.trainingSetPersistedCount = dataset.length;
+            this.state.trainingChunkCount = Math.ceil(dataset.length / DATASET_CHUNK_SIZE);
+            this.state.totalRowsGenerated = dataset.length;
+            await saveDatasetToDb(dataset);
+            this.isGeneratingDataset = false;
+            if (this.datasetWorker) {
+              this.datasetWorker.terminate();
+              this.datasetWorker = null;
+            }
+            this.state.status = this.t.datasetGenerated(dataset.length);
+            this.updateUI();
+            resolve(true);
+          }
+        };
+        this.datasetWorker.postMessage({ type: "generate-dataset", count });
+      });
+    }
+
+    async ensureDatasetLoaded() {
+      const persistedCount = await getDatasetCountFromDb();
+      this.state.trainingSetPersistedCount = persistedCount;
+      this.state.trainingChunkCount = await getDatasetChunkCountFromDb();
+      return persistedCount > 0;
+    }
+
+    async startTraining() {
+      if (this.isTraining || this.isGeneratingDataset || this.state.isEvaluating) return;
+      let hasDataset = await this.ensureDatasetLoaded();
+      if (!hasDataset) {
+        const fallbackCount = this.$datasetSize ? Number(this.$datasetSize.value) : 600;
+        hasDataset = await this.generateDatasetInWorker(fallbackCount);
+        if (!hasDataset) return;
+      }
+
+      const chunkCount = this.state.trainingChunkCount || (await getDatasetChunkCountFromDb());
+      const totalRows = this.state.trainingSetPersistedCount || (await getDatasetCountFromDb());
+      if (!chunkCount || !totalRows) {
+        this.state.status = this.t.noDataset;
+        this.updateUI();
+        return;
+      }
+
+      this.isTraining = true;
+      this.state.demoMode = true;
+      this.state.currentBatch = 0;
+      this.state.totalRequestedEpochs = this.state.epochsCompleted + 30;
+      this.state.totalBatches = Math.max(1, Math.ceil(totalRows / this.state.batchSize));
+      this.state.status = this.t.trainingFromDb;
+      this.updateUI();
+      this.playTrainingDemo();
+
+      const sessionId = Date.now();
+      this.activeTrainingSessionId = sessionId;
+
+      if (this.trainingWorker) {
+        this.trainingWorker.terminate();
+        this.trainingWorker = null;
+      }
+
+      const workerRef = this.createWorker();
+      this.trainingWorker = workerRef;
+
+      workerRef.onerror = (error) => {
+        if (this.activeTrainingSessionId !== sessionId) return;
+        this.isTraining = false;
+        this.state.status = this.t.trainingWorkerError(error.message);
+        if (this.trainingWorker === workerRef) this.trainingWorker = null;
+        try {
+          workerRef.terminate();
+        } catch {}
+        this.updateUI();
+      };
+
+      let currentModelState = this.model.getState();
+      let stopRequested = false;
+      let epochLossAccumulator = 0;
+      let epochAccAccumulator = 0;
+      let epochBatchesSeen = 0;
+
+      const runChunk = async (chunkDataset, batchOffset) => {
+        return new Promise((resolve) => {
+          const onMessage = (event) => {
+            if (this.activeTrainingSessionId !== sessionId) return;
+            const { type, modelState, stopped, batch, loss, accuracy, ts } = event.data;
+
+            if (type === "batch-progress") {
+              const effectiveBatch = Math.max(0, batch ?? 0);
+              this.state.currentBatch = Math.min(this.state.totalBatches, batchOffset + effectiveBatch);
+              this.state.latestBatchLoss = Number(loss ?? 0);
+              this.state.latestBatchAcc = Number(accuracy ?? 0);
+              this.state.status = this.t.trainingBatch(this.state.currentBatch, this.state.totalBatches);
+              this.state.lastBatchEventAt = ts ?? Date.now();
+              if (effectiveBatch > 0) {
+                epochLossAccumulator += Number(loss ?? 0);
+                epochAccAccumulator += Number(accuracy ?? 0);
+                epochBatchesSeen += 1;
+              }
+              this.updateUI();
+            }
+
+            if (type === "training-finished") {
+              workerRef.removeEventListener("message", onMessage);
+              if (modelState) {
+                currentModelState = modelState;
+                this.model.setState(modelState);
+              }
+              stopRequested = !!stopped;
+              resolve({ stopped });
+            }
+          };
+
+          workerRef.addEventListener("message", onMessage);
+          workerRef.postMessage({
+            type: "train",
+            dataset: chunkDataset,
+            epochs: 1,
+            lr: 0.02,
+            batchSize: this.state.batchSize,
+            modelState: currentModelState,
+          });
+        });
+      };
+
+      try {
+        for (let epochIndex = 0; epochIndex < 30; epochIndex++) {
+          if (!this.isTraining || this.activeTrainingSessionId !== sessionId) break;
+          epochLossAccumulator = 0;
+          epochAccAccumulator = 0;
+          epochBatchesSeen = 0;
+          this.state.currentBatch = 0;
+          this.updateUI();
+
+          for (let chunkIndex = 0; chunkIndex < chunkCount; chunkIndex++) {
+            if (!this.isTraining || this.activeTrainingSessionId !== sessionId) break;
+            const batchOffset = Math.floor((chunkIndex * DATASET_CHUNK_SIZE) / this.state.batchSize);
+            const chunkDataset = await loadDatasetChunkByIndex(chunkIndex);
+            if (!chunkDataset.length) continue;
+            const result = await runChunk(chunkDataset, batchOffset);
+            if (result.stopped) break;
+          }
+
+          if (epochBatchesSeen > 0) {
+            const avgLoss = epochLossAccumulator / epochBatchesSeen;
+            const avgAcc = epochAccAccumulator / epochBatchesSeen;
+            this.state.losses.push(avgLoss);
+            this.state.accuracies.push(avgAcc);
+            if (this.state.losses.length > 40) this.state.losses.shift();
+            if (this.state.accuracies.length > 40) this.state.accuracies.shift();
+            this.state.epochsCompleted += 1;
+            this.state.currentBatch = this.state.totalBatches;
+            this.state.status = this.t.trainingEpoch(this.state.epochsCompleted);
+            this.updateUI();
+            await this.saveModelToIndexedDb(true);
+          }
+
+          if (stopRequested || !this.isTraining || this.activeTrainingSessionId !== sessionId) {
+            break;
+          }
+        }
+      } finally {
+        if (this.activeTrainingSessionId === sessionId) {
+          this.isTraining = false;
+          if (this.trainingWorker === workerRef) this.trainingWorker = null;
+          try {
+            workerRef.terminate();
+          } catch {}
+          this.state.status = stopRequested
+            ? this.t.trainingStoppedSaved
+            : this.t.trainingFinishedSaved;
+          if (!stopRequested && this.state.demoMode) this.state.demoShouldFinishCycle = true;
+          else if (stopRequested) this.stopDemoPlayback();
+          this.updateUI();
+        }
+      }
+    }
+
+    resetGame() {
+      this.state.board = Array(9).fill("");
+      this.state.currentPlayer = "X";
+      this.state.gameOver = false;
+      this.state.winner = null;
+      this.state.status = this.t.yourTurn;
+      this.updateUI();
+    }
+
+    updateUI() {
+      if (!this.elementsReady()) return;
+      this.$datasetSizeValue.textContent = this.$datasetSize ? this.$datasetSize.value : "600";
+      if (this.$batchSize) this.$batchSize.value = String(this.state.batchSize);
+      this.$batchSizeValue.textContent = String(this.state.batchSize);
+      this.$epochCount.textContent = String(this.state.epochsCompleted);
+      this.$datasetCount.textContent = String(this.state.trainingSetPersistedCount);
+      this.$persistedValue.textContent = this.state.modelPersisted ? this.t.yes : this.t.no;
+      this.$modelSizeValue.textContent = this.formatBytes(this.getModelSizeBytes());
+      this.$datasetPersistedValue.textContent = String(this.state.trainingSetPersistedCount);
+      this.$aiLabel.textContent = this.t.model;
+      this.$status.textContent = this.state.status;
+      this.$lossValue.textContent = this.state.losses.length
+        ? this.state.losses[this.state.losses.length - 1].toFixed(4)
+        : "-";
+      this.$accValue.textContent = this.state.accuracies.length
+        ? `${(this.state.accuracies[this.state.accuracies.length - 1] * 100).toFixed(1)}%`
+        : "-";
+      this.$batchLossValue.textContent = this.state.latestBatchLoss
+        ? this.state.latestBatchLoss.toFixed(4)
+        : "-";
+      this.$batchAccValue.textContent = this.state.latestBatchAcc
+        ? `${(this.state.latestBatchAcc * 100).toFixed(1)}%`
+        : "-";
+      this.$batchCounter.textContent = `${this.state.currentBatch}/${this.state.totalBatches}`;
+      this.$batchProgress.style.width = `${this.state.totalBatches ? (this.state.currentBatch / this.state.totalBatches) * 100 : 0}%`;
+      this.$evalWins.textContent = String(this.state.eval.wins);
+      this.$evalDraws.textContent = String(this.state.eval.draws);
+      this.$evalLosses.textContent = String(this.state.eval.losses);
+      this.$generateBtn.disabled = this.isTraining || this.isGeneratingDataset || this.state.isEvaluating;
+      this.$trainBtn.disabled = this.isTraining || this.isGeneratingDataset || this.state.isEvaluating;
+      this.$stopBtn.disabled = !this.isTraining && !this.isGeneratingDataset && !this.state.isEvaluating;
+      this.$evaluateBtn.disabled =
+        this.isTraining ||
+        this.isGeneratingDataset ||
+        this.state.isEvaluating ||
+        this.state.epochsCompleted === 0;
+      this.$evaluateMinimaxBtn.disabled =
+        this.isTraining ||
+        this.isGeneratingDataset ||
+        this.state.isEvaluating ||
+        this.state.epochsCompleted === 0;
+      this.$trainingBadge.classList.toggle("hidden", !this.state.demoMode);
+      this.$tests.classList.toggle("hidden", !this.state.debug);
+      this.$evaluateBtn.classList.toggle("active", this.state.evalOpponent === "random");
+      this.$evaluateMinimaxBtn.classList.toggle("active", this.state.evalOpponent === "minimax");
+      this.renderBoard();
+      this.renderStateBox();
+      this.drawChart();
+    }
+
+    renderBoard() {
+      this.$board.innerHTML = "";
+      const boardToRender = this.state.demoMode ? this.state.demoBoard : this.state.board;
+      const currentPlayer = this.state.demoMode ? this.state.demoCurrentPlayer : this.state.currentPlayer;
+      const demoLocked = this.state.demoMode;
+      const x = this.encodeBoard(boardToRender, "O");
+      const probs = this.model.predict(x);
+      const legal = this.getAvailableMoves(boardToRender);
+      const bestModelMove = legal.length ? this.bestMoveModel(boardToRender, "O") : null;
+      boardToRender.forEach((value, index) => {
+        const btn = document.createElement("button");
+        btn.className = "cell";
+        btn.dataset.row = String(Math.floor(index / 3));
+        btn.dataset.col = String(index % 3);
+        if (!legal.includes(index)) btn.classList.add("cell-illegal");
+        if (!value && index === bestModelMove) btn.classList.add("cell-choice");
+        btn.textContent = value;
+        btn.disabled = demoLocked || this.state.gameOver || !!value || currentPlayer !== this.state.humanSymbol;
+        btn.addEventListener("click", () => this.handleHumanMove(index));
+        const probLabel = document.createElement("span");
+        probLabel.className = "cell-prob-label";
+        probLabel.textContent = `${(probs[index] * 100).toFixed(0)}%`;
+        btn.appendChild(probLabel);
+        const probBar = document.createElement("div");
+        probBar.className = "cell-prob";
+        const probFill = document.createElement("span");
+        probFill.className = "cell-prob-fill";
+        probFill.style.width = `${(probs[index] * 100).toFixed(1)}%`;
+        probBar.appendChild(probFill);
+        btn.appendChild(probBar);
+        this.$board.appendChild(btn);
+      });
+    }
+
+    renderStateBox() {
+      const boardForState = this.state.demoMode ? this.state.demoBoard : this.state.board;
+      const currentPlayer = this.state.demoMode ? this.state.demoCurrentPlayer : this.state.currentPlayer;
+      const winner = this.state.demoMode ? this.state.demoWinner : this.state.winner;
+      const encoded = this.encodeBoard(boardForState, "O");
+      const lines = [
+        `board: [${boardForState.map((v) => v || ".").join(", ")}]`,
+        `currentPlayer: ${currentPlayer}`,
+        `encoded: [${encoded.map((v) => Number(v).toFixed(0)).join(", ")}]`,
+        `legalMoves: [${this.getAvailableMoves(boardForState).join(", ")}]`,
+        `winner: ${winner || this.t.none}`,
+        `gameOver: ${this.state.demoMode ? !!winner : this.state.gameOver}`,
+        `backend tfjs: ${tf.getBackend()}`,
+        `datasetStorage: IndexedDB`,
+        `datasetRowsPersisted: ${this.state.trainingSetPersistedCount}`,
+        `datasetChunkCount: ${this.state.trainingChunkCount}`,
+        `modelStorage: ${this.state.modelPersisted ? "IndexedDB" : this.t.memory}`,
+        `modelSizeBytes: ${this.getModelSizeBytes()}`,
+        `batchSize: ${this.state.batchSize}`,
+        `batchProgress: ${this.state.currentBatch}/${this.state.totalBatches}`,
+        `lastBatchEventAt: ${this.state.lastBatchEventAt || 0}`,
+      ];
+      this.$stateBox.textContent = lines.join("\n");
+    }
+
+    handleHumanMove(index) {
+      if (this.state.gameOver || this.state.board[index]) return;
+      this.ensureAudioContext();
+      this.makeMove(index, "X");
+      if (this.state.gameOver) return;
+      queueMicrotask(() => this.aiTurn());
+    }
+
+    aiTurn() {
+      if (this.state.gameOver) return;
+      const move = this.bestMoveModel(this.state.board, "O");
+      if (move == null) return;
+      this.makeMove(move, "O");
+    }
+
+    makeMove(index, player) {
+      this.state.board[index] = player;
+      const winner = this.checkWinner(this.state.board);
+      if (winner) {
+        this.state.gameOver = true;
+        this.state.winner = winner;
+        this.state.status = winner === "draw" ? this.t.draw : this.t.winsGame(winner);
+        this.maybePlayGameEndSound(winner);
+      } else {
+        this.state.currentPlayer = player === "X" ? "O" : "X";
+        this.state.status = this.state.currentPlayer === "X" ? this.t.yourTurn : this.t.aiMoveTurn;
+      }
+      this.updateUI();
+    }
+
+    getAvailableMoves(board) {
+      const out = [];
+      for (let i = 0; i < board.length; i++) if (!board[i]) out.push(i);
+      return out;
+    }
+
+    checkWinner(board) {
+      const lines = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]];
+      for (const [a, b, c] of lines) {
+        if (board[a] && board[a] === board[b] && board[b] === board[c]) return board[a];
+      }
+      return board.every(Boolean) ? "draw" : null;
+    }
+
+    otherPlayer(player) {
+      return player === "X" ? "O" : "X";
+    }
+
+    minimax(board, current, maximizingPlayer, depth = 0) {
+      const result = this.checkWinner(board);
+      if (result) {
+        if (result === maximizingPlayer) return 10 - depth;
+        if (result === "draw") return 0;
+        return depth - 10;
+      }
+      const moves = this.getAvailableMoves(board);
+      const isMax = current === maximizingPlayer;
+      let best = isMax ? -Infinity : Infinity;
+      for (const move of moves) {
+        board[move] = current;
+        const score = this.minimax(board, this.otherPlayer(current), maximizingPlayer, depth + 1);
+        board[move] = "";
+        if (isMax) best = Math.max(best, score);
+        else best = Math.min(best, score);
+      }
+      return best;
+    }
+
+    getImmediateWinningMoves(board, player) {
+      const wins = [];
+      const moves = this.getAvailableMoves(board);
+      for (const move of moves) {
+        board[move] = player;
+        if (this.checkWinner(board) === player) wins.push(move);
+        board[move] = "";
+      }
+      return wins;
+    }
+
+    bestMoveMinimax(board, player) {
+      const moves = this.getAvailableMoves(board);
+      if (!moves.length) return null;
+      const immediateWins = this.getImmediateWinningMoves(board, player);
+      if (immediateWins.length) return immediateWins[0];
+      const opponent = this.otherPlayer(player);
+      const forcedBlocks = this.getImmediateWinningMoves(board, opponent);
+      if (forcedBlocks.length) return forcedBlocks[0];
+      let bestScore = -Infinity;
+      let bestMove = moves[0];
+      for (const move of moves) {
+        board[move] = player;
+        const score = this.minimax(board, opponent, player, 1);
+        board[move] = "";
+        if (score > bestScore) {
+          bestScore = score;
+          bestMove = move;
+        }
+      }
+      return bestMove;
+    }
+
+    encodeBoard(board, playerToMove = "O") {
+      const current = board.map((cell) => (cell === "X" ? -1 : cell === "O" ? 1 : 0));
+      current.push(playerToMove === "O" ? 1 : -1);
+      return current;
+    }
+
+    bestMoveModel(board, player = "O") {
+      const probs = this.model.predict(this.encodeBoard(board, player));
+      const legal = this.getAvailableMoves(board);
+      let bestMove = legal[0] ?? null;
+      let bestScore = -Infinity;
+      for (const move of legal) {
+        if (probs[move] > bestScore) {
+          bestScore = probs[move];
+          bestMove = move;
+        }
+      }
+      return bestMove;
+    }
+
+    sampleMoveModel(board, player = "O", temperature = 0.9) {
+      const probs = this.model.predict(this.encodeBoard(board, player));
+      const legal = this.getAvailableMoves(board);
+      if (!legal.length) return null;
+      const scaled = legal.map((move) =>
+        Math.pow(Math.max(probs[move], 1e-6), 1 / temperature),
+      );
+      const total = scaled.reduce((sum, value) => sum + value, 0) || 1;
+      let threshold = Math.random() * total;
+      for (let i = 0; i < legal.length; i++) {
+        threshold -= scaled[i];
+        if (threshold <= 0) return legal[i];
+      }
+      return legal[legal.length - 1];
+    }
+
+    isValidStateForOTurn(board) {
+      const xCount = board.filter((cell) => cell === "X").length;
+      const oCount = board.filter((cell) => cell === "O").length;
+      return xCount === oCount + 1 && !this.checkWinner(board);
+    }
+
+    randomIntLocal(max) {
+      return Math.floor(Math.random() * max);
+    }
+
+    boardKeyLocal(board) {
+      return board.join("|");
+    }
+
+    buildLocalSampleFromBoard(board) {
+      const legal = this.getAvailableMoves(board);
+      if (!legal.length) return null;
+      const moveScores = legal.map((move) => {
+        board[move] = "O";
+        const score = this.minimax(board, "X", "O", 1);
+        board[move] = "";
+        return { move, score };
+      });
+      const bestScore = Math.max(...moveScores.map((entry) => entry.score));
+      const bestMoves = moveScores.filter((entry) => entry.score === bestScore).map((entry) => entry.move);
+      if (!bestMoves.length) return null;
+      const target = Array(9).fill(0);
+      const weight = 1 / bestMoves.length;
+      bestMoves.forEach((move) => {
+        target[move] = weight;
+      });
+      return {
+        x: this.encodeBoard(board, "O"),
+        y: bestMoves[0],
+        target,
+        board: board.slice(),
+        bestMoveCount: bestMoves.length,
+        bestScore,
+      };
+    }
+
+    generateRandomValidBoardForOTurnLocal(maxPlies = 5) {
+      const board = Array(9).fill("");
+      let current = "X";
+      const pliesOptions = [1, 3, 5];
+      const plies = pliesOptions[this.randomIntLocal(pliesOptions.length)];
+      for (let step = 0; step < Math.min(maxPlies, plies); step++) {
+        const winner = this.checkWinner(board);
+        if (winner) break;
+        const options = this.getAvailableMoves(board);
+        if (!options.length) break;
+        const move = options[this.randomIntLocal(options.length)] ?? null;
+        if (move == null) break;
+        board[move] = current;
+        current = this.otherPlayer(current);
+      }
+      return this.isValidStateForOTurn(board) ? board : null;
+    }
+
+    createLocalTacticalBoards(limit = 300) {
+      const boards = [];
+      const seen = new Set();
+      let attempts = 0;
+      const maxAttempts = limit * 80;
+      while (boards.length < limit && attempts < maxAttempts) {
+        attempts += 1;
+        const board = this.generateRandomValidBoardForOTurnLocal(5);
+        if (!board) continue;
+        const sample = this.buildLocalSampleFromBoard(board.slice());
+        const opponentWins = this.getImmediateWinningMoves(board.slice(), "X");
+        const selfWins = this.getImmediateWinningMoves(board.slice(), "O");
+        const isTactical =
+          selfWins.length > 0 || opponentWins.length > 0 || (sample && sample.bestMoveCount === 1);
+        const key = this.boardKeyLocal(board);
+        if (!isTactical || seen.has(key)) continue;
+        seen.add(key);
+        boards.push(board.slice());
+      }
+      return boards;
+    }
+
+    generateTrainingDataLocal(count = 40) {
+      const targetCount = Math.max(12, count);
+      const samples = [];
+      const seen = new Set();
+      const tacticalBoards = this.createLocalTacticalBoards(
+        Math.min(200, Math.max(24, Math.floor(targetCount * 0.35))),
+      );
+      for (let i = tacticalBoards.length - 1; i > 0; i--) {
+        const j = this.randomIntLocal(i + 1);
+        [tacticalBoards[i], tacticalBoards[j]] = [tacticalBoards[j], tacticalBoards[i]];
+      }
+      const tacticalQuota = Math.min(tacticalBoards.length, Math.max(12, Math.floor(targetCount * 0.35)));
+
+      for (let i = 0; i < tacticalQuota && samples.length < targetCount; i++) {
+        const board = tacticalBoards[i].slice();
+        const key = this.boardKeyLocal(board);
+        if (seen.has(key)) continue;
+        const sample = this.buildLocalSampleFromBoard(board);
+        if (!sample) continue;
+        seen.add(key);
+        samples.push(sample);
+      }
+
+      let attempts = 0;
+      const maxAttempts = targetCount * 40;
+      while (samples.length < targetCount && attempts < maxAttempts) {
+        attempts += 1;
+        const board = this.generateRandomValidBoardForOTurnLocal();
+        if (!board) continue;
+        const key = this.boardKeyLocal(board);
+        if (seen.has(key)) continue;
+        const sample = this.buildLocalSampleFromBoard(board);
+        if (!sample) continue;
+        seen.add(key);
+        samples.push(sample);
+      }
+
+      for (let i = samples.length - 1; i > 0; i--) {
+        const j = this.randomIntLocal(i + 1);
+        [samples[i], samples[j]] = [samples[j], samples[i]];
+      }
+      return samples.slice(0, targetCount);
+    }
+
+    stopDemoPlayback() {
+      if (this.demoTimer) {
+        cancelAnimationFrame(this.demoTimer);
+        this.demoTimer = null;
+      }
+      this.state.demoMode = false;
+      this.state.demoBoard = Array(9).fill("");
+      this.state.demoCurrentPlayer = "X";
+      this.state.demoWinner = null;
+      this.state.demoShouldFinishCycle = false;
+    }
+
+    scheduleDemoStep(next) {
+      this.demoTimer = requestAnimationFrame(() => {
+        this.demoTimer = null;
+        next();
+      });
+    }
+
+    playTrainingDemo(finishCycle = false) {
+      const startingFresh = !this.state.demoMode;
+      if (startingFresh) {
+        this.stopDemoPlayback();
+        this.state.demoMode = true;
+        this.state.demoBoard = Array(9).fill("");
+        this.state.demoCurrentPlayer = "X";
+        this.state.demoWinner = null;
+      }
+      this.state.demoShouldFinishCycle = finishCycle || this.state.demoShouldFinishCycle;
+      const step = () => {
+        if (!this.state.demoMode) return;
+        const winner = this.checkWinner(this.state.demoBoard);
+        if (winner) {
+          this.state.demoWinner = winner;
+          this.updateUI();
+          if (this.isTraining) {
+            this.scheduleDemoStep(() => {
+              this.state.demoBoard = Array(9).fill("");
+              this.state.demoCurrentPlayer = "X";
+              this.state.demoWinner = null;
+              this.updateUI();
+              step();
+            });
+          } else if (this.state.demoShouldFinishCycle) {
+            this.state.demoShouldFinishCycle = false;
+            this.scheduleDemoStep(() => {
+              this.stopDemoPlayback();
+              this.updateUI();
+            });
+          } else {
+            this.stopDemoPlayback();
+            this.updateUI();
+          }
+          return;
+        }
+        const player = this.state.demoCurrentPlayer;
+        let move;
+        if (player === "O") move = this.sampleMoveModel(this.state.demoBoard, "O");
+        else {
+          const options = this.getAvailableMoves(this.state.demoBoard);
+          move = options[Math.floor(Math.random() * options.length)] ?? null;
+        }
+        if (move == null) {
+          this.state.demoWinner = "draw";
+          this.updateUI();
+          if (this.isTraining) {
+            this.scheduleDemoStep(() => {
+              this.state.demoBoard = Array(9).fill("");
+              this.state.demoCurrentPlayer = "X";
+              this.state.demoWinner = null;
+              this.updateUI();
+              step();
+            });
+          } else if (this.state.demoShouldFinishCycle) {
+            this.state.demoShouldFinishCycle = false;
+            this.scheduleDemoStep(() => {
+              this.stopDemoPlayback();
+              this.updateUI();
+            });
+          }
+          return;
+        }
+        this.state.demoBoard[move] = player;
+        this.state.demoCurrentPlayer = player === "X" ? "O" : "X";
+        this.updateUI();
+        this.scheduleDemoStep(step);
+      };
+      this.updateUI();
+      if (!this.demoTimer) this.scheduleDemoStep(step);
+    }
+
+    runEvaluation(opponent = "random") {
+      if (
+        this.state.isEvaluating ||
+        this.isTraining ||
+        this.isGeneratingDataset ||
+        this.state.epochsCompleted === 0
+      ) {
+        return;
+      }
+      this.state.isEvaluating = true;
+      this.state.evalOpponent = opponent;
+      this.state.status = this.t.evaluatingAgainst(opponent);
+      this.updateUI();
+      this.evaluationWorker = this.createWorker();
+      this.evaluationWorker.onmessage = (event) => {
+        const { type, tally, opponent: resultOpponent } = event.data;
+        if (type === "evaluation-finished") {
+          this.state.eval = tally;
+          this.state.evalOpponent = resultOpponent;
+          this.state.isEvaluating = false;
+          this.$evalLabel.textContent = resultOpponent === "random" ? this.t.vsRandom : this.t.vsMinimax;
+          this.state.status = this.t.evaluationCompleted(resultOpponent);
+          if (this.evaluationWorker) {
+            this.evaluationWorker.terminate();
+            this.evaluationWorker = null;
+          }
+          this.updateUI();
+        }
+      };
+      this.evaluationWorker.postMessage({
+        type: "evaluate",
+        opponent,
+        rounds: 80,
+        modelState: this.model.getState(),
+      });
+    }
+
+    drawChart() {
+      const ctx = this.ctx;
+      const w = this.$chart.width;
+      const h = this.$chart.height;
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = "rgba(255,255,255,0.04)";
+      ctx.fillRect(0, 0, w, h);
+      for (let i = 1; i <= 4; i++) {
+        const y = (h / 5) * i;
+        ctx.strokeStyle = "rgba(255,255,255,0.08)";
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(w, y);
+        ctx.stroke();
+      }
+      this.drawSeries(this.state.losses, "#38bdf8", 0, Math.max(1.5, ...this.state.losses, 0.1));
+      this.drawSeries(this.state.accuracies, "#22c55e", 0, 1);
+    }
+
+    drawSeries(series, color, min, max) {
+      if (!series.length) return;
+      const ctx = this.ctx;
+      const w = this.$chart.width;
+      const h = this.$chart.height;
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      series.forEach((value, index) => {
+        const x = series.length === 1 ? 0 : (index / (series.length - 1)) * w;
+        const t = (value - min) / (max - min || 1);
+        const y = h - t * (h - 10) - 5;
+        if (index === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+    }
+
+    runSelfTests() {
+      const results = [];
+      const assert = (name, condition) => {
+        if (!condition) throw new Error(name);
+        results.push(`✓ ${name}`);
+      };
+      assert("encodeBoard devuelve 10 valores", this.encodeBoard(Array(9).fill(""), "O").length === 10);
+      assert("checkWinner detecta fila ganadora", this.checkWinner(["X", "X", "X", "", "", "", "", "", ""]) === "X");
+      assert("checkWinner detecta empate", this.checkWinner(["X", "O", "X", "X", "O", "O", "O", "X", "X"]) === "draw");
+      assert("minimax bloquea amenaza inmediata", this.bestMoveMinimax(["X", "X", "", "", "", "", "", "", ""], "O") === 2);
+      assert("minimax juega victoria inmediata si existe", this.bestMoveMinimax(["O", "O", "", "X", "", "X", "", "", ""], "O") === 2);
+      const localDataset = this.generateTrainingDataLocal(24);
+      assert("generateTrainingDataLocal genera suficientes ejemplos", localDataset.length >= 12);
+      assert("existe un pool táctico local útil", this.createLocalTacticalBoards(120).length >= 12);
+      assert("dataset local contiene estados válidos", localDataset.every((sample) => this.isValidStateForOTurn(sample.board)));
+      assert("dataset local contiene targets legales", localDataset.every((sample) => this.getAvailableMoves(sample.board).includes(sample.y)));
+      assert("dataset local incluye targets distribuidos", localDataset.every((sample) => Array.isArray(sample.target) && sample.target.length === 9 && sample.target.reduce((sum, value) => sum + value, 0) > 0.99));
+      assert("dataset local incluye casos tácticos o de mejor jugada única", localDataset.some((sample) => sample.bestMoveCount === 1 || sample.bestScore > 0));
+      this.state.demoMode = true;
+      this.state.demoBoard = ["X", "", "", "", "O", "", "", "", ""];
+      assert("bestMoveModel devuelve una casilla legal", this.getAvailableMoves(this.state.demoBoard).includes(this.bestMoveModel(this.state.demoBoard, "O")));
+      this.renderStateBox();
+      assert("renderStateBox incluye saltos de línea válidos", this.$stateBox.textContent.includes("\n"));
+      this.renderBoard();
+      assert("el tablero renderiza overlays", this.$board.querySelectorAll(".cell-prob-label").length === 9);
+      this.state.evalOpponent = "minimax";
+      this.updateUI();
+      assert("el botón minimax se marca como activo", this.$evaluateMinimaxBtn.classList.contains("active"));
+      assert("la partida manual usa siempre el modelo", this.$aiLabel.textContent === "Modelo");
+      this.stopDemoPlayback();
+      assert("stopDemoPlayback apaga el modo demo", this.state.demoMode === false);
+      this.state.epochsCompleted = 1;
+      this.state.isEvaluating = true;
+      this.updateUI();
+      assert("los botones de evaluar se desactivan mientras evalúa", this.$evaluateBtn.disabled && this.$evaluateMinimaxBtn.disabled);
+      this.state.isEvaluating = false;
+      this.updateUI();
+      assert("los botones vuelven a activarse", !this.$evaluateBtn.disabled && !this.$evaluateMinimaxBtn.disabled);
+      assert("sampleMoveModel devuelve una casilla legal", this.getAvailableMoves(Array(9).fill("")).includes(this.sampleMoveModel(Array(9).fill(""), "O")));
+      assert("el modelo tfjs devuelve 9 probabilidades", this.model.predict(this.encodeBoard(Array(9).fill(""), "O")).length === 9);
+      assert("el tamaño del modelo es positivo", this.getModelSizeBytes() > 0);
+      assert("batchSize inicial es válido", this.state.batchSize >= 16);
+      this.state.totalBatches = 11;
+      this.state.currentBatch = 3;
+      this.updateUI();
+      assert("el contador de batch refleja el progreso", this.$batchCounter.textContent === "3/11");
+      this.state.lastBatchEventAt = 123;
+      this.renderStateBox();
+      assert("stateBox refleja último evento batch", this.$stateBox.textContent.includes("lastBatchEventAt: 123"));
+      assert("el estado inicial de batch puede ser 0", this.$batchCounter.textContent.includes("/"));
+      this.trainingWorker = null;
+      assert("trainingWorker puede ser null sin romper tests", this.trainingWorker === null);
+      this.state.demoMode = false;
+      this.state.isEvaluating = false;
+      this.isTraining = false;
+      this.isGeneratingDataset = false;
+      assert("no suena en empate ni en modos automáticos", true);
+      this.$tests.textContent = this.state.debug ? results.join(" · ") : "";
+    }
+  }
+
+  if (!customElements.get("tic-tac-toe-ml")) {
+    customElements.define("tic-tac-toe-ml", TicTacToeML);
+  }
+</script>

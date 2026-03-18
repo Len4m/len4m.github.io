@@ -1,0 +1,134 @@
+---
+author: Lenam
+pubDatetime: 2026-03-18T00:00:00Z
+title: "TensorFlow.js: models d'IA i machine learning al navegador"
+slug: tensorflowjs-entrenar-models-navegador
+ogImage: "../../../assets/images/tensorflowjs-entrenar-modelos-navegador/OpenGraph.png"
+featured: true
+draft: false
+tags:
+  - JavaScript
+  - ML
+  - TensorFlow.js
+  - navegador
+  - IndexedDB
+description: Crea, entrena, avalua i guarda un model de machine learning directament al navegador amb TensorFlow.js. Demo interactiva de tres en ratlla amb dataset local, Web Workers i IndexedDB.
+lang: ca
+translationId: tensorflowjs-entrenar-modelos-navegador
+---
+
+import TicTacToeML from "@components/tensorflowjs/TicTacToeML.astro";
+
+![TensorFlow.js per crear i entrenar models de machine learning directament al navegador amb un exemple interactiu de tres en ratlla](../../../assets/images/tensorflowjs-entrenar-modelos-navegador/OpenGraph.png)
+
+**[TensorFlow.js](https://www.tensorflow.org/js)** permet crear, entrenar i executar models de *machine learning* directament al navegador fent servir JavaScript. Això vol dir que una pàgina web pot deixar de ser només una interfície i convertir-se en un petit laboratori d'IA que corre completament al client.
+
+Si t'interessa l'altra cara del problema, a l'article anterior sobre [**Transformers.js: models de llenguatge i ML al navegador**](/ca/posts/transformersjs-models-ml-navegador/) explico com fer **inferència** directament al navegador amb models ja preparats. Aquest post se centra en una cosa diferent però complementària: **crear i entrenar** el model al mateix client amb TensorFlow.js.
+
+## Com aprèn un model
+
+Abans de parlar del joc, convé entendre la idea general. Un model no neix sabent coses: primer es defineix una estructura amb capes i connexions, després se li mostren exemples i, a poc a poc, va ajustant els seus números interns per cometre menys errors. Dit sense dramatitzar les matemàtiques: al principi improvisa, després practica i, amb sort, acaba fent alguna cosa que ja sembla intel·ligència en lloc d'atzar.
+
+Entrenar un model consisteix a repetir moltes vegades el mateix ritual:
+
+- Rebre una entrada.
+- Comparar la sortida amb la resposta correcta.
+- Mesurar l'error.
+- Ajustar lleugerament els pesos interns.
+
+Això és aprendre en una xarxa neuronal. No memoritza com un lloro: mou milers de petits dials invisibles fins a trobar patrons útils. En aquest exemple aquests patrons són jugades de tres en ratlla; en altres casos podrien ser text, imatges o àudio.
+
+## Què fa TensorFlow.js al navegador
+
+L'interessant aquí no és només el tres en ratlla, sinó que tot viu dins del navegador gràcies a **TensorFlow.js**. Amb una sola pàgina podem:
+
+- Crear un model.
+- Entrenar-lo localment.
+- Fer prediccions.
+- Guardar-lo a **IndexedDB** perquè sobrevisqui a una recàrrega.
+
+El resultat és un flux complet de *machine learning* sense backend, sense APIs externes i sense cap servidor fent feina amagada al darrere.
+
+## Exemple: una xarxa neuronal que aprèn a jugar al tres en ratlla
+
+La demo de sota construeix una xarxa neuronal petita que aprèn a jugar com a `O`. Primer es genera un dataset de posicions raonables, després el model ajusta els seus pesos mitjançant entrenament per lots, i finalment t'hi pots enfrontar directament a la pàgina.
+
+El tres en ratlla també és aquí com a gest a *WarGames* (*Jocs de guerra*), una de les primeres pel·lícules populars en què el protagonista és un hacker i on aquest joc apareix en una de les seves escenes més recordades.
+
+<div class="flex justify-center">
+<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/F7qOV8xonfY?si=haUOCmX7QFiWVzi3" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</div>
+
+Com fer servir la demo:
+
+1. Juga primer unes quantes partides sense entrenar el model.
+2. Genera un dataset.
+3. Prem `Entrenar / reanudar`.
+4. Observa com avancen els batches i les epochs.
+5. Torna a jugar i compara l'abans i el després.
+
+<TicTacToeML lang="ca" />
+
+## Crear el model amb TensorFlow.js
+
+La definició del model és força compacta. Aquí fem servir una entrada de 10 valors, una capa oculta senzilla i una sortida amb 9 probabilitats, una per a cada casella del tauler:
+
+```javascript
+const model = tf.sequential();
+model.add(tf.layers.dense({ inputShape: [10], units: 24, activation: "relu" }));
+model.add(tf.layers.dense({ units: 9, activation: "softmax" }));
+model.compile({
+  optimizer: tf.train.adam(0.02),
+  loss: "categoricalCrossentropy",
+  metrics: ["accuracy"],
+});
+```
+
+L'entrada codifica el tauler i el torn actual. La sortida és una distribució de probabilitat sobre les 9 caselles. A partir d'aquí, s'escull la millor jugada legal segons aquestes probabilitats.
+
+## Entrenar dins del mateix navegador
+
+L'entrenament també passa al client. Es pren un *batch* del dataset, es converteixen els exemples en tensors i s'ajusten els pesos del model:
+
+```javascript
+const xs = tf.tensor2d(batchX, [batchX.length, 10]);
+const ys = tf.tensor2d(batchY, [batchY.length, 9]);
+const metrics = await this.model.trainOnBatch(xs, ys);
+xs.dispose();
+ys.dispose();
+```
+
+Sona humil perquè ho és, però així és exactament com una xarxa neuronal comença a aprendre patrons. En aquesta demo, a més, la feina pesada s'envia a **Web Workers** perquè la interfície continuï responent, i el dataset es divideix en blocs que es guarden a **IndexedDB** per poder reprendre l'entrenament sense començar de zero.
+
+## Què està passant realment a la demo
+
+Sota el capó hi ha més coses de les que sembla:
+
+- **Minimax** genera exemples de bones jugades.
+- **TensorFlow.js** entrena el model dins del navegador.
+- **IndexedDB** persisteix tant el dataset com el model.
+- **Web Workers** eviten que la UI es congeli durant la generació, l'entrenament o l'avaluació.
+- L'avaluació ràpida permet comparar el model contra un rival aleatori o contra minimax.
+
+Dit d'una altra manera: això parla de tres en ratlla, sí, però sobretot parla d'una cosa realment útil per a qualsevol que faci web: avui ja es poden muntar petites experiències d'IA directament en JavaScript, dins d'una pàgina normal i amb feedback visual immediat.
+
+## Conclusions
+
+TensorFlow.js converteix el navegador en un entorn vàlid per experimentar amb *machine learning* real. No només permet fer inferència: també permet **crear models**, **entrenar-los**, **avaluar-los** i **guardar-los localment**. Per a demos, prototips, educació o eines privades, això obre un ventall enorme de possibilitats sense dependre d'infraestructura externa.
+
+I a més deixa una idea força útil: per a problemes petits, moltes vegades té més sentit un model senzill que aprèn davant nostre que una IA espectacular, amb un consum enorme, dedicada a jugar al tres en ratlla o a resoldre una cerca web senzilla.
+
+## Més demos i inspiració
+
+Si vols veure fins on arriba aquesta idea, TensorFlow.js manté una galeria oficial d'exemples i demostracions en viu, incloent control per webcam, visualitzacions de l'entrenament, classificació d'imatges, música generada per xarxes neuronals i més:
+
+- [Demostracions oficials de TensorFlow.js](https://www.tensorflow.org/js/demos?hl=es)
+
+## Referències
+
+- [TensorFlow.js](https://www.tensorflow.org/js) - Documentació oficial del projecte.
+- [Guia de TensorFlow.js](https://www.tensorflow.org/js/guide) - Introducció a models, tensors i entrenament.
+- [Demostracions oficials de TensorFlow.js](https://www.tensorflow.org/js/demos?hl=es) - Galeria d'exemples i demos en viu.
+- [Web Workers a MDN](https://developer.mozilla.org/es/docs/Web/API/Web_Workers_API) - Execució de feina en segon pla al navegador.
+- [IndexedDB a MDN](https://developer.mozilla.org/es/docs/Web/API/IndexedDB_API) - Persistència local estructurada al navegador.
+- [WarGames](https://en.wikipedia.org/wiki/WarGames) - Referència cultural del tres en ratlla dins de la ficció hacker popular.
