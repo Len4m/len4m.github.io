@@ -3,10 +3,6 @@ const { debug = false, lang = "es" } = Astro.props;
 ---
 
 <div class="tfjs-demo">
-  <script
-    is:inline
-    src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js"
-  ></script>
   <tic-tac-toe-ml debug={debug ? "true" : "false"} lang={lang}></tic-tac-toe-ml>
 </div>
 
@@ -19,6 +15,52 @@ const { debug = false, lang = "es" } = Astro.props;
 <script is:inline type="module">
   const TFJS_URL =
     "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js";
+
+  /** Referencia al bundle global; se asigna tras ensureTfjsGlobal() */
+  let tf;
+
+  let tfjsLoadPromise = null;
+  /**
+   * Carga tf.min.js una sola vez y espera a que exista globalThis.tf.
+   * Evita carreras con View Transitions / navegación cliente donde el <script src>
+   * del HTML no garantiza orden respecto al módulo.
+   */
+  function ensureTfjsGlobal() {
+    const g = globalThis;
+    if (g.tf) return Promise.resolve(g.tf);
+    if (tfjsLoadPromise) return tfjsLoadPromise;
+    tfjsLoadPromise = new Promise((resolve, reject) => {
+      const existing = document.querySelector(
+        'script[data-tfjs-tictactoe-loader="1"]',
+      );
+      const done = () => {
+        if (g.tf) resolve(g.tf);
+        else reject(new Error("TensorFlow.js no expuso `tf` tras cargar"));
+      };
+      if (existing) {
+        if (g.tf) {
+          resolve(g.tf);
+          return;
+        }
+        existing.addEventListener("load", done);
+        existing.addEventListener("error", () =>
+          reject(new Error("Error cargando TensorFlow.js")),
+        );
+        return;
+      }
+      const s = document.createElement("script");
+      s.src = TFJS_URL;
+      s.async = true;
+      s.crossOrigin = "anonymous";
+      s.dataset.tfjsTictactoeLoader = "1";
+      s.onload = done;
+      s.onerror = () =>
+        reject(new Error("No se pudo descargar TensorFlow.js desde el CDN"));
+      (document.head || document.documentElement).appendChild(s);
+    });
+    return tfjsLoadPromise;
+  }
+
   const I18N = {
     es: {
       yourTurn: "Tu turno.",
@@ -2040,6 +2082,13 @@ const { debug = false, lang = "es" } = Astro.props;
       this.$tests.textContent = this.state.debug ? results.join(" · ") : "";
     }
   }
+
+  await ensureTfjsGlobal();
+  tf = globalThis.tf;
+  if (!tf) {
+    throw new Error("TensorFlow.js no está disponible tras cargar el script");
+  }
+  await tf.ready();
 
   if (!customElements.get("tic-tac-toe-ml")) {
     customElements.define("tic-tac-toe-ml", TicTacToeML);
