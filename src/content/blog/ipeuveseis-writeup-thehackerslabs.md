@@ -3,7 +3,7 @@ author: Lenam
 pubDatetime: 2026-02-01T00:00:00Z  
 title: WriteUp Ipeuveseis - TheHackersLabs  
 urlSlug: ipeuveseis-writeup-thehackerslabs  
-featured: true
+featured: false
 draft: false  
 ogImage: "../../assets/images/ipeuveseis/OpenGraph.png"  
 tags:
