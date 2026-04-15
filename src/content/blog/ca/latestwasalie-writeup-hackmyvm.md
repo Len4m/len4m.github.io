@@ -1,6 +1,6 @@
 ---
 author: Lenam
-pubDatetime: 2026-04-16T00:00:00Z
+pubDatetime: 2026-04-15T00:00:00Z
 title: WriteUp Latest Was A Lie - HackMyVM
 urlSlug: latest-was-a-lie-writeup-hackmyvm-ca
 featured: true
@@ -35,15 +35,15 @@ Writeup de la màquina **Latest Was A Lie** de [HackMyVM](https://hackmyvm.eu/):
 ## Taula de continguts
 
 - [Taula de continguts](#taula-de-continguts)
-- [Enumeració](#enumeracio)
-- [Intrusió](#intrusio)
+- [Enumeració](#enumeració)
+- [Intrusió](#intrusió)
   - [Credencials al Docker Registry (port 5000)](#credencials-al-docker-registry-port-5000)
-  - [Inspecció del registre amb credencials vàlides](#inspeccio-del-registre-amb-credencials-valides)
-  - [Substitució de la imatge al registre (mateixa etiqueta `latest`)](#substitucio-de-la-imatge-al-registre-mateixa-etiqueta-latest)
-  - [Accés RCE des del web](#acces-rce-des-del-web)
+  - [Inspecció del registre amb credencials vàlides](#inspecció-del-registre-amb-credencials-vàlides)
+  - [Substitució de la imatge al registre (mateixa etiqueta `latest`)](#substitució-de-la-imatge-al-registre-mateixa-etiqueta-latest)
+  - [Accés RCE des del web](#accés-rce-des-del-web)
   - [Sortida del contenidor cap a l'host](#sortida-del-contenidor-cap-a-lhost)
 - [Escalada de privilegis](#escalada-de-privilegis)
-- [Referències](#referencies)
+- [Referències](#referències)
 
 ---
 

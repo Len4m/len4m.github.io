@@ -1,6 +1,6 @@
 ---
 author: Lenam
-pubDatetime: 2026-04-16T00:00:00Z
+pubDatetime: 2026-04-15T00:00:00Z
 title: WriteUp Latest Was A Lie - HackMyVM
 urlSlug: latest-was-a-lie-writeup-hackmyvm-es
 featured: true
