@@ -213,6 +213,24 @@ Baixem la imatge de Docker del registre, la modifiquem afegint el nostre payload
 
 > Nota: Aquest procediment es pot fer de maneres diferents; aquí es mostra una de les opcions, procurant evitar la majoria d'alternatives, tot i que potser se m'ha passat per alt alguna.
 
+Abans d'autenticar-nos amb `docker login`, cal tenir en compte un detall pràctic: aquest registry està exposat per **HTTP** al port `5000`, no per HTTPS. Per defecte, Docker intenta parlar amb els registries fent servir TLS; si no es configura com a registre insegur, ordres com `docker login`, `docker pull` o `docker push` poden fallar amb un error del tipus `server gave HTTP response to HTTPS client`.
+
+A la màquina atacant, afegim el registry a la llista d'`insecure-registries` del dimoni Docker. Si `/etc/docker/daemon.json` ja existeix, no convé sobreescriure'l directament: cal fusionar aquesta clau amb la configuració existent.
+
+```bash
+sudo mkdir -p /etc/docker
+
+cat <<'EOF' | sudo tee /etc/docker/daemon.json
+{
+  "insecure-registries": ["10.0.2.15:5000"]
+}
+EOF
+
+sudo systemctl restart docker
+```
+
+Després de reiniciar Docker, el client ja podrà comunicar-se amb `10.0.2.15:5000` fent servir HTTP.
+
 `docker login` contra `10.0.2.15:5000` desa credencials per a **push** i **pull** cap a aquest registre (el dimoni Docker farà servir autenticació en parlar amb l'API del registry).
 
 Amb l'usuari `adm:lover1`.

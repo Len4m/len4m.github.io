@@ -213,6 +213,24 @@ Descargamos la imagen de Docker del registro, la modificamos agregando nuestro p
 
 > Nota: Este procedimiento puede realizarse de diferentes formas; aquí se muestra una de las opciones, procurando evitar la mayoría de alternativas, aunque puede que se me haya pasado por alto alguna.
 
+Antes de autenticarnos con `docker login`, hay que tener en cuenta un detalle práctico: este registry está expuesto por **HTTP** en el puerto `5000`, no por HTTPS. Por defecto, Docker intenta hablar con los registries usando TLS; si no se configura como registro inseguro, comandos como `docker login`, `docker pull` o `docker push` pueden fallar con un error del estilo `server gave HTTP response to HTTPS client`.
+
+En la máquina atacante, añadimos el registry a la lista de `insecure-registries` del demonio Docker. Si `/etc/docker/daemon.json` ya existe, no conviene sobrescribirlo directamente: hay que fusionar esta clave con la configuración existente.
+
+```bash
+sudo mkdir -p /etc/docker
+
+cat <<'EOF' | sudo tee /etc/docker/daemon.json
+{
+  "insecure-registries": ["10.0.2.15:5000"]
+}
+EOF
+
+sudo systemctl restart docker
+```
+
+Después de reiniciar Docker, el cliente ya podrá comunicarse con `10.0.2.15:5000` usando HTTP.
+
 `docker login` contra `10.0.2.15:5000` guarda credenciales para **push** y **pull** hacia ese registro (el demonio Docker usará autenticación al hablar con la API del registry).
 
 Con el usuario `adm:lover1`.

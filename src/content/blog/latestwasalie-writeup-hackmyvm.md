@@ -213,6 +213,24 @@ Pull the image from the registry, modify it with your payload, then push it back
 
 > Note: There are several ways to do this; here is one approach, deliberately avoiding most alternatives, though I may have missed another option.
 
+Before authenticating with `docker login`, there is one practical detail to handle: this registry is exposed over **HTTP** on port `5000`, not HTTPS. By default, Docker tries to talk to registries over TLS; if the registry is not configured as insecure, commands such as `docker login`, `docker pull`, or `docker push` may fail with an error like `server gave HTTP response to HTTPS client`.
+
+On the attacker machine, add the registry to Docker daemon's `insecure-registries` list. If `/etc/docker/daemon.json` already exists, do not blindly overwrite it: merge this key into the existing configuration.
+
+```bash
+sudo mkdir -p /etc/docker
+
+cat <<'EOF' | sudo tee /etc/docker/daemon.json
+{
+  "insecure-registries": ["10.0.2.15:5000"]
+}
+EOF
+
+sudo systemctl restart docker
+```
+
+After restarting Docker, the client can communicate with `10.0.2.15:5000` over HTTP.
+
 `docker login` against `10.0.2.15:5000` stores credentials for **push** and **pull** to that registry (the Docker daemon will authenticate to the registry API).
 
 Using `adm:lover1`.
