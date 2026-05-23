@@ -3,7 +3,7 @@ author: Lenam
 pubDatetime: 2026-05-13T15:00:00Z
 title: WriteUp GameShell5 - HackMyVM
 urlSlug: gameshell5-writeup-hackmyvm
-featured: true
+featured: false
 draft: false
 ogImage: "../../../assets/images/gameshell5/OpenGraph.png"
 tags:
