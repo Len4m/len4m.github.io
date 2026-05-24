@@ -27,7 +27,7 @@ translationId: browser-agent-v86-poc
 
 ¿Y si pudieras ejecutar una **máquina virtual** directamente en el navegador? Con [**v86**](https://github.com/copy/v86) esto es realidad: emula hardware x86 configurable (**RAM**, **VRAM**, discos), así que puedes instalar un sistema operativo de 32 bits sin salir del navegador.
 
-¿Y si además pudieras correr un **modelo de IA** en local? También es posible gracias a **Transformers.js**, que permite descargar y ejecutar modelos en el navegador. Lo explico en este [artículo](/es/transformersjs-navegador-poc), y también sobre entrenamiento en el navegador con [**TensorFlow.js**](/es/posts/transformersjs-modelos-ml-navegador/).
+¿Y si además pudieras correr un **modelo de IA** en local? También es posible gracias a **Transformers.js**, que permite descargar y ejecutar modelos en el navegador. Lo explico en este [artículo](/es/posts/transformersjs-modelos-ml-navegador/), y también sobre entrenamiento en el navegador con [**TensorFlow.js**](/es/posts/tensorflowjs-entrenar-modelos-navegador/).
 
 Por último: también puedes tener, en el navegador, un **agente de IA** que use Transformers.js para ejecutar comandos en la VM de v86; todo esto ya es posible con **Browser Agent v86 POC**, una prueba de concepto que permite experimentar ejecutando una **VM Linux x86**, un **chat con LLM local** y un conjunto de **tools de agente** directamente desde el navegador.
 
