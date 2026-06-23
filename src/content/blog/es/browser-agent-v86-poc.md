@@ -36,7 +36,7 @@ Por último: también puedes tener, en el navegador, un **agente de IA** que use
 - Repositorio:[Len4m/browser-agent-v86-poc](https://github.com/Len4m/browser-agent-v86-poc)
 - Demo:[https://browseragent.icu/](https://browseragent.icu/)
 
-El proyecto se encuentra en fase beta, específicamente en la versión **0.9.0-beta.1** al momento de escribir este artículo. Actualmente solo está disponible en español, aunque existe la intención de añadir soporte para otros idiomas en el futuro.
+El proyecto se encuentra en fase beta; la versión del repositorio comprobada para este artículo es **0.9.7-beta.2**. La interfaz y la documentación principal están disponibles en **español e inglés**.
 
 ## Qué es Browser Agent v86 POC
 
@@ -73,11 +73,11 @@ Cuando ejecutas la aplicación publicada en internet, `127.0.0.1` sigue refirié
 
 ### Modelos de IA
 
-Actualmente, la aplicación permite utilizar modelos de Transformers.js u Ollama. Ambos métodos emplean modelos de inteligencia artificial que se ejecutan en tu propia GPU, por lo que es importante contar con una buena tarjeta gráfica y suficiente memoria.
+Actualmente, la aplicación permite utilizar modelos de Transformers.js u Ollama. En ambos casos la inferencia se ejecuta en tu propio equipo, pero no siempre de la misma forma: Transformers.js corre dentro del navegador con WebGPU cuando está disponible y puede usar WASM como fallback en algunos modelos, mientras que Ollama funciona como servicio local y usa los recursos CPU/GPU que tengas configurados en Ollama.
 
 #### Transformers.js
 
-Para utilizar los modelos de Transformers.js es necesario contar con un navegador que soporte WebGPU. Existen varios modelos preconfigurados, pero también puedes configurar cualquier otro modelo ONNX y se descargará automáticamente.
+Para obtener la mejor experiencia con Transformers.js es necesario contar con un navegador que soporte WebGPU. Existen varios modelos preconfigurados, y también puedes configurar modelos compatibles con Transformers.js/ONNX, pero no cualquier modelo ONNX arbitrario sirve para este flujo de chat y tools. El fallback WASM puede servir para chat básico en algunos casos, pero no debe considerarse fiable para tools de agente.
 
 - Más información: https://caniuse.com/webgpu  
 - Listado de modelos ONNX compatibles con Transformers.js:  
@@ -87,11 +87,15 @@ https://huggingface.co/models?pipeline_tag=text-generation&library=transformers.
 
 También existe una integración opcional con **Ollama**. En este caso, el navegador realiza peticiones al servicio local del usuario en `http://127.0.0.1:11434/api/chat`.
 
-Para que Ollama funcione correctamente, es necesario configurar la variable de entorno `OLLAMA_ORIGINS`; esto permitirá que Ollama conceda acceso.
+Para que Ollama funcione correctamente desde el navegador, es necesario configurar la variable de entorno `OLLAMA_ORIGINS` con el origen exacto desde el que sirves la app.
 
 Ejemplo:
 
 ```bash
+# Desarrollo local
+OLLAMA_ORIGINS=http://127.0.0.1:5173 ollama serve
+
+# Demo publicada
 OLLAMA_ORIGINS=https://browseragent.icu,https://www.browseragent.icu ollama serve
 ```
 
@@ -109,8 +113,8 @@ A continuación, se detallan los perfiles disponibles y los principales paquetes
 
 | Perfil                | Principales paquetes instalados                                                                                                      |
 |-----------------------|--------------------------------------------------------------------------------------------------------------------------------------|
-| `alpine-base`         | `ca-certificates`, `curl`, `nano`, `tmux`                                                                                            |
-| `alpine-pentest-lite` | `ca-certificates`, `curl`, `nano`, `nmap`, `ffuf`, `python3`, `py3-pip`, `bind-tools`, `iproute2`, `tmux` (+ wordlists SecLists Web-Content) |
+| `alpine-base`         | `ca-certificates`, `curl`, `nano`, `python3`                                                                                         |
+| `alpine-pentest-lite` | `ca-certificates`, `curl`, `nano`, `python3`, `nmap`, `ffuf`, `py3-pip`, `bind-tools`, `iproute2` (+ wordlists SecLists Web-Content) |
 | `alpine-pentest-web`  | Todos los anteriores, más `nikto`, `httpx`, `perl-net-ssleay`, `perl-io-socket-ssl`, `perl-mozilla-ca`, `openssl`                   |
 
 Estos perfiles permiten adaptar el entorno según la necesidad, desde un sistema básico hasta uno preparado para realizar pruebas de red o auditorías web.
@@ -127,7 +131,7 @@ apk add htop
 
 Debes tener en cuenta que todo se ejecuta en el navegador; por lo tanto, si cambias de página o recargas el sitio perderás el estado de la máquina virtual. Existen dos opciones: puedes configurar la red para enviarte los datos necesarios, o bien generar un snapshot.
 
-Sin embargo, ten precaución al restaurar un snapshot: para que todo funcione correctamente, debes configurar el mismo perfil de VM con los mismos parámetros. Además, el snapshot guarda el estado de la RAM, la CPU y la VM, pero no incluye los cambios realizados en los discos hda.
+Sin embargo, ten precaución al restaurar un snapshot: para que todo funcione correctamente, debes configurar el mismo perfil de VM con los mismos parámetros. Además, el snapshot guarda el estado de la RAM, la CPU y la VM de v86, pero no persiste los cambios realizados en el disco HDA.
 
 ## Uso
 
@@ -143,11 +147,11 @@ npm run prepare:local       # primera vez: setup VM + build frontend/LLM/assets
 
 # Puedes elegir una de estas dos opciones para levantar el servidor local:
 
-npm start                   # Opción recomendada. Incluye cabeceras necesarias y soporte completo para los discos hd de la VM.
+npm start                   # Opción recomendada. Incluye cabeceras necesarias, MIME correcto para WASM, soporte Range y soporte correcto para los discos HDA de la VM.
 
 # O bien, lanzar un servidor simple con Python:
 cd public
-python3 -m http.server 5173 # Opción alternativa. ¡OJO! En este modo no tendrás las cabeceras necesarias y los discos hd de la VM i el LLM pueden no funcionar correctamente.
+python3 -m http.server 5173 # Opción alternativa. ¡OJO! En este modo no tendrás todas las cabeceras necesarias, así que SharedArrayBuffer, v86, los discos HDA de la VM o el LLM pueden no funcionar correctamente.
 ```
 
 ## Limitaciones actuales
@@ -155,11 +159,11 @@ python3 -m http.server 5173 # Opción alternativa. ¡OJO! En este modo no tendr�
 Esto sigue siendo una prueba de concepto. Hay varias limitaciones importantes:
 
 - El primer arranque puede requerir descargas pesadas;
-- Los modelos locales dependen mucho del navegador, hardware y soporte WebGPU;
-- La VM necesita headers concretos para rendir bien, sobre todo con los discos hda;
+- Los modelos locales dependen mucho del navegador, hardware y soporte WebGPU/WASM;
+- La VM necesita headers concretos para rendir bien, sobre todo con los discos HDA;
 - La red es lenta, ten cuidado con la cantidad de peticiones.
-- La VM solo cuenta con un nucleo, ten cuidado con la cantidad de procesos en ejecución.
-- Las Tools en transformers.js son limitadas.
+- La VM solo cuenta con un núcleo, ten cuidado con la cantidad de procesos en ejecución.
+- Las tools con Transformers.js son limitadas en comparación con las llamadas a tools respaldadas por Ollama.
 
 La intención es mantener el proyecto como un entorno experimental claro, no venderlo como una plataforma cerrada ni como una solución de producción.
 

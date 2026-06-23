@@ -36,7 +36,7 @@ Finally, you can also have an **AI agent** in the browser that uses Transformers
 - Repository:[Len4m/browser-agent-v86-poc](https://github.com/Len4m/browser-agent-v86-poc)
 - Demo:[https://browseragent.icu/](https://browseragent.icu/)
 
-The project is currently in beta, specifically version **0.9.0-beta.1** at the time of writing. It is currently only available in Spanish, although there is an intention to add support for other languages in the future.
+The project is currently in beta; the repository version checked for this article is **0.9.7-beta.2**. The UI and the main documentation are available in **Spanish and English**.
 
 ## What Browser Agent v86 POC is
 
@@ -73,11 +73,11 @@ When you run the application published on the internet, `127.0.0.1` still refers
 
 ### AI models
 
-The application currently supports models from Transformers.js and Ollama. Both methods use artificial intelligence models that run on your own GPU, so it is important to have a good graphics card and enough memory.
+The application currently supports models from Transformers.js and Ollama. In both cases, inference runs on your own machine, but not always in the same way: Transformers.js runs inside the browser with WebGPU when available and can fall back to WASM for some models, while Ollama runs as a local service and uses the CPU/GPU resources configured in Ollama.
 
 #### Transformers.js
 
-To use Transformers.js models, you need a browser with WebGPU support. Several models are preconfigured, but you can also configure any other ONNX model and it will be downloaded automatically.
+For the best Transformers.js experience, you need a browser with WebGPU support. Several models are preconfigured, and you can also configure compatible Transformers.js/ONNX models, but not every arbitrary ONNX model is suitable for this chat and tool-calling flow. The WASM fallback is useful for basic chat in some cases, but it should not be considered reliable for agent tools.
 
 - More information: https://caniuse.com/webgpu  
 - List of ONNX models compatible with Transformers.js:  
@@ -87,11 +87,15 @@ https://huggingface.co/models?pipeline_tag=text-generation&library=transformers.
 
 There is also an optional integration with **Ollama**. In this case, the browser sends requests to the user's local service at `http://127.0.0.1:11434/api/chat`.
 
-For Ollama to work correctly, you need to configure the `OLLAMA_ORIGINS` environment variable; this allows Ollama to grant access.
+For Ollama to work correctly from the browser, you need to configure the `OLLAMA_ORIGINS` environment variable with the exact origin that serves the app.
 
 Example:
 
 ```bash
+# Local development
+OLLAMA_ORIGINS=http://127.0.0.1:5173 ollama serve
+
+# Published demo
 OLLAMA_ORIGINS=https://browseragent.icu,https://www.browseragent.icu ollama serve
 ```
 
@@ -109,8 +113,8 @@ The following table lists the available profiles and the main packages they incl
 
 | Profile               | Main installed packages                                                                                                             |
 |-----------------------|-------------------------------------------------------------------------------------------------------------------------------------|
-| `alpine-base`         | `ca-certificates`, `curl`, `nano`, `tmux`                                                                                           |
-| `alpine-pentest-lite` | `ca-certificates`, `curl`, `nano`, `nmap`, `ffuf`, `python3`, `py3-pip`, `bind-tools`, `iproute2`, `tmux` (+ SecLists Web-Content wordlists) |
+| `alpine-base`         | `ca-certificates`, `curl`, `nano`, `python3`                                                                                         |
+| `alpine-pentest-lite` | `ca-certificates`, `curl`, `nano`, `python3`, `nmap`, `ffuf`, `py3-pip`, `bind-tools`, `iproute2` (+ SecLists Web-Content wordlists) |
 | `alpine-pentest-web`  | All of the above, plus `nikto`, `httpx`, `perl-net-ssleay`, `perl-io-socket-ssl`, `perl-mozilla-ca`, `openssl`                     |
 
 These profiles let you adapt the environment to your needs, from a basic system to one prepared for network testing or web auditing.
@@ -127,7 +131,7 @@ apk add htop
 
 Keep in mind that everything runs in the browser; therefore, if you change pages or reload the site, you will lose the virtual machine state. There are two options: you can configure the network to send yourself the necessary data, or you can generate a snapshot.
 
-However, be careful when restoring a snapshot: for everything to work correctly, you must configure the same VM profile with the same parameters. Also, the snapshot saves the state of RAM, CPU, and the VM, but it does not include changes made to the hda disks.
+However, be careful when restoring a snapshot: for everything to work correctly, you must configure the same VM profile with the same parameters. Also, the snapshot saves the state of RAM, CPU, and the v86 VM, but it does not persist changes made to the HDA disk image.
 
 ## Usage
 
@@ -143,11 +147,11 @@ npm run prepare:local       # first run: VM setup + frontend/LLM/assets build
 
 # You can choose one of these two options to start the local server:
 
-npm start                   # Recommended option. Includes the required headers and full support for the VM hd disks.
+npm start                   # Recommended option. Includes the required headers, WASM MIME handling, Range support, and proper support for the VM HDA disks.
 
 # Or start a simple Python server:
 cd public
-python3 -m http.server 5173 # Alternative option. WARNING! In this mode you will not have the required headers, and the VM hd disks and the LLM may not work correctly.
+python3 -m http.server 5173 # Alternative option. WARNING! In this mode you will not have all the required headers, so SharedArrayBuffer, v86, VM HDA disks, or the LLM may not work correctly.
 ```
 
 ## Current limitations
@@ -155,11 +159,11 @@ python3 -m http.server 5173 # Alternative option. WARNING! In this mode you will
 This is still a proof of concept. There are several important limitations:
 
 - The first boot may require large downloads;
-- Local models depend heavily on the browser, hardware, and WebGPU support;
-- The VM needs specific headers to perform well, especially with hda disks;
+- Local models depend heavily on the browser, hardware, and WebGPU/WASM support;
+- The VM needs specific headers to perform well, especially with HDA disks;
 - Networking is slow, so be careful with the number of requests.
 - The VM only has one core, so be careful with the number of running processes.
-- Tools in transformers.js are limited.
+- Tools with Transformers.js are limited compared with Ollama-backed tool calls.
 
 The intention is to keep the project as a clear experimental environment, not to present it as a closed platform or a production solution.
 
